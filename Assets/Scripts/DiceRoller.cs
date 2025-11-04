@@ -2,61 +2,61 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-public class DiceRoller : MonoBehaviour
+namespace Script
 {
-    public static int lastRollResult = 0;
-
-    [Header("UI Component")]
-    public Image diceImage;
-
-    [Header("Dice Sprites")]
-    public Sprite[] diceSprites;
-
-    [Header("Animation Settings")]
-    public int diceSides = 6;
-    public float rollDuration = 0.5f;
-    public float changeInterval = 0.05f;
-
-    public void RollDice(int diceSides)
+    public class DiceRoller : MonoBehaviour
     {
-        int result = Random.Range(1, diceSides + 1);
+        public static int lastRollResult = 0;
 
-        lastRollResult = result;
+        [Header("UI Component")] public Image diceImage;
 
-        Debug.Log($"D{diceSides} ÁÖ»çÀ§ °á°ú: {result}");
-    }
+        [Header("Dice Sprites")] public Sprite[] diceSprites;
 
-    public void RollDiceWithAnimation()
-    {
-        StopAllCoroutines();
-        StartCoroutine(AnimateDiceRoll());
-    }
+        [Header("Animation Settings")] public int diceSides = 6;
+        public float rollDuration = 0.5f;
+        public float changeInterval = 0.05f;
 
-    IEnumerator AnimateDiceRoll()
-    {
-        if (diceSprites == null || diceSprites.Length != 6 || diceImage == null)
+        public static void RollDice(int diceSides)
         {
-            Debug.LogError("ÁÖ»çÀ§ ½ºÇÁ¶óÀÌÆ® ¹è¿­Àº 6°³¿©¾ß ÇÏ¸ç, Image ÄÄÆ÷³ÍÆ®°¡ ÇÒ´çµÇ¾î¾ß ÇÕ´Ï´Ù.");
-            yield break;
+            int result = Random.Range(1, diceSides + 1);
+
+            lastRollResult = result;
+
+            Debug.Log($"D{diceSides} ï¿½Ö»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½: {result}");
         }
 
-        float startTime = Time.time;
-
-        while (Time.time < startTime + rollDuration)
+        public void RollDiceWithAnimation()
         {
-            int randomSpriteIndex = Random.Range(0, diceSprites.Length);
-            diceImage.sprite = diceSprites[randomSpriteIndex];
-
-            yield return new WaitForSeconds(changeInterval);
+            StopAllCoroutines();
+            StartCoroutine(AnimateDiceRoll());
         }
 
-        int result = Random.Range(1, diceSides + 1);
-        lastRollResult = result;
+        IEnumerator AnimateDiceRoll()
+        {
+            if (diceSprites == null || diceSprites.Length != 6 || diceImage == null)
+            {
+                Debug.LogError("ï¿½Ö»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½è¿­ï¿½ï¿½ 6ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï¸ï¿½, Image ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ò´ï¿½Ç¾ï¿½ï¿½ ï¿½Õ´Ï´ï¿½.");
+                yield break;
+            }
 
-        int finalSpriteIndex = result - 1;
+            float startTime = Time.time;
 
-        diceImage.sprite = diceSprites[finalSpriteIndex];
+            while (Time.time < startTime + rollDuration)
+            {
+                int randomSpriteIndex = Random.Range(0, diceSprites.Length);
+                diceImage.sprite = diceSprites[randomSpriteIndex];
 
-        Debug.Log($"D{diceSides} ÁÖ»çÀ§ ÃÖÁ¾ °á°ú: {result}");
+                yield return new WaitForSeconds(changeInterval);
+            }
+
+            int result = Random.Range(1, diceSides + 1);
+            lastRollResult = result;
+
+            int finalSpriteIndex = result - 1;
+
+            diceImage.sprite = diceSprites[finalSpriteIndex];
+
+            Debug.Log($"D{diceSides} ï¿½Ö»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½: {result}");
+        }
     }
 }

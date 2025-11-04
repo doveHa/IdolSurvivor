@@ -7,19 +7,15 @@
         public int Rank { get; private set; }
         public string Name { get; private set; }
 
-        public Character(string name)
+        public Character()
         {
             Stat = new CharacterStats();
             VoteCount = 0;
             Rank = 0;
-            Name = name;
         }
 
-        public Character(CharacterStats stat, int voteCount, string name)
+        public void SetName(string name)
         {
-            Stat = stat;
-            VoteCount = voteCount;
-            Rank = 0;
             Name = name;
         }
     }

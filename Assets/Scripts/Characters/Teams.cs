@@ -49,7 +49,7 @@ namespace Script.Characters
             {
                 return TeamColor.OneMan;
             }
-            else if (maxStat.Value >= sumValue * Constant.TEMA_COLOR_COFF)
+            else if (maxStat.Value >= sumValue * Constant.TEAM_COLOR_COFF)
             {
                 return StatTypeToTeamColor(maxStat.StatType);
             }
@@ -98,7 +98,7 @@ namespace Script.Characters
 
             teamSumStat -= leaderSumStat;
 
-            return leaderSumStat > teamSumStat * Constant.TEMA_COLOR_COFF;
+            return leaderSumStat > teamSumStat * Constant.TEAM_COLOR_COFF;
         }
 
         private TeamColor StatTypeToTeamColor(StatType statType)

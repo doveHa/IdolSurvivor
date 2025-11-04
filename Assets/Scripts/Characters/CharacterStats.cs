@@ -35,24 +35,25 @@ namespace Script.Characters
             Charm.AddValue(stat.Charm.Value);
         }
 
-        public void AddSing(int sing)
+        public void AddStat(StatType statType, int value)
         {
-            Sing.AddValue(sing);
-        }
-
-        public void AddDance(int dance)
-        {
-            Dance.AddValue(dance);
-        }
-
-        public void AddAppearance(int appearance)
-        {
-            Appearance.AddValue(appearance);
-        }
-
-        public void AddCharm(int charm)
-        {
-            Charm.AddValue(charm);
+            switch (statType)
+            {
+                case StatType.Sing:
+                    Sing.AddValue(value);
+                    break;
+                case StatType.Dance:
+                    Dance.AddValue(value);
+                    break;
+                case StatType.Appearance:
+                    Appearance.AddValue(value);
+                    break;
+                case StatType.Charm:
+                    Charm.AddValue(value);
+                    break;
+                default:
+                    break;
+            }
         }
 
         public int SumStat()
