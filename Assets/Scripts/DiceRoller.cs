@@ -2,6 +2,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
+public enum DiceCheckResult
+{
+    CriticalSuccess,
+    Success,
+    Normal,
+    Failure
+}
+
 namespace Script
 {
     public class DiceRoller : MonoBehaviour
@@ -57,6 +65,42 @@ namespace Script
             diceImage.sprite = diceSprites[finalSpriteIndex];
 
             Debug.Log($"D{diceSides} �ֻ��� ���� ���: {result}");
+        }
+
+        public static DiceCheckResult JudgeRollResult(int roll)
+        {
+            if (roll == 6)
+            {
+                return DiceCheckResult.CriticalSuccess; // 대성공
+            }
+            else if (roll == 4 || roll == 5)
+            {
+                return DiceCheckResult.Success; // 성공
+            }
+            else // roll == 1 || roll == 2
+            {
+                return DiceCheckResult.Failure; // 실패
+            }
+        }
+
+        public static DiceCheckResult JudgeRollResultWithNormal(int roll)
+        {
+            if (roll == 6)
+            {
+                return DiceCheckResult.CriticalSuccess; // 대성공
+            }
+            else if (roll == 4 || roll == 5)
+            {
+                return DiceCheckResult.Success; // 성공
+            }
+            else if (roll == 3)
+            {
+                return DiceCheckResult.Normal; // 보통
+            }
+            else // roll == 1 || roll == 2
+            {
+                return DiceCheckResult.Failure; // 실패
+            }
         }
     }
 }
