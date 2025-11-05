@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16192965b93b4709b633a7c9e17ecd95, type: 3}
+  m_Name: Natsumi
+  m_EditorClassIdentifier: Assembly-CSharp::Script.DataDefinition.ScriptableObjects.CharacterData
+  name: "\uB098\uCE20\uBBF8"
+  description: "\uC194\uC9C1\uD558\uACE0 \uD138\uD138\uD55C \uBCF4\uC774\uC2DC\uD55C
+    \uB9E4\uB825. \uC2B9\uBD80\uC695\uC774 \uAC15\uD558\uBA70 \uC794\uAF80\uB97C
+    \uBD80\uB9AC\uC9C0 \uC54A\uB294 \uC815\uC9C1\uD568. \uBA64\uBC84\uB4E4 \uC0AC\uC774\uC758
+    \uC911\uC7AC\uC790 \uC5ED\uD560."
+  standingImage: {fileID: -166966734, guid: 323e8b201bfa0124b9e0f7fa56d03ad3, type: 3}

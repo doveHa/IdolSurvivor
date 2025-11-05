@@ -23,7 +23,7 @@ namespace Script.Characters
             statCoffs.Add(StatType.Appearance, 1);
             statCoffs.Add(StatType.Charm, 1);
             this.leader = leader;
-            team = new CharacterStats[Constant.MAX_TEAM_MEMBER];
+            team = new CharacterStats[Constant.Team.MAX_MEMBER];
             team[0] = leader;
         }
 
@@ -43,13 +43,13 @@ namespace Script.Characters
             }
 
             sumValue -= maxStat.Value;
-            sumValue /= Constant.MAX_TEAM_MEMBER - 1;
+            sumValue /= Constant.Team.MAX_MEMBER - 1;
 
             if (IsOneManTeam())
             {
                 return TeamColor.OneMan;
             }
-            else if (maxStat.Value >= sumValue * Constant.TEAM_COLOR_COFF)
+            else if (maxStat.Value >= sumValue * Constant.Harmony.TEAM_COLOR_COFF)
             {
                 return StatTypeToTeamColor(maxStat.StatType);
             }
@@ -98,7 +98,7 @@ namespace Script.Characters
 
             teamSumStat -= leaderSumStat;
 
-            return leaderSumStat > teamSumStat * Constant.TEAM_COLOR_COFF;
+            return leaderSumStat > teamSumStat * Constant.Harmony.TEAM_COLOR_COFF;
         }
 
         private TeamColor StatTypeToTeamColor(StatType statType)
@@ -126,8 +126,8 @@ namespace Script.Characters
             double variance = totalStats.Select(s => (s - average) * (s - average)).Average();
             double stdDev = Math.Sqrt(variance);
             double normalize = stdDev / average;
-            return (float)(Constant.MAX_HARMONY_COFF -
-                           (Constant.MAX_HARMONY_COFF - Constant.MIN_HARMONY_COFF) * normalize);
+            return (float)(Constant.Harmony.MAX_COFF -
+                           (Constant.Harmony.MAX_COFF - Constant.Harmony.MIN_COFF) * normalize);
         }
     }
 }

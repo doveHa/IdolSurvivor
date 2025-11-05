@@ -1,6 +1,8 @@
 ﻿using System;
+using Mono.Cecil;
 using Script.Characters;
 using Script.DataDefinition.Enum;
+using Script.DataDefinition.ScriptableObjects;
 using UnityEngine;
 
 namespace Script.Manager
@@ -16,13 +18,21 @@ namespace Script.Manager
         protected override void Awake()
         {
             base.Awake();
-            Player = new Character();
+            Player = new Character(ResourceManager.Load<CharacterData>(Config.PlayerCharacterDataPath));
             settingCount = 0;
         }
 
         public void SetMode(bool isFemale)
         {
             IsFemale = isFemale;
+            if (IsFemale)
+            {
+                Config.Gender = "Female";
+            }
+            else
+            {
+                Config.Gender = "Male";
+            }
         }
 
         public void SetStat(string statType, int statValue)
@@ -32,7 +42,7 @@ namespace Script.Manager
             settingCount++;
 
             Debug.Log(settingCount);
-            if (settingCount >= Constant.NUMBER_OF_STAT_TYPE)
+            if (settingCount >= Constant.Stat.NUMBER_OF_TYPES)
             {
                 nextSceneButton.SetActive(true);
             }

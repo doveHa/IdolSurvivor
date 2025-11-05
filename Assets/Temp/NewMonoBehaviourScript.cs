@@ -13,7 +13,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
         statText[1].text = CharacterSelectManager.Manager.Player.Stat.Dance.Value.ToString();
         statText[2].text = CharacterSelectManager.Manager.Player.Stat.Appearance.Value.ToString();
         statText[3].text = CharacterSelectManager.Manager.Player.Stat.Charm.Value.ToString();
-        statText[4].text = CharacterSelectManager.Manager.Player.Name;
+        statText[4].text = CharacterSelectManager.Manager.Player.Data.name;
     }
 
     // Update is called once per frame

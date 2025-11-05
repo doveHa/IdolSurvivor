@@ -2,13 +2,13 @@
 
 namespace Script.Manager
 {
-    public static class SceneLoadManager
+    public class SceneLoadManager : ManagerBase<SceneLoadManager>
     {
-        public static void LoadCharacterSelectScene()
+        public void LoadCharacterSelectScene()
         {
         }
 
-        public static void LoadMainScene()
+        public void LoadMainScene()
         {
             SceneManager.LoadScene(Constant.Scene.MAIN);
         }
