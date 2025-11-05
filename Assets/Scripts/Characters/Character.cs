@@ -16,5 +16,10 @@ namespace Script.Characters
             Rank = 0;
             Data = data;
         }
+
+        public void AddVote(int voteCount)
+        {
+            VoteCount += voteCount;
+        }
     }
 }

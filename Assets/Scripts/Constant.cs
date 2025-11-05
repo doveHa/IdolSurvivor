@@ -2,6 +2,13 @@
 {
     public static class Constant
     {
+        public static class InitialVoteCount
+        {
+            public const int GRADE_A = 50;
+            public const int GRADE_B = 30;
+            public const int GRADE_C = 10;
+        }
+
         public static class Stat
         {
             public const int NUMBER_OF_TYPES = 4;
