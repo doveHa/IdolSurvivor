@@ -8,6 +8,7 @@ public class GMManager : MonoBehaviour
     public static GMManager Instance { get; private set; }
 
     public GameObject gmPanel;
+    public TMPro.TextMeshProUGUI gmNameText;
     public TMPro.TextMeshProUGUI gmText;
     public Button NextBtn;
     public Button PrevBtn;
