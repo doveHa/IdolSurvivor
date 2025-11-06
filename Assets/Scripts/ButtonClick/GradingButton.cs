@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Script.Characters;
 using Script.DataDefinition.Dialogue;
 using Script.Manager;
 using Script.UI;
@@ -30,6 +31,8 @@ namespace Script.ButtonClick
 
         protected override void OnClick()
         {
+            int gradeA = 4;
+            int gradeB = 4;
             DiceRoller.RollDice(6);
             switch (DiceRoller.lastRollResult)
             {
@@ -41,14 +44,39 @@ namespace Script.ButtonClick
                     break;
                 case 4:
                 case 5:
+                    gradeB--;
                     dialogue = GradingDialogue.GRADE_B;
                     AdjustResult(Constant.InitialVoteCount.GRADE_B);
                     break;
                 case 6:
+                    gradeA--;
                     dialogue = GradingDialogue.GRADE_A;
                     AdjustResult(Constant.InitialVoteCount.GRADE_A);
                     break;
             }
+
+            foreach (Character character in AllCharacterManager.Manager.AllCharacters)
+            {
+                if (character != CharacterSelectManager.Manager.Player)
+                {
+                    if (gradeA > 0)
+                    {
+                        character.AddVote(Constant.InitialVoteCount.GRADE_A);
+                        gradeA--;
+                    }
+                    else if (gradeB > 0)
+                    {
+                        character.AddVote(Constant.InitialVoteCount.GRADE_B);
+                        gradeB--;
+                    }
+                    else
+                    {
+                        character.AddVote(Constant.InitialVoteCount.GRADE_C);
+                    }
+                }
+            }
+
+            Debug.Log(AllCharacterManager.Manager.AllCharacters);
         }
 
         private void AdjustResult(int initialVoteCount)

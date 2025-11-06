@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Script.Characters;
 using Script.DataDefinition.ScriptableObjects;
+using UnityEngine;
 
 namespace Script.Manager
 {
@@ -27,6 +28,20 @@ namespace Script.Manager
                 {
                     AllCharacters.Add(new Character(character));
                 }
+            }
+
+            Shuffle();
+        }
+
+        private void Shuffle()
+        {
+            int count = Constant.Character.ALL_MEMBER;
+
+            while (count > 0)
+            {
+                count--;
+                int random = Random.Range(0, AllCharacters.Count);
+                (AllCharacters[count], AllCharacters[random]) = (AllCharacters[random], AllCharacters[count]);
             }
         }
     }

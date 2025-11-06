@@ -14,6 +14,11 @@
             public const int NUMBER_OF_TYPES = 4;
         }
 
+        public static class Character
+        {
+            public const int ALL_MEMBER = 12;
+        }
+
         public static class Team
         {
             public const int MAX_COUNT = 4;
@@ -29,7 +34,7 @@
 
         public static class Scene
         {
-            public const string MAIN = "Main(Test)";
+            public const string GradingScene = "GradingScene";
         }
     }
 }

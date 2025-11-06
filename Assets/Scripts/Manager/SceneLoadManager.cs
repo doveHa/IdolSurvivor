@@ -10,7 +10,7 @@ namespace Script.Manager
 
         public void LoadMainScene()
         {
-            SceneManager.LoadScene(Constant.Scene.MAIN);
+            SceneManager.LoadScene(Constant.Scene.GradingScene);
         }
     }
 }

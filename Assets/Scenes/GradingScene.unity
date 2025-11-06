@@ -1418,7 +1418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2381d75a68394814911d54c965ecb48b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Script.UI.DisplayStats
-  nameText: {fileID: 0}
+  nameText: {fileID: 187074523}
   singText: {fileID: 68191017}
   danceText: {fileID: 32661215}
   appearanceText: {fileID: 1694200804}
@@ -3005,7 +3005,6 @@ GameObject:
   - component: {fileID: 900727425}
   - component: {fileID: 900727424}
   - component: {fileID: 900727423}
-  - component: {fileID: 900727422}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -3013,24 +3012,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &900727422
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 900727421}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c350aef00cb5fd4a805d6327d944e42, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
-  statText:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!114 &900727423
 MonoBehaviour:
   m_ObjectHideFlags: 0
