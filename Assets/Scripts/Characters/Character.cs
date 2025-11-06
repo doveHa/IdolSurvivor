@@ -1,22 +1,25 @@
-﻿namespace Script.Characters
+﻿using Script.DataDefinition.ScriptableObjects;
+
+namespace Script.Characters
 {
     public class Character
     {
         public CharacterStats Stat { get; private set; }
         public int VoteCount { get; private set; }
         public int Rank { get; private set; }
-        public string Name { get; private set; }
+        public CharacterData Data { get; private set; }
 
-        public Character()
+        public Character(CharacterData data)
         {
             Stat = new CharacterStats();
             VoteCount = 0;
             Rank = 0;
+            Data = data;
         }
 
-        public void SetName(string name)
+        public void AddVote(int voteCount)
         {
-            Name = name;
+            VoteCount += voteCount;
         }
     }
 }

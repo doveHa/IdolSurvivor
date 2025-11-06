@@ -13,8 +13,9 @@ namespace Script.ButtonClick
         {
             if (inputField.text.Length > 0)
             {
-                CharacterSelectManager.Manager.Player.SetName(inputField.text);
-                SceneLoadManager.LoadMainScene();
+                CharacterSelectManager.Manager.Player.Data.name = inputField.text;
+                AllCharacterManager.Manager.GenerateAllCharacters();
+                SceneLoadManager.Manager.LoadMainScene();
             }
             else
             {

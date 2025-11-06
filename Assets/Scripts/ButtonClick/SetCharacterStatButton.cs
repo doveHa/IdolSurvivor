@@ -29,7 +29,7 @@ namespace Script.ButtonClick
             dice.GetComponent<DraggableObject>().CanDrag();
             dice.GetComponentInChildren<TextMeshProUGUI>().text = DiceRoller.lastRollResult.ToString();
 
-            if (currentCount >= Constant.NUMBER_OF_STAT_TYPE)
+            if (currentCount >= Constant.Stat.NUMBER_OF_TYPES)
             {
                 GetComponent<UnityEngine.UI.Button>().interactable = false;
             }

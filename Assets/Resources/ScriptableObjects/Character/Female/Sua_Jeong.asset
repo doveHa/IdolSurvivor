@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16192965b93b4709b633a7c9e17ecd95, type: 3}
+  m_Name: Sua_Jeong
+  m_EditorClassIdentifier: Assembly-CSharp::Script.DataDefinition.ScriptableObjects.CharacterData
+  name: "\uC815\uC218\uC544"
+  description: "\uC560\uAD50 \uB9CE\uACE0 \uD574\uB9D1\uC740 \uB9C9\uB0B4 \uCE90\uB9AD\uD130.
+    \uC5B4\uB9AC\uAD11\uC744 \uBD80\uB9AC\uC9C0\uB9CC, \uBB34\uB300\uC5D0\uC11C\uB294
+    \uBC18\uC804 \uB9E4\uB825\uC744 \uBCF4\uC5EC\uC8FC\uB824 \uB178\uB825\uD568."
+  standingImage: {fileID: -166966734, guid: 323e8b201bfa0124b9e0f7fa56d03ad3, type: 3}
