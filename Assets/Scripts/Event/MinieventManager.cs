@@ -1,27 +1,46 @@
-using Script;
 using UnityEngine;
 using System;
+using Script; // DiceRoller 네임스페이스
 using Script.DataDefinition.Enum;
 using UnityEngine.UI;
+using TMPro; // TMPro 네임스페이스
 
 public class MinieventManager : MonoBehaviour
 {
     public enum EventType { PR_1Min, Practice, StreetPerformance, Entertainment }
 
+    [Header("Event Settings")]
     public EventType currentEvent = EventType.PR_1Min;
 
-    private int rollCount = 0;
+    [Header("Street Performance UI")]
+    public GameObject statSelectionPanel; // Inspector에서 할당 필요
+
+    public StatButton[] statButtons;
+
+    // 굴림 상태 관리 필드
+    private int[] currentRolls;       // 현재 이벤트의 모든 주사위 결과를 저장
+    private int requiredRolls = 0;    // 필요한 총 굴림 횟수
+    private int currentRollIndex = 0; // 현재 굴림 횟수 인덱스
+    private Action<int[]> onRollsCompleteCallback; // 모든 굴림 완료 후 실행될 콜백
+
+    // 이벤트 결과 필드
     private int firstRoll = 0;
     private int finalVotesResult = 0;
+    private int practicePoints = 0;
+    private StatType selectedStatForStreet;
+
+    // 길거리 공연 스탯 변화량 상수
+    private const float StreetSuccessMultiplier = 3.0f;
+    private const float StreetFailureReduction = 0.20f; // 20% 감소
 
     void Start()
     {
-        // 씬 시작 시 바로 이벤트 시작
         StartCurrentEvent();
     }
 
     private void StartCurrentEvent()
     {
+        // StartCurrentEvent가 호출될 때마다 해당 이벤트가 시작되도록 처리
         switch (currentEvent)
         {
             case EventType.PR_1Min:
@@ -39,261 +58,387 @@ public class MinieventManager : MonoBehaviour
         }
     }
 
+    private string GetKoreanStatName(StatType type)
+    {
+        // 모든 StatType에 대해 필요한 번역을 추가하세요.
+        switch (type)
+        {
+            case StatType.Sing:
+                return "노래";
+            case StatType.Dance:
+                return "춤";
+            case StatType.Charm:
+                return "매력";
+            case StatType.Appearance:
+                return "외모";
+            default:
+                return type.ToString();
+        }
+    }
+
+    // =================================================================
+    // 범용 멀티 롤 시스템 (효율화의 핵심)
+    // =================================================================
+
+    /// <summary>
+    /// N번의 주사위를 굴리고 결과를 배열에 저장한 후, 최종 콜백을 실행하는 범용 함수입니다.
+    /// </summary>
+    private void StartMultiRoll(int numRolls, Action<int[]> finalCallback)
+    {
+        requiredRolls = numRolls;
+        currentRollIndex = 0;
+        currentRolls = new int[numRolls];
+        onRollsCompleteCallback = finalCallback;
+
+        // 첫 번째 굴림을 시작하도록 UI 설정 및 리스너 연결
+        ShowDiceAndSetRollListener();
+        DiceRoller.Instance.rollButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = $"Roll (1/{numRolls})";
+        DiceRoller.Instance.rollButton.interactable = true;
+    }
+
+    private void ShowDiceAndSetRollListener()
+    {
+        DiceRoller.Instance.ShowDicePanel();
+        Button rollBtn = DiceRoller.Instance.rollButton;
+
+        if (rollBtn != null)
+        {
+            rollBtn.onClick.RemoveAllListeners();
+            rollBtn.onClick.AddListener(() =>
+            {
+                // 굴림이 끝난 후 NextDiceOrFinalize를 호출하도록 요청
+                DiceRoller.Instance.RollDiceWithCallback(NextDiceOrFinalize);
+                rollBtn.interactable = false;
+            });
+        }
+    }
+
+    private void NextDiceOrFinalize(int rollResult)
+    {
+        currentRolls[currentRollIndex] = rollResult;
+        currentRollIndex++;
+
+        if (currentRollIndex < requiredRolls)
+        {
+            // 굴릴 주사위가 남은 경우: 다음 굴림 준비 (Next 버튼으로 전환)
+            DiceRoller.Instance.resultText.text =
+                $"굴림 #{currentRollIndex} 결과: {rollResult}!\n다음 굴림을 준비하세요.";
+
+            DiceRoller.Instance.SetRollCompletedUI(); // Roll -> Next 버튼 전환
+
+            DiceRoller.Instance.onNextAction = () =>
+            {
+                // Next 버튼 클릭 시 다음 주사위 굴림 버튼 텍스트 설정 및 리스너 재할당
+                ShowDiceAndSetRollListener();
+                DiceRoller.Instance.rollButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
+                    $"Roll ({currentRollIndex + 1}/{requiredRolls})";
+            };
+        }
+        else
+        {
+            // 모든 굴림 완료: 최종 처리 시작
+            DiceRoller.Instance.resultText.text = $"모든 굴림 완료! 최종 결과를 확인하세요.";
+            DiceRoller.Instance.SetRollCompletedUI(); // Roll -> Next 버튼 전환
+
+            // Next 버튼에 최종 처리 콜백 연결
+            DiceRoller.Instance.onNextAction = () =>
+            {
+                //DiceRoller.Instance.HideDicePanel();
+                //onRollsCompleteCallback.Invoke(currentRolls); // 최종 처리 함수에 결과 배열 전달
+                onRollsCompleteCallback.Invoke(currentRolls);
+            };
+        }
+    }
+
+
+    // =================================================================
+    // 1분 PR 이벤트 (Roll 2회)
+    // =================================================================
+
     private void StartOneMinPR()
     {
-        string[] dialogue = new string[]
-        {
-            "미니 이벤트 '1분 PR'에 오신 것을 환영합니다!",
-            "1분 PR은 주사위를 두 번 굴려 득표수를 결정합니다.",
-            "3 이하의 숫자가 2개면 거듭제곱,\n짝수 2개거나 홀수 2개면 곱하기,",
-            "나머지는 더하기로 득표수를 산정합니다."
-        };
-
+        string[] dialogue = { "미니 이벤트 '1분 PR'에 오신 것을 환영합니다!", "주사위를 두 번 굴려 득표수를 결정합니다." };
         if (GMManager.Instance != null)
         {
-            // 대화가 끝난 후 첫 번째 주사위 굴림 시작
-            GMManager.Instance.StartDialogue(dialogue, RollFirstPRDice);
+            // StartMultiRoll을 사용하여 RollFirstPRDice, RollSecondPRDice 함수를 제거함
+            GMManager.Instance.StartDialogue(dialogue,
+                () => StartMultiRoll(2, ProcessFinalPRResult));
         }
     }
 
-    // 좀 더 효율적이고 코드를 깔끔하게 쓸 수 있을 방법이 있을거 같은데 고민...
-    private void RollFirstPRDice()
+    private void ProcessFinalPRResult(int[] rolls)
     {
-        // 첫 번째 굴림 설정
-        rollCount = 1;
-
-        if (DiceRoller.Instance != null)
-        {
-            DiceRoller.Instance.ShowDicePanel();
-
-            Button rollBtn = DiceRoller.Instance.rollButton;
-            if (rollBtn != null)
-            {
-                rollBtn.onClick.RemoveAllListeners();
-
-                // 첫 번째 굴림의 콜백은 ProcessFirstPRRoll
-                rollBtn.onClick.AddListener(() =>
-                {
-                    DiceRoller.Instance.RollDiceWithCallback(ProcessFirstPRRoll);
-                    rollBtn.interactable = false;
-                });
-
-                rollBtn.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Roll (1/2)";
-                rollBtn.interactable = true;
-            }
-        }
-    }
-
-    private void ProcessFirstPRRoll(int roll)
-    {
-        firstRoll = roll; // 첫 번째 결과 저장
-
-        if (DiceRoller.Instance != null)
-        {
-            DiceRoller.Instance.resultText.text = $"첫 번째: {roll}!\n다음 굴림을 준비하세요.";
-            DiceRoller.Instance.SetRollCompletedUI(); // 버튼을 Next로 변경
-
-            // Next 버튼을 누르면 두 번째 주사위 굴림 시작
-            DiceRoller.Instance.onNextAction = RollSecondPRDice;
-        }
-    }
-
-    private void RollSecondPRDice()
-    {
-        // 두 번째 굴림 설정
-        rollCount = 2;
-
-        if (DiceRoller.Instance != null)
-        {
-            DiceRoller.Instance.ShowDicePanel(); // 패널이 닫혔다면 다시 열고, 
-
-            Button rollBtn = DiceRoller.Instance.rollButton;
-            if (rollBtn != null)
-            {
-                rollBtn.onClick.RemoveAllListeners();
-                rollBtn.onClick.AddListener(() =>
-                {
-                    // 두 번째 굴림의 콜백은 ProcessFinalPRResult
-                    DiceRoller.Instance.RollDiceWithCallback(ProcessFinalPRResult);
-                    rollBtn.interactable = false;
-                });
-
-                rollBtn.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Roll (2/2)";
-                rollBtn.interactable = true;
-            }
-        }
-    }
-
-    private void ProcessFinalPRResult(int secondRoll)
-    {
+        firstRoll = rolls[0];
+        int secondRoll = rolls[1];
         int finalVotes = 0;
         string formula = "";
 
         // 득표수 계산 로직
         if (firstRoll <= 3 && secondRoll <= 3)
         {
-            // 3이하 2개 거듭제곱 3 * 3
             finalVotes = (int)Mathf.Pow(firstRoll, secondRoll);
             formula = $"{firstRoll}^{secondRoll} = {finalVotes}";
         }
         else if (firstRoll % 2 == 0 && secondRoll % 2 == 0)
         {
-            // 짝수, 짝수 곱하기
             finalVotes = firstRoll * secondRoll;
             formula = $"{firstRoll} x {secondRoll} = {finalVotes}";
         }
         else if (firstRoll % 2 != 0 && secondRoll % 2 != 0)
         {
-            // 홀수, 홀수 곱하기
             finalVotes = firstRoll * secondRoll;
             formula = $"{firstRoll} x {secondRoll} = {finalVotes}";
         }
         else
         {
-            // 나머지 더하기
             finalVotes = firstRoll + secondRoll;
             formula = $"{firstRoll} + {secondRoll} = {finalVotes}";
         }
 
         finalVotesResult = finalVotes;
 
-        // 4. UI 업데이트 및 다음 단계 연결
-        if (DiceRoller.Instance != null)
-        {
-            string message = $"최종 득표 결과: {finalVotes}표!\n(계산식: {formula})";
-            Debug.Log(finalVotes);
+        // 득표수 적용 여기에
 
-            DiceRoller.Instance.resultText.text = message;
-            DiceRoller.Instance.SetRollCompletedUI();
-
-            // 득표수 적용 여기에
-
-            // Next 버튼 누르면 최종 대사 시작
-            DiceRoller.Instance.onNextAction = FinalPRDialogue;
-        }
+        FinalPRDialogue();
     }
 
     private void FinalPRDialogue()
     {
-        string[] dialogue = new string[]
-        {
-            $"1분 PR이 끝났습니다. 득표수 {finalVotesResult}표를 획득하였습니다.", // 실제 득표수는 finalVotes 변수에 있음
-            "다음 이벤트로 이동합니다."
-        };
-
+        string[] dialogue = { $"1분 PR이 끝났습니다. 득표수 {finalVotesResult}표를 획득하였습니다.", "다음 이벤트로 이동합니다." };
         if (GMManager.Instance != null)
         {
-            // 최종 대화가 끝난 후 씬 전환 또는 다음 이벤트 시작
             GMManager.Instance.StartDialogue(dialogue, () => Debug.Log("미니 이벤트 끝. 다음 씬으로 전환"));
         }
     }
 
+
+    // =================================================================
+    // 연습 이벤트 (Roll 2회 -> Stat 분배)
+    // =================================================================
+
     private void StartPractice()
     {
-        string[] dialogue = new string[]
-        {
-            "연습을 시작합니다.",
-            "주사위를 두 번 굴려 나온 합만큼 스탯 포인트를 얻습니다.",
-            "이 포인트는 플레이어의 스탯에 자유롭게 분배할 수 있습니다."
-        };
-
+        string[] dialogue = { "연습 이벤트를 시작합니다. 주사위 합만큼 스탯 포인트를 얻고 분배합니다." };
         if (GMManager.Instance != null)
         {
-            // 대화가 끝난 후 두 번의 주사위 굴림을 위한 함수 호출
-            GMManager.Instance.StartDialogue(dialogue, RollTwoDiceForSum);
+            GMManager.Instance.StartDialogue(dialogue,
+                () => StartMultiRoll(2, ProcessPracticeResult));
         }
     }
 
-    private void RollTwoDiceForSum()
+    private void ProcessPracticeResult(int[] rolls)
     {
-        // 간단화를 위해 바로 최종 콜백으로 연결
-        rollCount = 0;
-        if (DiceRoller.Instance != null)
+        practicePoints = rolls[0] + rolls[1];
+
+        // Next 버튼을 누르면 StatAllocationManager 호출
+        StartPracticeAllocation();
+    }
+
+    private void StartPracticeAllocation()
+    {
+        if (DiceRoller.Instance != null) DiceRoller.Instance.HideDicePanel();
+
+        if (StatAllocationManager.Instance != null)
         {
-            DiceRoller.Instance.ShowDicePanel();
-            DiceRoller.Instance.rollButton.onClick.RemoveAllListeners();
-            DiceRoller.Instance.rollButton.onClick.AddListener(() =>
-            {
-                // ProcessTwoDiceSum을 콜백으로 넘기기
-                DiceRoller.Instance.RollDiceWithCallback(roll1 => RollDiceForSumSecond(roll1));
-                DiceRoller.Instance.rollButton.interactable = false;
-            });
-            DiceRoller.Instance.rollButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Roll (1/2)";
-            DiceRoller.Instance.rollButton.interactable = true;
+            // 분배가 끝난 후 FinalPracticeDialogue 함수를 실행하도록 콜백 전달
+            StatAllocationManager.Instance.StartAllocation(practicePoints, FinalPracticeDialogue);
+        }
+        else
+        {
+            Debug.LogError("StatAllocationManager 인스턴스를 찾을 수 없습니다! 최종 대화로 바로 이동합니다.");
+            FinalPracticeDialogue();
         }
     }
 
-    private void RollDiceForSumSecond(int roll1)
+    private void FinalPracticeDialogue()
     {
-        // 첫 번째 굴림 후 Next 버튼 로직 처리
-        DiceRoller.Instance.resultText.text = $"첫 번째: {roll1}. 다음 굴림을 준비하세요.";
-        DiceRoller.Instance.SetRollCompletedUI();
-        DiceRoller.Instance.onNextAction = () =>
+        string[] dialogue = { $"연습이 끝났습니다. 총 {practicePoints} 포인트를 스탯에 분배했습니다.", "다음 이벤트로 이동합니다." };
+        if (GMManager.Instance != null)
         {
-            // Next 버튼 클릭 후 두 번째 주사위 굴림 시작
-            DiceRoller.Instance.ShowDicePanel();
-            Button rollBtn = DiceRoller.Instance.rollButton;
-            rollBtn.onClick.RemoveAllListeners();
-            rollBtn.onClick.AddListener(() =>
-            {
-                DiceRoller.Instance.RollDiceWithCallback(roll2 => ProcessTwoDiceSum(roll1, roll2));
-                rollBtn.interactable = false;
-            });
-            rollBtn.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Roll (2/2)";
-            rollBtn.interactable = true;
-        };
-    }
-
-    private void ProcessTwoDiceSum(int roll1, int roll2)
-    {
-        int totalPoints = roll1 + roll2;
-
-        if (DiceRoller.Instance != null)
-        {
-            DiceRoller.Instance.resultText.text =
-                $"주사위 합: {roll1} + {roll2} = {totalPoints} 포인트 획득!.";
-            DiceRoller.Instance.SetRollCompletedUI();
-
-            // Next 버튼을 누르면 스탯 분배 UI로 이동 (가정)
-            DiceRoller.Instance.onNextAction = () =>
-            {
-                Debug.Log($"총 {totalPoints} 포인트를 분배할 수 있습니다. (스탯 분배 UI 구현 필요)");
-                // ShowStatDistributionUI(totalPoints); // 별도 UI 함수 호출
-
-                // 여기서 스탯 추가
-
-                // 분배가 끝났다고 가정하고 최종 대화 시작
-                FinalPracticeDialogue(totalPoints);
-            };
+            GMManager.Instance.StartDialogue(dialogue, () => Debug.Log("연습 이벤트 종료"));
         }
     }
 
-    private void FinalPracticeDialogue(int points)
-    {
-        string[] dialogue = new string[]
-        {
-            $"연습이 끝났습니다. 총 {points} 포인트를 스탯에 분배했습니다.",
-            "다음 이벤트로 이동합니다."
-        };
-        GMManager.Instance.StartDialogue(dialogue, () => Debug.Log("연습 이벤트 종료"));
-    }
+
+    // =================================================================
+    // 길거리 공연 이벤트 (스탯 선택 및 Roll 1회)
+    // =================================================================
 
     private void StartStreetPerformance()
     {
+        string[] dialogue = { "프로그램을 홍보하기 위해 길거리 공연 이벤트를 진행합니다!",
+            "어떤 포지션으로 길거리 공연 이벤트에 나가시겠습니까?"};
+        
+        if (GMManager.Instance != null)
+        {
+            // 대화가 끝난 후 스탯 선택 UI 활성화
+            GMManager.Instance.StartDialogue(dialogue, ShowStatSelectionUI);
+        }
+    }
+
+    private void ShowStatSelectionUI()
+    {
+        if (statSelectionPanel != null)
+        {
+            // 스탯 선택 패널을 활성화하고 GM 패널을 닫습니다.
+            statSelectionPanel.SetActive(true);
+            if (GMManager.Instance != null)
+            {
+                GMManager.Instance.gmPanel.SetActive(false);
+            }
+
+            ConnectStatButtons();
+        }
+    }
+
+    private void ConnectStatButtons()
+    {
+        foreach (var statBtn in statButtons)
+        {
+            if (statBtn != null && statBtn.GetComponent<Button>() != null)
+            {
+                Button btn = statBtn.GetComponent<Button>();
+
+                // 기존 리스너 제거 (필수)
+                btn.onClick.RemoveAllListeners();
+
+                // AddListener를 사용해 람다 함수로 동적 연결
+                btn.onClick.AddListener(() => OnStatSelectedByCode(statBtn.statType));
+            }
+        }
+    }
+
+    public void OnStatSelectedByCode(StatType type)
+    {
+        // 2. 선택된 스탯 저장
+        selectedStatForStreet = type;
+
+        if (GMManager.Instance != null)
+        {
+            string translatedStat = GetKoreanStatName(type);
+
+            // 3. GM 패널에 확인 메시지 표시
+            GMManager.Instance.gmText.text =
+                $"{translatedStat} 스탯을 선택하시겠습니까?\n" +
+                "(성공 시 스탯 증가, 실패 시 스탯 감소)";
+            GMManager.Instance.gmPanel.SetActive(true);
+
+            // 4. Next 버튼에 주사위 굴림 시작 함수 연결
+            GMManager.Instance.NextBtn.onClick.RemoveAllListeners();
+            GMManager.Instance.NextBtn.onClick.AddListener(RollStreetPerformanceDice);
+        }
+    }
+
+
+    private void RollStreetPerformanceDice()
+    {
+        // 1. 스탯 선택 UI 및 GM 확인 패널 비활성화
+        if (statSelectionPanel != null)
+            statSelectionPanel.SetActive(false);
+        if (GMManager.Instance != null)
+            GMManager.Instance.gmPanel.SetActive(false);
+
+        if (DiceRoller.Instance != null)
+        {
+            // 2. 주사위 패널 열기
+            DiceRoller.Instance.ShowDicePanel();
+
+            Button rollBtn = DiceRoller.Instance.rollButton;
+            if (rollBtn != null)
+            {
+                // 3. Roll 버튼 리스너 설정: 굴림 완료 후 ProcessStreetResult 실행
+                rollBtn.onClick.RemoveAllListeners();
+                rollBtn.onClick.AddListener(() =>
+                {
+                    // 수제 구현 핵심: RollDiceWithCallback에 ProcessStreetResult 연결
+                    DiceRoller.Instance.RollDiceWithCallback(ProcessStreetResultManual);
+                    rollBtn.interactable = false;
+                });
+
+                // UI 텍스트 설정
+                rollBtn.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Roll";
+                rollBtn.interactable = true;
+            }
+        }
+    }
+
+    private void ProcessStreetResultManual(int roll)
+    {
+        // ProcessStreetResult 로직을 직접 실행합니다.
+        string translatedStat = GetKoreanStatName(selectedStatForStreet);
+
+        // 1. 스탯 값 가져오기 (임시)
+        int baseValue = 10;
+
+        DiceCheckResult check = JudgeStreetRoll(roll);
+        string resultMessage;
+        int change = 0;
+
+        // 2. 성공/실패 판정 및 스탯 변경 계산
+        if (check == DiceCheckResult.Success)
+        {
+            change = (int)(baseValue * StreetSuccessMultiplier);
+            resultMessage =
+                $"[굴림: {roll}] 성공!\n" +
+                $"스탯이 {StreetSuccessMultiplier}배 증가하여 {change}가 되었습니다!";
+            // TODO: PlayerManager.Instance.ApplyStatChange(selectedStatForStreet, change);
+        }
+        else
+        {
+            int reductionAmount = (int)(baseValue * StreetFailureReduction); // 10 * 0.20f = 2
+            change = -reductionAmount;
+
+            resultMessage =
+                $"[굴림: {roll}] 실패!\n" +
+                $"스탯이 20% 감소하여 {change}가 되었습니다.";
+            // TODO: PlayerManager.Instance.ApplyStatChange(selectedStatForStreet, reduction);
+        }
+
+        // 3. UI 업데이트 및 Next 버튼 설정
+        if (DiceRoller.Instance != null)
+        {
+            DiceRoller.Instance.resultText.text = resultMessage;
+            DiceRoller.Instance.SetRollCompletedUI();
+
+            // 4. Next 버튼 클릭 시 FinalStreetDialogue 실행
+            DiceRoller.Instance.onNextAction = FinalStreetDialogue;
+        }
+    }
+
+    private void FinalStreetDialogue()
+    {
+        Debug.Log("FinalStreetDialogue 호출됨");
+
+        if (DiceRoller.Instance != null)
+        {
+            DiceRoller.Instance.HideDicePanel();
+        }
+
         string[] dialogue = new string[]
         {
-            "프로그램을 홍보하기 위해 길거리 공연을 진행 합니다."
+            "길거리 공연 이벤트가 끝났습니다.",
+            "다음 이벤트로 이동합니다."
         };
 
         if (GMManager.Instance != null)
         {
-            GMManager.Instance.StartDialogue(dialogue, () =>
-            {
-                // TeamManager.Instance.StartStreetPerformanceEvent();
-                Debug.Log("길거리 공연 이벤트 시작");
-            });
+            GMManager.Instance.StartDialogue(dialogue, FinalActionOfStreetEvent);
         }
     }
+
+    private void FinalActionOfStreetEvent()
+    {
+        Debug.Log("길거리 공연 이벤트 종료");
+        // 여기에 씬 전환 또는 다음 이벤트 시작 로직을 넣습니다.
+    }
+
+    // 길거리 공연 판정 로직 (1~3: 실패, 4~6: 성공)
+    private DiceCheckResult JudgeStreetRoll(int roll)
+    {
+        if (roll >= 4) return DiceCheckResult.Success;
+        return DiceCheckResult.Failure;
+    }
+
 
     private void ProcessEntertainment()
     {

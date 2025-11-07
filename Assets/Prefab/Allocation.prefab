@@ -4228,7 +4228,7 @@ MonoBehaviour:
   applyButton: {fileID: 7057903920036747612}
   allocationEntries:
   - statType: 0
-    currentValueText: {fileID: 3911426090160428432}
+    currentValueText: {fileID: 4084798691601096505}
     allocationValueText: {fileID: 7517478204252801207}
     addButton: {fileID: 5018779332335613890}
     subtractButton: {fileID: 4209325375096662589}

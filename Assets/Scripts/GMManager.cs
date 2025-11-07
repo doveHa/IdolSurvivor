@@ -104,7 +104,15 @@ public class GMManager : MonoBehaviour
         onDialogueEndAction = onEnd; // 설명 끝 콜백 저장
 
         gmPanel.SetActive(true);
-        NextBtn.gameObject.SetActive(true); // Next 버튼 활성화
+
+        //NextBtn.gameObject.SetActive(true); // Next 버튼 활성화
+        if (NextBtn != null)
+        {
+            NextBtn.onClick.RemoveAllListeners(); // 안전하게 기존 것 제거
+            NextBtn.onClick.AddListener(OnClickNext); // 대화 진행 리스너 다시 연결
+            NextBtn.gameObject.SetActive(true);
+        }
+
         PrevBtn.gameObject.SetActive(false); // 이전 버튼 비활성화 (선택 사항)
 
         // 첫 번째 텍스트 출력
