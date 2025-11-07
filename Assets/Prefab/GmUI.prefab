@@ -623,6 +623,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GMManager
   gmPanel: {fileID: 4709936899048652293}
+  gmNameText: {fileID: 7377939658960184292}
   gmText: {fileID: 994601063089270124}
   NextBtn: {fileID: 4960176050647634454}
   PrevBtn: {fileID: 2586756987489548661}

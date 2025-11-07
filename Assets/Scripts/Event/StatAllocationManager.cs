@@ -38,6 +38,7 @@ public class StatAllocationManager : MonoBehaviour
     void Start()
     {
         allocationPanel.SetActive(false);
+        InitializeUI();
     }
 
     private void InitializeUI()
