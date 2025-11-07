@@ -4,6 +4,7 @@ using Script; // DiceRoller 네임스페이스
 using Script.DataDefinition.Enum;
 using UnityEngine.UI;
 using TMPro; // TMPro 네임스페이스
+using System.Linq;
 
 public class MinieventManager : MonoBehaviour
 {
@@ -35,6 +36,8 @@ public class MinieventManager : MonoBehaviour
 
     void Start()
     {
+        currentEvent = GetRandomEventType();
+        Debug.Log($"선택된 이벤트: {currentEvent}");
         StartCurrentEvent();
     }
 
@@ -74,6 +77,21 @@ public class MinieventManager : MonoBehaviour
             default:
                 return type.ToString();
         }
+    }
+
+    public EventType GetRandomEventType()
+    {
+        EventType[] allEvents = (EventType[])Enum.GetValues(typeof(EventType));
+
+        if (allEvents.Length == 0)
+        {
+            Debug.LogError("EventType Enum에 정의된 이벤트가 없습니다. PR_1Min을 기본값으로 반환합니다.");
+            return EventType.PR_1Min;
+        }
+
+        int randomIndex = UnityEngine.Random.Range(0, allEvents.Length);
+
+        return allEvents[randomIndex];
     }
 
     // =================================================================

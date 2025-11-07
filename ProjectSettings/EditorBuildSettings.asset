@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/CharacterSelectScene.unity
     guid: 63970630af645b040aa69c6fdcfd84e4
   - enabled: 1
-    path: Assets/Scenes/Main(Test).unity
+    path: Assets/Scenes/GradingScene.unity
     guid: e86a74072b3a6474ca77625d4a0de989
   - enabled: 1
     path: Assets/Scenes/BeforeShow.unity

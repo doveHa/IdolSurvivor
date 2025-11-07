@@ -1,0 +1,440 @@
+using UnityEngine;
+using System;
+using System.Linq;
+using Script;
+using Script.DataDefinition.Enum;
+using UnityEngine.UI;
+using TMPro;
+
+public class MinieventManager2 : MonoBehaviour
+{
+    public enum CrisisEventType
+    {
+        SNSActivity,        // 26%
+        SpecialOffer,       // 10%
+        SchoolViolence,     // 10%
+        AlcoholTobacco,     // 27%
+        TeamConflict        // 27%
+    }
+
+    [Header("UI References")]
+    public GameObject specialOfferPanel; // 특혜 제안 선택지 UI (Inspector에서 할당)
+    public Button acceptOfferButton;     // 특혜 제안 수락 버튼
+    public Button declineOfferButton;    // 특혜 제안 거절 버튼
+    public GameObject gameOverPanel;
+
+    //임시
+    private int tempStatValue = 100;
+    private int tempTeamColor = 50;
+
+    private enum DiceCheckResult { Failure, Success, Normal }
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        StartCrisisEvent();
+    }
+
+
+    private readonly (CrisisEventType type, int weight)[] eventWeights = new[]
+    {
+        (CrisisEventType.SNSActivity, 26),
+        (CrisisEventType.SpecialOffer, 10),
+        (CrisisEventType.SchoolViolence, 10),
+        (CrisisEventType.AlcoholTobacco, 27),
+        (CrisisEventType.TeamConflict, 27)
+    };
+
+    private void StartCrisisEvent()
+    {
+        // 1. 랜덤으로 위기 이벤트 선택
+        //CrisisEventType selectedEvent = GetRandomCrisisEvent();
+        CrisisEventType selectedEvent = CrisisEventType.SNSActivity; // 테스트용 고정
+
+        // 2. 선택된 이벤트 시작
+        switch (selectedEvent)
+        {
+            case CrisisEventType.SNSActivity:
+                StartSNSActivity();
+                break;
+            case CrisisEventType.SpecialOffer:
+                StartSpecialOffer();
+                break;
+            case CrisisEventType.SchoolViolence:
+                StartSchoolViolence();
+                break;
+            case CrisisEventType.AlcoholTobacco:
+                StartAlcoholTobacco();
+                break;
+            case CrisisEventType.TeamConflict:
+                StartTeamConflict();
+                break;
+        }
+    }
+
+    private CrisisEventType GetRandomCrisisEvent()
+    {
+        int totalWeight = eventWeights.Sum(ew => ew.weight);
+        int randValue = UnityEngine.Random.Range(1, totalWeight + 1);
+        int cumulativeWeight = 0;
+
+        foreach (var (type, weight) in eventWeights)
+        {
+            cumulativeWeight += weight;
+            if (randValue <= cumulativeWeight)
+            {
+                Debug.Log($"랜덤 이벤트 선택됨: {type} (확률: {weight}%)");
+                return type;
+            }
+        }
+
+        // 안전 장치 (도달해서는 안 됨)
+        return eventWeights[0].type;
+    }
+
+    // 주사위 판정
+    private DiceCheckResult JudgeSuccessFailure(int roll)
+    {
+        if (roll >= 4) return DiceCheckResult.Success;
+        return DiceCheckResult.Failure;
+    }
+
+    private DiceCheckResult JudgeSuccessNormalFailure(int roll)
+    {
+        if (roll >= 5) return DiceCheckResult.Success;
+        if (roll >= 3) return DiceCheckResult.Normal;
+        return DiceCheckResult.Failure;
+    }
+
+    // 범용 헬퍼 함수
+
+    private void StartSingleRoll(Action<int> finalCallback, string rollButtonText)
+    {
+        if (DiceRoller.Instance == null)
+        {
+            Debug.LogError("DiceRoller 인스턴스를 찾을 수 없습니다.");
+            return;
+        }
+
+        DiceRoller.Instance.ShowDicePanel();
+        Button rollBtn = DiceRoller.Instance.rollButton;
+
+        if (rollBtn != null)
+        {
+            rollBtn.onClick.RemoveAllListeners();
+            rollBtn.onClick.AddListener(() =>
+            {
+                // 굴림 후 Next 버튼에 최종 콜백 연결
+                DiceRoller.Instance.RollDiceWithCallback((rollResult) =>
+                {
+                    DiceRoller.Instance.SetRollCompletedUI();
+                    DiceRoller.Instance.onNextAction = () => finalCallback.Invoke(rollResult);
+                });
+                rollBtn.interactable = false;
+            });
+
+            rollBtn.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = rollButtonText;
+            rollBtn.interactable = true;
+        }
+    }
+
+    private void FinalizeCrisisEvent()
+    {
+        if (DiceRoller.Instance != null) DiceRoller.Instance.HideDicePanel();
+
+        string[] finalDialogue = { "위기 이벤트가 종료되었습니다.", "다음 단계로 이동합니다." };
+
+        GMManager.Instance.StartDialogue(finalDialogue, () => Debug.Log("위기 이벤트 종료. 다음 씬/단계로 전환."));
+    }
+
+    private void ShowGameOver()
+    {
+        if (DiceRoller.Instance != null) DiceRoller.Instance.HideDicePanel();
+        if (GMManager.Instance != null) GMManager.Instance.gmPanel.SetActive(false);
+
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+            Debug.Log("게임 오버!");
+            // TODO: 여기에 게임 재시작 또는 메인 메뉴로 돌아가는 로직 추가
+        }
+        else
+        {
+            Debug.LogError("Game Over Panel이 할당되지 않았습니다. 게임 오버 로직을 수동으로 처리해야 합니다.");
+        }
+    }
+
+    // 이벤트 구현
+
+    private void StartSNSActivity()
+    {
+        string[] dialogue = {
+            "사건 발생! 프로그램의 규칙을 깨고 몰래 SNS를 업로드 하였습니다.",
+            "주사위를 굴려 대응 성공 여부를 판정합니다. (성공/실패)"
+        };
+        GMManager.Instance.StartDialogue(dialogue,
+            () => StartSingleRoll(ProcessSNSActivityResult, "Roll") // 주사위 굴림 시작
+        );
+    }
+
+    #region SNS 활동
+    private void ProcessSNSActivityResult(int roll)
+    {
+        DiceRoller.Instance.HideDicePanel();
+        DiceCheckResult check = JudgeSuccessFailure(roll);
+        string resultMessage;
+        string finalTitle;
+
+        if (check == DiceCheckResult.Success)
+        {
+            // 성공: 득표수 100 획득
+            resultMessage = $"결과: {roll} 성공!  팬들에게 어필하여 득표수 100표를 획득했습니다.";
+            finalTitle = "논란은 가라앉고, 오히려 팬덤이 커지는 계기가 되었습니다.";
+            // TODO: 득표수 추가
+        }
+        else
+        {
+            // 실패: 팀 빌딩 불가 All 랜덤
+            resultMessage = $"결과: {roll} 실패! 규칙을 어긴 패널티로 팀 빌딩이 불가능해졌습니다.\n모든 스탯이 랜덤으로 재조정됩니다.";
+            finalTitle = "여론이 악화되어 팀 활동에 제동이 걸렸습니다.";
+            // TODO: 팀 빌딩 불가, 랜덤 함수 호출
+        }
+
+        ShowResultThenFinalize(resultMessage, finalTitle);
+    }
+    #endregion
+
+    #region 특혜 제안
+
+    private void StartSpecialOffer()
+    {
+        string[] dialogue = { "소속사로부터 은밀한 제안이 들어왔습니다.", "이번 포지션과 노래를 원하는 대로 선택할 수 있게 해주겠답니다. 수락하시겠습니까?" };
+        GMManager.Instance.StartDialogue(dialogue, ShowSpecialOfferOptions);
+    }
+
+    private void ShowSpecialOfferOptions()
+    {
+        if (GMManager.Instance != null) GMManager.Instance.gmPanel.SetActive(false);
+        if (specialOfferPanel != null)
+        {
+            specialOfferPanel.SetActive(true);
+
+            // 버튼 리스너 연결
+            acceptOfferButton.onClick.RemoveAllListeners();
+            acceptOfferButton.onClick.AddListener(() => ProcessSpecialOffer(true));
+
+            declineOfferButton.onClick.RemoveAllListeners();
+            declineOfferButton.onClick.AddListener(() => ProcessSpecialOffer(false));
+        }
+    }
+
+    private void ProcessSpecialOffer(bool accepted)
+    {
+        if (specialOfferPanel != null) specialOfferPanel.SetActive(false);
+
+        string[] finalDialogue;
+
+        if (accepted)
+        {
+            // 수락
+            string[] dialogue = { "소속사의 특혜를 수락했습니다.", "성공적으로 비밀을 유지할 수 있을지 주사위를 굴려 판정합니다." };
+            GMManager.Instance.StartDialogue(dialogue,
+                () => StartSingleRoll(ProcessSpecialOfferRollResult, "특혜 Roll")
+            );
+        }
+        else
+        {
+            // 거절: 넘어감
+            finalDialogue = new string[] { "소속사의 제안을 거절했습니다.", "정정당당하게 하겠습니다!" };
+            GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
+        }
+    }
+
+    private void ProcessSpecialOfferRollResult(int roll)
+    {
+        DiceRoller.Instance.HideDicePanel();
+        DiceCheckResult check = JudgeSuccessFailure(roll);
+        string resultMessage;
+        string finalTitle;
+
+        if (check == DiceCheckResult.Success)
+        {
+            // 성공: 원하는 포지션과 노래 바로 선택 가능
+            resultMessage = $"성공! (Roll: {roll}) 소속사의 특혜가 비밀리에 성공했습니다.";
+            finalTitle = "원하는 포지션과 노래를 선택하세요.";
+            // TODO: 포지션/노래 선택 UI 활성화 로직
+            ShowResultThenFinalize(resultMessage, finalTitle);
+        }
+        else
+        {
+            // 실패: 특혜가 걸렸다. 게임 오버
+            resultMessage = $"실패! (Roll: {roll}) 비밀이 폭로되었습니다! 프로그램에서 하차합니다.";
+            finalTitle = "특혜가 걸린 것이 대중에 알려져...";
+            ShowResultThenGameOver(resultMessage, finalTitle); // 게임 오버 처리
+        }
+    }
+
+    #endregion
+
+    #region 학폭 폭로
+
+    private void StartSchoolViolence()
+    {
+        string[] dialogue = { "인터넷에 과거에 학교 폭력을 했다는 폭로글이 올라왔습니다.", "폭로글이 진실인지 판정합니다." };
+        GMManager.Instance.StartDialogue(dialogue,
+            () => StartSingleRoll(ProcessSchoolViolenceResult, "Roll")
+        );
+    }
+
+    private void ProcessSchoolViolenceResult(int roll)
+    {
+        DiceRoller.Instance.HideDicePanel();
+        string resultMessage;
+        string finalTitle;
+
+        // 1: 실패(진짜였음) → 게임 오버
+        if (roll == 1)
+        {
+            resultMessage = $"진실 판정 결과: {roll}. 학폭이 사실로 드러났습니다.";
+            finalTitle = "프로그램에서 영구 하차합니다.";
+            ShowResultThenGameOver(resultMessage, finalTitle);
+        }
+        else
+        {
+            // 나머지 (2~6): 친구가 글 올림 → 넘어감
+            resultMessage = $"진실 판정 결과: {roll}. 폭로글이 거짓으로 드러나 논란이 무사히 넘어갔습니다.";
+            finalTitle = "학창 시절 친구들의 증언 글로 논란이 잠잠해졌습니다.";
+            ShowResultThenFinalize(resultMessage, finalTitle);
+        }
+    }
+
+    #endregion
+
+    #region 술 담배 논란
+
+    private void StartAlcoholTobacco()
+    {
+        string[] dialogue = { "팀원 중 한 명의 과거 술/담배 논란 사진이 유출되었습니다.", "주사위를 굴려 여론 수습 성공 여부를 판정합니다. (성공/실패)" };
+        GMManager.Instance.StartDialogue(dialogue,
+            () => StartSingleRoll(ProcessAlcoholTobaccoResult, "Roll")
+        );
+    }
+
+    private void ProcessAlcoholTobaccoResult(int roll)
+    {
+        DiceRoller.Instance.HideDicePanel();
+        DiceCheckResult check = JudgeSuccessFailure(roll);
+        string resultMessage;
+        string finalTitle;
+
+        if (check == DiceCheckResult.Success)
+        {
+            resultMessage = $"성공! (Roll: {roll}) 팀원의 진실된 사과로 다행히 큰 문제가 되지 않았습니다.";
+            finalTitle = "무사히 넘어갔습니다.";
+        }
+        else
+        {
+            int reduction = -20;
+            resultMessage = $"실패! (Roll: {roll}) 여론이 악화되었습니다. 모든 스탯이 {reduction} 감소했습니다.";
+            finalTitle = "이미지 손상으로 활동에 제약이 생겼습니다.";
+            tempStatValue += reduction;
+            Debug.Log($"임시 스탯 감소: {tempStatValue}");
+            // TODO: PlayerManager.Instance.ApplyStatChangeAll(reduction);
+        }
+
+        ShowResultThenFinalize(resultMessage, finalTitle);
+    }
+
+    #endregion
+
+    #region 팀원 간 불화
+    private void StartTeamConflict()
+    {
+        string[] dialogue = { "팀원들 사이에 사소한 불화가 발생했습니다.", "주사위를 굴려 불화 극복 결과를 판정합니다. (성공/보통/실패)" };
+        GMManager.Instance.StartDialogue(dialogue,
+            () => StartSingleRoll(ProcessTeamConflictResult, "Roll")
+        );
+    }
+
+    private void ProcessTeamConflictResult(int roll)
+    {
+        DiceRoller.Instance.HideDicePanel();
+        DiceCheckResult check = JudgeSuccessNormalFailure(roll);
+        string resultMessage;
+        string finalTitle;
+
+        if (check == DiceCheckResult.Success)
+        {
+            int gain = 10;
+            resultMessage = $"성공! (Roll: {roll}) 위기를 극복하며 팀이 더 단단해졌습니다. 팀 컬러가 +{gain} 증가했습니다.";
+            finalTitle = "우리는 하나!";
+            tempTeamColor += gain;
+            Debug.Log($"임시 팀 컬러 증가: {tempTeamColor}");
+            // TODO: TeamManager.Instance.AddTeamColor(gain);
+        }
+        else if (check == DiceCheckResult.Normal)
+        {
+            resultMessage = $"보통. (Roll: {roll}) 불화는 있었지만, 잘 해결하고 넘어갔습니다.";
+            finalTitle = "다음 활동에 집중합시다.";
+        }
+        else // Failure
+        {
+            resultMessage = $"실패! (Roll: {roll}) 불화가 걷잡을 수 없이 커져 팀 컬러가 삭제되었습니다.";
+            finalTitle = "팀워크가 무너졌습니다.";
+            tempTeamColor = 0;
+            Debug.Log("임시 팀 컬러 삭제");
+            // TODO: TeamManager.Instance.ResetTeamColor();
+        }
+
+        ShowResultThenFinalize(resultMessage, finalTitle);
+    }
+
+    #endregion
+
+    private void ShowResultThenFinalize(string resultMessage, string finalTitle)
+    {
+        // 1. 주사위 결과 텍스트를 DiceRoller UI에 표시
+        if (DiceRoller.Instance != null)
+        {
+            DiceRoller.Instance.resultText.text = resultMessage;
+            DiceRoller.Instance.SetRollCompletedUI(); // Next 버튼 활성화
+
+            // 2. Next 버튼에 최종 GM 대화 연결
+            DiceRoller.Instance.onNextAction = () =>
+            {
+                DiceRoller.Instance.HideDicePanel();
+                // [Final Title] -> [Result Message] -> [Finalize Crisis Event]
+                string[] finalDialogue = new string[] { finalTitle, resultMessage };
+                GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
+            };
+        }
+        else
+        {
+            // DiceRoller가 없는 경우 바로 GM 대화로 전환
+            string[] finalDialogue = new string[] { finalTitle, resultMessage };
+            GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
+        }
+    }
+
+    private void ShowResultThenGameOver(string resultMessage, string finalTitle)
+    {
+        if (DiceRoller.Instance != null)
+        {
+            DiceRoller.Instance.resultText.text = resultMessage;
+            DiceRoller.Instance.SetRollCompletedUI();
+
+            // Next 버튼에 최종 GM 대화 (게임 오버) 연결
+            DiceRoller.Instance.onNextAction = () =>
+            {
+                DiceRoller.Instance.HideDicePanel();
+                string[] finalDialogue = new string[] { finalTitle, resultMessage };
+                GMManager.Instance.StartDialogue(finalDialogue, ShowGameOver);
+            };
+        }
+        else
+        {
+            string[] finalDialogue = new string[] { finalTitle, resultMessage };
+            GMManager.Instance.StartDialogue(finalDialogue, ShowGameOver);
+        }
+    }
+}
