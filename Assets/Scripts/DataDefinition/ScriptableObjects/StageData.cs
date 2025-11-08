@@ -7,9 +7,11 @@ namespace Script.DataDefinition.ScriptableObjects
     public class StageData : ScriptableObject
     {
         public Sprite backGround;
+
         public string title;
+
         //public Sound sound;
         public StatType plusStat, minusStat;
-        
+        public int eventCount;
     }
 }

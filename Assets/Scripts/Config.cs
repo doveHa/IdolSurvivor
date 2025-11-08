@@ -26,7 +26,7 @@
 
                 public static string NextStageDataPath()
                 {
-                    return $"ScriptableObjects/Stage/{NextStage}/";
+                    return $"ScriptableObjects/Stage/{NextStage}";
                 }
             }
         }

@@ -33,7 +33,7 @@ namespace Script.ButtonClick
         {
             int gradeA = 4;
             int gradeB = 4;
-            DiceRoller.RollDice(6);
+            DiceRoller.RollDice(DiceRoller.SIX_DICE_EYE);
             switch (DiceRoller.lastRollResult)
             {
                 case 1:
@@ -75,8 +75,6 @@ namespace Script.ButtonClick
                     }
                 }
             }
-
-            Debug.Log(AllCharacterManager.Manager.AllCharacters);
         }
 
         private void AdjustResult(int initialVoteCount)

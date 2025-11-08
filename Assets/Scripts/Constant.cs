@@ -42,5 +42,10 @@
         {
             public const string GradingScene = "GradingScene";
         }
+
+        public static class UIAnimationNumber
+        {
+            public const int PROGRESS_BAR_KNOB_IDLE = 0;
+        }
     }
 }

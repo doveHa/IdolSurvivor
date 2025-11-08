@@ -16,6 +16,7 @@ namespace Script
 {
     public class DiceRoller : MonoBehaviour
     {
+        public const int SIX_DICE_EYE = 6;
         public static DiceRoller Instance { get; private set; }
 
         private Action<int> onRollFinishedCallback;

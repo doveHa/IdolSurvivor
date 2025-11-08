@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace Script.UI.DragDrop
 {
-    [RequireComponent(typeof(Collider2D))]
+    [RequireComponent(typeof(Collider2D),typeof(IDrop))]
     public class DraggableObject : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
         private Vector3 offset, originalPos;

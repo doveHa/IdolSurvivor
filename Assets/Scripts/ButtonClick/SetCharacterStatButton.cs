@@ -23,7 +23,7 @@ namespace Script.ButtonClick
 
         protected override void OnClick()
         {
-            DiceRoller.RollDice(6);
+            DiceRoller.RollDice(DiceRoller.SIX_DICE_EYE);
             diceEyes.Add(DiceRoller.lastRollResult);
             GameObject dice = dices[currentCount++];
             dice.GetComponent<DraggableObject>().CanDrag();
