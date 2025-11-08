@@ -265,7 +265,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4709936899048652293, guid: 7e889bd290627d041beaf6160c47d0af, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8354623778687727501, guid: 7e889bd290627d041beaf6160c47d0af, type: 3}
       propertyPath: m_Pivot.x
@@ -642,7 +642,7 @@ GameObject:
   - component: {fileID: 693266660}
   - component: {fileID: 693266659}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: MiniEvent2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -660,6 +660,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1530833724}
   - {fileID: 1888386921}
   - {fileID: 1532177086}
   m_Father: {fileID: 0}
@@ -1126,6 +1127,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1530833724}
   - component: {fileID: 1530833723}
+  - component: {fileID: 1530833725}
   m_Layer: 0
   m_Name: MiniEvent2Manager
   m_TagString: Untagged
@@ -1157,13 +1159,25 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1530833722}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 704.7995, y: 390.9817, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -255.2005, y: -149.01831, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 693266658}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1530833725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1530833722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07fa4159b62007849933a91e3ddcf618, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameOverBtn
 --- !u!1 &1532177085
 GameObject:
   m_ObjectHideFlags: 0
@@ -1284,7 +1298,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1532177087}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1530833725}
+        m_TargetAssemblyTypeName: GameOverBtn, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1604145818
 GameObject:
   m_ObjectHideFlags: 0
@@ -1687,4 +1713,3 @@ SceneRoots:
   - {fileID: 267295304}
   - {fileID: 824608134}
   - {fileID: 693266658}
-  - {fileID: 1530833724}

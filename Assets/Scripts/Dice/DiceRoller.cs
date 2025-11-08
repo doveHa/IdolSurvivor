@@ -86,7 +86,7 @@ namespace Script
 
         public void OnNextButtonClicked()
         {
-            HideDicePanel();
+            //HideDicePanel();
 
             if (rollButtonText != null)
             {

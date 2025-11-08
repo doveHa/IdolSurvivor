@@ -1,10 +1,12 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using System;
 using System.Linq;
 using Script;
 using Script.DataDefinition.Enum;
 using UnityEngine.UI;
 using TMPro;
+
+
 
 public class MinieventManager2 : MonoBehaviour
 {
@@ -17,24 +19,26 @@ public class MinieventManager2 : MonoBehaviour
         TeamConflict        // 27%
     }
 
+
+
     [Header("UI References")]
-    public GameObject specialOfferPanel; // ∆Ø«˝ ¡¶æ» º±≈√¡ˆ UI (Inspectorø°º≠ «“¥Á)
-    public Button acceptOfferButton;     // ∆Ø«˝ ¡¶æ» ºˆ∂Ù πˆ∆∞
-    public Button declineOfferButton;    // ∆Ø«˝ ¡¶æ» ∞≈¿˝ πˆ∆∞
+    public GameObject specialOfferPanel; // ÌäπÌòú Ï†úÏïà ÏÑ†ÌÉùÏßÄ UI (InspectorÏóêÏÑú Ìï†Îãπ)
+    public Button acceptOfferButton;     // ÌäπÌòú Ï†úÏïà ÏàòÎùΩ Î≤ÑÌäº
+    public Button declineOfferButton;    // ÌäπÌòú Ï†úÏïà Í±∞Ï†à Î≤ÑÌäº
     public GameObject gameOverPanel;
 
-    //¿”Ω√
+    //ÏûÑÏãú
     private int tempStatValue = 100;
     private int tempTeamColor = 50;
 
     private enum DiceCheckResult { Failure, Success, Normal }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         StartCrisisEvent();
     }
-
 
     private readonly (CrisisEventType type, int weight)[] eventWeights = new[]
     {
@@ -47,11 +51,11 @@ public class MinieventManager2 : MonoBehaviour
 
     private void StartCrisisEvent()
     {
-        // 1. ∑£¥˝¿∏∑Œ ¿ß±‚ ¿Ã∫•∆Æ º±≈√
+        // 1. ÎûúÎç§ÏúºÎ°ú ÏúÑÍ∏∞ Ïù¥Î≤§Ìä∏ ÏÑ†ÌÉù
         //CrisisEventType selectedEvent = GetRandomCrisisEvent();
-        CrisisEventType selectedEvent = CrisisEventType.SNSActivity; // ≈◊Ω∫∆ÆøÎ ∞Ì¡§
+        CrisisEventType selectedEvent = CrisisEventType.SpecialOffer; // ÌÖåÏä§Ìä∏Ïö© Í≥†Ï†ï
 
-        // 2. º±≈√µ» ¿Ã∫•∆Æ Ω√¿€
+        // 2. ÏÑ†ÌÉùÎêú Ïù¥Î≤§Ìä∏ ÏãúÏûë
         switch (selectedEvent)
         {
             case CrisisEventType.SNSActivity:
@@ -77,22 +81,21 @@ public class MinieventManager2 : MonoBehaviour
         int totalWeight = eventWeights.Sum(ew => ew.weight);
         int randValue = UnityEngine.Random.Range(1, totalWeight + 1);
         int cumulativeWeight = 0;
-
         foreach (var (type, weight) in eventWeights)
         {
             cumulativeWeight += weight;
             if (randValue <= cumulativeWeight)
             {
-                Debug.Log($"∑£¥˝ ¿Ã∫•∆Æ º±≈√µ : {type} (»Æ∑¸: {weight}%)");
+                Debug.Log($"ÎûúÎç§ Ïù¥Î≤§Ìä∏ ÏÑ†ÌÉùÎê®: {type} (ÌôïÎ•†: {weight}%)");
                 return type;
             }
         }
 
-        // æ»¿¸ ¿Âƒ° (µµ¥ﬁ«ÿº≠¥¬ æ» µ )
+        // ÏïàÏ†Ñ Ïû•Ïπò (ÎèÑÎã¨Ìï¥ÏÑúÎäî Ïïà Îê®)
         return eventWeights[0].type;
     }
 
-    // ¡÷ªÁ¿ß ∆«¡§
+    // Ï£ºÏÇ¨ÏúÑ ÌåêÏ†ï
     private DiceCheckResult JudgeSuccessFailure(int roll)
     {
         if (roll >= 4) return DiceCheckResult.Success;
@@ -106,13 +109,12 @@ public class MinieventManager2 : MonoBehaviour
         return DiceCheckResult.Failure;
     }
 
-    // π¸øÎ «Ô∆€ «‘ºˆ
-
+    // Î≤îÏö© Ìó¨Ìçº Ìï®Ïàò
     private void StartSingleRoll(Action<int> finalCallback, string rollButtonText)
     {
         if (DiceRoller.Instance == null)
         {
-            Debug.LogError("DiceRoller ¿ŒΩ∫≈œΩ∫∏¶ √£¿ª ºˆ æ¯Ω¿¥œ¥Ÿ.");
+            Debug.LogError("DiceRoller Ïù∏Ïä§ÌÑ¥Ïä§Î•º Ï∞æÏùÑ Ïàò ÏóÜÏäµÎãàÎã§.");
             return;
         }
 
@@ -124,7 +126,7 @@ public class MinieventManager2 : MonoBehaviour
             rollBtn.onClick.RemoveAllListeners();
             rollBtn.onClick.AddListener(() =>
             {
-                // ±º∏≤ »ƒ Next πˆ∆∞ø° √÷¡æ ƒ›πÈ ø¨∞·
+                // Íµ¥Î¶º ÌõÑ Next Î≤ÑÌäºÏóê ÏµúÏ¢Ö ÏΩúÎ∞± Ïó∞Í≤∞
                 DiceRoller.Instance.RollDiceWithCallback((rollResult) =>
                 {
                     DiceRoller.Instance.SetRollCompletedUI();
@@ -142,9 +144,9 @@ public class MinieventManager2 : MonoBehaviour
     {
         if (DiceRoller.Instance != null) DiceRoller.Instance.HideDicePanel();
 
-        string[] finalDialogue = { "¿ß±‚ ¿Ã∫•∆Æ∞° ¡æ∑·µ«æ˙Ω¿¥œ¥Ÿ.", "¥Ÿ¿Ω ¥‹∞Ë∑Œ ¿Ãµø«’¥œ¥Ÿ." };
+        string[] finalDialogue = { "ÏúÑÍ∏∞ Ïù¥Î≤§Ìä∏Í∞Ä Ï¢ÖÎ£åÎêòÏóàÏäµÎãàÎã§.", "Îã§Ïùå Îã®Í≥ÑÎ°ú Ïù¥ÎèôÌï©ÎãàÎã§." };
 
-        GMManager.Instance.StartDialogue(finalDialogue, () => Debug.Log("¿ß±‚ ¿Ã∫•∆Æ ¡æ∑·. ¥Ÿ¿Ω æ¿/¥‹∞Ë∑Œ ¿¸»Ø."));
+        GMManager.Instance.StartDialogue(finalDialogue, () => Debug.Log("ÏúÑÍ∏∞ Ïù¥Î≤§Ìä∏ Ï¢ÖÎ£å. Îã§Ïùå Ïî¨/Îã®Í≥ÑÎ°ú Ï†ÑÌôò."));
     }
 
     private void ShowGameOver()
@@ -155,60 +157,58 @@ public class MinieventManager2 : MonoBehaviour
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
-            Debug.Log("∞‘¿” ø¿πˆ!");
-            // TODO: ø©±‚ø° ∞‘¿” ¿ÁΩ√¿€ ∂«¥¬ ∏ﬁ¿Œ ∏ﬁ¥∫∑Œ µπæ∆∞°¥¬ ∑Œ¡˜ √ﬂ∞°
+            Debug.Log("Í≤åÏûÑ Ïò§Î≤Ñ!");
+            // TODO: Ïó¨Í∏∞Ïóê Í≤åÏûÑ Ïû¨ÏãúÏûë ÎòêÎäî Î©îÏù∏ Î©îÎâ¥Î°ú ÎèåÏïÑÍ∞ÄÎäî Î°úÏßÅ Ï∂îÍ∞Ä
         }
+
         else
         {
-            Debug.LogError("Game Over Panel¿Ã «“¥Áµ«¡ˆ æ æ“Ω¿¥œ¥Ÿ. ∞‘¿” ø¿πˆ ∑Œ¡˜¿ª ºˆµø¿∏∑Œ √≥∏Æ«ÿæﬂ «’¥œ¥Ÿ.");
+            Debug.LogError("Game Over PanelÏù¥ Ìï†ÎãπÎêòÏßÄ ÏïäÏïòÏäµÎãàÎã§. Í≤åÏûÑ Ïò§Î≤Ñ Î°úÏßÅÏùÑ ÏàòÎèôÏúºÎ°ú Ï≤òÎ¶¨Ìï¥Ïïº Ìï©ÎãàÎã§.");
         }
     }
 
-    // ¿Ã∫•∆Æ ±∏«ˆ
-
+    // Ïù¥Î≤§Ìä∏ Íµ¨ÌòÑ
     private void StartSNSActivity()
     {
-        string[] dialogue = {
-            "ªÁ∞« πﬂª˝! «¡∑Œ±◊∑•¿« ±‘ƒ¢¿ª ±˙∞Ì ∏Ù∑° SNS∏¶ æ˜∑ŒµÂ «œø¥Ω¿¥œ¥Ÿ.",
-            "¡÷ªÁ¿ß∏¶ ±º∑¡ ¥Î¿¿ º∫∞¯ ø©∫Œ∏¶ ∆«¡§«’¥œ¥Ÿ. (º∫∞¯/Ω«∆–)"
-        };
+        string[] dialogue = { "ÏÇ¨Í±¥ Î∞úÏÉù! ÌîÑÎ°úÍ∑∏Îû®Ïùò Í∑úÏπôÏùÑ Íπ®Í≥† Î™∞Îûò SNSÎ•º ÏóÖÎ°úÎìú ÌïòÏòÄÏäµÎãàÎã§.", "Ï£ºÏÇ¨ÏúÑÎ•º Íµ¥Î†§ ÎåÄÏùë ÏÑ±Í≥µ Ïó¨Î∂ÄÎ•º ÌåêÏ†ïÌï©ÎãàÎã§. (ÏÑ±Í≥µ/Ïã§Ìå®)" };
+
         GMManager.Instance.StartDialogue(dialogue,
-            () => StartSingleRoll(ProcessSNSActivityResult, "Roll") // ¡÷ªÁ¿ß ±º∏≤ Ω√¿€
+            () => StartSingleRoll(ProcessSNSActivityResult, "Roll") // Ï£ºÏÇ¨ÏúÑ Íµ¥Î¶º ÏãúÏûë
         );
     }
 
-    #region SNS »∞µø
+    #region SNS ÌôúÎèô
     private void ProcessSNSActivityResult(int roll)
     {
         DiceRoller.Instance.HideDicePanel();
         DiceCheckResult check = JudgeSuccessFailure(roll);
+
         string resultMessage;
-        string finalTitle;
+        string[] finalDialogue;
 
         if (check == DiceCheckResult.Success)
         {
-            // º∫∞¯: µÊ«•ºˆ 100 »πµÊ
-            resultMessage = $"∞·∞˙: {roll} º∫∞¯!  ∆“µÈø°∞‘ æÓ« «œø© µÊ«•ºˆ 100«•∏¶ »πµÊ«ﬂΩ¿¥œ¥Ÿ.";
-            finalTitle = "≥Ì∂ı¿∫ ∞°∂Ûæ…∞Ì, ø¿»˜∑¡ ∆“¥˝¿Ã ƒø¡ˆ¥¬ ∞Ë±‚∞° µ«æ˙Ω¿¥œ¥Ÿ.";
-            // TODO: µÊ«•ºˆ √ﬂ∞°
+            // ÏÑ±Í≥µ: ÎìùÌëúÏàò 100 ÌöçÎìù
+            resultMessage = "Ìå¨Îì§ÏóêÍ≤å Ïñ¥ÌïÑÌïòÏó¨ ÎìùÌëúÏàò 100ÌëúÎ•º ÌöçÎìùÌñàÏäµÎãàÎã§.";
+            finalDialogue = new string[] { $"Í≤∞Í≥º: {roll} ÏÑ±Í≥µ!", resultMessage };
+            // TODO: TeamManager.Instance.AddVotes(100);
         }
         else
         {
-            // Ω«∆–: ∆¿ ∫Ùµ˘ ∫“∞° All ∑£¥˝
-            resultMessage = $"∞·∞˙: {roll} Ω«∆–! ±‘ƒ¢¿ª æÓ±‰ ∆–≥Œ∆º∑Œ ∆¿ ∫Ùµ˘¿Ã ∫“∞°¥…«ÿ¡≥Ω¿¥œ¥Ÿ.\n∏µÁ Ω∫≈»¿Ã ∑£¥˝¿∏∑Œ ¿Á¡∂¡§µÀ¥œ¥Ÿ.";
-            finalTitle = "ø©∑–¿Ã æ«»≠µ«æÓ ∆¿ »∞µøø° ¡¶µø¿Ã ∞…∑»Ω¿¥œ¥Ÿ.";
-            // TODO: ∆¿ ∫Ùµ˘ ∫“∞°, ∑£¥˝ «‘ºˆ »£√‚
+            // Ïã§Ìå®: ÌåÄ ÎπåÎî© Î∂àÍ∞Ä All ÎûúÎç§
+            resultMessage = "Í∑úÏπôÏùÑ Ïñ¥Í∏¥ Ìå®ÎÑêÌã∞Î°ú ÌåÄ ÎπåÎî©Ïù¥ Î∂àÍ∞ÄÎä•Ìï¥Ï°åÏäµÎãàÎã§.\nÎ™®Îì† Ïä§ÌÉØÏù¥ ÎûúÎç§ÏúºÎ°ú Ïû¨Ï°∞Ï†ïÎê©ÎãàÎã§.";
+            finalDialogue = new string[] { $"Í≤∞Í≥º: {roll} Ïã§Ìå®!", resultMessage };
+            // TODO: TeamManager.Instance.RandomizeAllStats();
         }
 
-        ShowResultThenFinalize(resultMessage, finalTitle);
+        GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
     }
     #endregion
 
-    #region ∆Ø«˝ ¡¶æ»
-
+    #region ÌäπÌòú Ï†úÏïà
     private void StartSpecialOffer()
     {
-        string[] dialogue = { "º“º”ªÁ∑Œ∫Œ≈Õ ¿∫π–«— ¡¶æ»¿Ã µÈæÓø‘Ω¿¥œ¥Ÿ.", "¿Ãπ¯ ∆˜¡ˆº«∞˙ ≥Î∑°∏¶ ø¯«œ¥¬ ¥Î∑Œ º±≈√«“ ºˆ ¿÷∞‘ «ÿ¡÷∞⁄¥‰¥œ¥Ÿ. ºˆ∂Ù«œΩ√∞⁄Ω¿¥œ±Ó?" };
+        string[] dialogue = { "ÏÜåÏÜçÏÇ¨Î°úÎ∂ÄÌÑ∞ ÏùÄÎ∞ÄÌïú Ï†úÏïàÏù¥ Îì§Ïñ¥ÏôîÏäµÎãàÎã§.", "Ïù¥Î≤à Ìè¨ÏßÄÏÖòÍ≥º ÎÖ∏ÎûòÎ•º ÏõêÌïòÎäî ÎåÄÎ°ú ÏÑ†ÌÉùÌï† Ïàò ÏûàÍ≤å Ìï¥Ï£ºÍ≤†ÎãµÎãàÎã§. ÏàòÎùΩÌïòÏãúÍ≤†ÏäµÎãàÍπå?" };
         GMManager.Instance.StartDialogue(dialogue, ShowSpecialOfferOptions);
     }
 
@@ -219,7 +219,7 @@ public class MinieventManager2 : MonoBehaviour
         {
             specialOfferPanel.SetActive(true);
 
-            // πˆ∆∞ ∏ÆΩ∫≥  ø¨∞·
+            // Î≤ÑÌäº Î¶¨Ïä§ÎÑà Ïó∞Í≤∞
             acceptOfferButton.onClick.RemoveAllListeners();
             acceptOfferButton.onClick.AddListener(() => ProcessSpecialOffer(true));
 
@@ -232,55 +232,88 @@ public class MinieventManager2 : MonoBehaviour
     {
         if (specialOfferPanel != null) specialOfferPanel.SetActive(false);
 
-        string[] finalDialogue;
+        /*string[] finalDialogue;
 
         if (accepted)
         {
-            // ºˆ∂Ù
-            string[] dialogue = { "º“º”ªÁ¿« ∆Ø«˝∏¶ ºˆ∂Ù«ﬂΩ¿¥œ¥Ÿ.", "º∫∞¯¿˚¿∏∑Œ ∫Òπ–¿ª ¿Ø¡ˆ«“ ºˆ ¿÷¿ª¡ˆ ¡÷ªÁ¿ß∏¶ ±º∑¡ ∆«¡§«’¥œ¥Ÿ." };
+            // ÏàòÎùΩ
+            DiceCheckResult check = JudgeSuccessFailure(UnityEngine.Random.Range(1, 7)); // ÎûúÎç§ Íµ¥Î¶º
+
+            if (check == DiceCheckResult.Success)
+            {
+                // ÏÑ±Í≥µ: ÏõêÌïòÎäî Ìè¨ÏßÄÏÖòÍ≥º ÎÖ∏Îûò Î∞îÎ°ú ÏÑ†ÌÉù Í∞ÄÎä•
+                finalDialogue = new string[] { "ÏÜåÏÜçÏÇ¨Ïùò ÌäπÌòúÍ∞Ä ÎπÑÎ∞ÄÎ¶¨Ïóê ÏÑ±Í≥µÌñàÏäµÎãàÎã§.", "ÏõêÌïòÎäî Ìè¨ÏßÄÏÖòÍ≥º ÎÖ∏ÎûòÎ•º ÏÑ†ÌÉùÌïòÏÑ∏Ïöî." };
+                // TODO: Ìè¨ÏßÄÏÖò/ÎÖ∏Îûò ÏÑ†ÌÉù UI ÌôúÏÑ±Ìôî Î°úÏßÅ
+                GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
+            }
+            else
+            {
+                // Ïã§Ìå®: ÌäπÌòúÍ∞Ä Í±∏Î†∏Îã§. Í≤åÏûÑ Ïò§Î≤Ñ
+                finalDialogue = new string[] { "ÎπÑÎ∞ÄÏù¥ Ìè≠Î°úÎêòÏóàÏäµÎãàÎã§!", "ÌäπÌòúÍ∞Ä Í±∏Î¶∞ Í≤ÉÏù¥ ÎåÄÏ§ëÏóê ÏïåÎ†§Ï†∏ ÌîÑÎ°úÍ∑∏Îû®ÏóêÏÑú ÌïòÏ∞®Ìï©ÎãàÎã§." };
+                GMManager.Instance.StartDialogue(finalDialogue, ShowGameOver);
+            }
+        }
+        else
+        {
+            // Í±∞Ï†à: ÎÑòÏñ¥Í∞ê
+            finalDialogue = new string[] { "ÏÜåÏÜçÏÇ¨Ïùò Ï†úÏïàÏùÑ Í±∞Ï†àÌñàÏäµÎãàÎã§.", "Ï†ïÏ†ïÎãπÎãπÌïòÍ≤å ÌïòÍ≤†ÏäµÎãàÎã§!" };
+            GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
+        }*/
+
+        if (accepted)
+        {
+            // ÏàòÎùΩ Ïãú: GM ÎåÄÏÇ¨ ÌõÑ Ï£ºÏÇ¨ÏúÑ Íµ¥Î¶º ÏãúÏûë
+            string[] dialogue = { "ÏÜåÏÜçÏÇ¨Ïùò ÏùÄÎ∞ÄÌïú Ï†úÏïàÏùÑ ÏàòÎùΩÌñàÏäµÎãàÎã§.", "Ï£ºÏÇ¨ÏúÑÎ•º Íµ¥Î†§ ÌäπÌòúÍ∞Ä Î∞úÍ∞ÅÎêòÏßÄ ÏïäÏùÑÏßÄ ÌåêÏ†ïÌï©ÎãàÎã§. (ÏÑ±Í≥µ/Ïã§Ìå®, ÏÑ±Í≥µÎ•† 50%)" };
+
             GMManager.Instance.StartDialogue(dialogue,
-                () => StartSingleRoll(ProcessSpecialOfferRollResult, "∆Ø«˝ Roll")
+                // Ï£ºÏÇ¨ÏúÑ Íµ¥Î¶º ÏãúÏûë, Í≤∞Í≥ºÎäî ProcessSpecialOfferRollResultÏóêÏÑú Ï≤òÎ¶¨
+                () => StartSingleRoll(ProcessSpecialOfferRollResult, "Roll")
             );
         }
         else
         {
-            // ∞≈¿˝: ≥—æÓ∞®
-            finalDialogue = new string[] { "º“º”ªÁ¿« ¡¶æ»¿ª ∞≈¿˝«ﬂΩ¿¥œ¥Ÿ.", "¡§¡§¥Á¥Á«œ∞‘ «œ∞⁄Ω¿¥œ¥Ÿ!" };
+            // Í±∞Ï†à: ÎÑòÏñ¥Í∞ê
+            string[] finalDialogue = new string[] { "ÏÜåÏÜçÏÇ¨Ïùò Ï†úÏïàÏùÑ Í±∞Ï†àÌñàÏäµÎãàÎã§.", "Ï†ïÏ†ïÎãπÎãπÌïòÍ≤å ÌïòÍ≤†ÏäµÎãàÎã§!" };
             GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
         }
     }
 
     private void ProcessSpecialOfferRollResult(int roll)
     {
-        DiceRoller.Instance.HideDicePanel();
+        // DiceRollerÏùò Next Î≤ÑÌäº ÌÅ¥Î¶≠ Ïãú Ìò∏Ï∂úÎê©ÎãàÎã§.
+        if (DiceRoller.Instance != null) DiceRoller.Instance.HideDicePanel();
+
         DiceCheckResult check = JudgeSuccessFailure(roll);
         string resultMessage;
-        string finalTitle;
+        string[] finalDialogue;
+        Action finalAction;
 
         if (check == DiceCheckResult.Success)
         {
-            // º∫∞¯: ø¯«œ¥¬ ∆˜¡ˆº«∞˙ ≥Î∑° πŸ∑Œ º±≈√ ∞°¥…
-            resultMessage = $"º∫∞¯! (Roll: {roll}) º“º”ªÁ¿« ∆Ø«˝∞° ∫Òπ–∏Æø° º∫∞¯«ﬂΩ¿¥œ¥Ÿ.";
-            finalTitle = "ø¯«œ¥¬ ∆˜¡ˆº«∞˙ ≥Î∑°∏¶ º±≈√«œººø‰.";
-            // TODO: ∆˜¡ˆº«/≥Î∑° º±≈√ UI »∞º∫»≠ ∑Œ¡˜
-            ShowResultThenFinalize(resultMessage, finalTitle);
+            // ÏÑ±Í≥µ: ÏõêÌïòÎäî Ìè¨ÏßÄÏÖòÍ≥º ÎÖ∏Îûò Î∞îÎ°ú ÏÑ†ÌÉù Í∞ÄÎä•
+            resultMessage = "ÏõêÌïòÎäî Ìè¨ÏßÄÏÖòÍ≥º ÎÖ∏ÎûòÎ•º ÏÑ†ÌÉùÌïòÏÑ∏Ïöî.";
+            finalDialogue = new string[] { $"ÌåêÏ†ï Í≤∞Í≥º: {roll} (ÏÑ±Í≥µ)", "ÏÜåÏÜçÏÇ¨Ïùò ÌäπÌòúÍ∞Ä ÎπÑÎ∞ÄÎ¶¨Ïóê ÏÑ±Í≥µÌñàÏäµÎãàÎã§.", resultMessage };
+            finalAction = FinalizeCrisisEvent;
+            // TODO: Ìè¨ÏßÄÏÖò/ÎÖ∏Îûò ÏÑ†ÌÉù UI ÌôúÏÑ±Ìôî Î°úÏßÅ
         }
         else
         {
-            // Ω«∆–: ∆Ø«˝∞° ∞…∑»¥Ÿ. ∞‘¿” ø¿πˆ
-            resultMessage = $"Ω«∆–! (Roll: {roll}) ∫Òπ–¿Ã ∆¯∑Œµ«æ˙Ω¿¥œ¥Ÿ! «¡∑Œ±◊∑•ø°º≠ «œ¬˜«’¥œ¥Ÿ.";
-            finalTitle = "∆Ø«˝∞° ∞…∏∞ ∞Õ¿Ã ¥Î¡ﬂø° æÀ∑¡¡Æ...";
-            ShowResultThenGameOver(resultMessage, finalTitle); // ∞‘¿” ø¿πˆ √≥∏Æ
+            // Ïã§Ìå®: ÌäπÌòúÍ∞Ä Í±∏Î†∏Îã§. Í≤åÏûÑ Ïò§Î≤Ñ
+            resultMessage = "ÌäπÌòúÍ∞Ä Í±∏Î¶∞ Í≤ÉÏù¥ ÎåÄÏ§ëÏóê ÏïåÎ†§Ï†∏ ÌîÑÎ°úÍ∑∏Îû®ÏóêÏÑú ÌïòÏ∞®Ìï©ÎãàÎã§.";
+            finalDialogue = new string[] { $"ÌåêÏ†ï Í≤∞Í≥º: {roll} (Ïã§Ìå®)", "ÎπÑÎ∞ÄÏù¥ Ìè≠Î°úÎêòÏóàÏäµÎãàÎã§!", resultMessage };
+            finalAction = ShowGameOver;
         }
+
+        // ÏµúÏ¢Ö GM ÎåÄÌôî ÎòêÎäî Í≤åÏûÑ Ïò§Î≤Ñ
+        GMManager.Instance.StartDialogue(finalDialogue, finalAction);
     }
 
     #endregion
 
-    #region «–∆¯ ∆¯∑Œ
-
+    #region ÌïôÌè≠ Ìè≠Î°ú
     private void StartSchoolViolence()
     {
-        string[] dialogue = { "¿Œ≈Õ≥›ø° ∞˙∞≈ø° «–±≥ ∆¯∑¬¿ª «ﬂ¥Ÿ¥¬ ∆¯∑Œ±€¿Ã ø√∂Ûø‘Ω¿¥œ¥Ÿ.", "∆¯∑Œ±€¿Ã ¡¯Ω«¿Œ¡ˆ ∆«¡§«’¥œ¥Ÿ." };
+        string[] dialogue = { "Ïù∏ÌÑ∞ÎÑ∑Ïóê Í≥ºÍ±∞Ïóê ÌïôÍµê Ìè≠Î†•ÏùÑ ÌñàÎã§Îäî Ìè≠Î°úÍ∏ÄÏù¥ Ïò¨ÎùºÏôîÏäµÎãàÎã§.\nÌè≠Î°úÍ∏ÄÏù¥ ÏßÑÏã§Ïù∏ÏßÄ ÌåêÏ†ïÌï©ÎãàÎã§." };
         GMManager.Instance.StartDialogue(dialogue,
             () => StartSingleRoll(ProcessSchoolViolenceResult, "Roll")
         );
@@ -289,32 +322,28 @@ public class MinieventManager2 : MonoBehaviour
     private void ProcessSchoolViolenceResult(int roll)
     {
         DiceRoller.Instance.HideDicePanel();
-        string resultMessage;
-        string finalTitle;
+        string[] finalDialogue;
 
-        // 1: Ω«∆–(¡¯¬•ø¥¿Ω) °Ê ∞‘¿” ø¿πˆ
+        // 1: Ïã§Ìå®(ÏßÑÏßúÏòÄÏùå) ‚Üí Í≤åÏûÑ Ïò§Î≤Ñ
         if (roll == 1)
         {
-            resultMessage = $"¡¯Ω« ∆«¡§ ∞·∞˙: {roll}. «–∆¯¿Ã ªÁΩ«∑Œ µÂ∑Ø≥µΩ¿¥œ¥Ÿ.";
-            finalTitle = "«¡∑Œ±◊∑•ø°º≠ øµ±∏ «œ¬˜«’¥œ¥Ÿ.";
-            ShowResultThenGameOver(resultMessage, finalTitle);
+            finalDialogue = new string[] { $"ÏßÑÏã§ ÌåêÏ†ï Í≤∞Í≥º: {roll}", "ÌïôÌè≠Ïù¥ ÏÇ¨Ïã§Î°ú ÎìúÎü¨ÎÇ¨ÏäµÎãàÎã§. ÌîÑÎ°úÍ∑∏Îû®ÏóêÏÑú ÏòÅÍµ¨ ÌïòÏ∞®Ìï©ÎãàÎã§." };
+            GMManager.Instance.StartDialogue(finalDialogue, ShowGameOver);
         }
         else
         {
-            // ≥™∏”¡ˆ (2~6): ƒ£±∏∞° ±€ ø√∏≤ °Ê ≥—æÓ∞®
-            resultMessage = $"¡¯Ω« ∆«¡§ ∞·∞˙: {roll}. ∆¯∑Œ±€¿Ã ∞≈¡˛¿∏∑Œ µÂ∑Ø≥™ ≥Ì∂ı¿Ã π´ªÁ»˜ ≥—æÓ∞¨Ω¿¥œ¥Ÿ.";
-            finalTitle = "«–√¢ Ω√¿˝ ƒ£±∏µÈ¿« ¡ıæ ±€∑Œ ≥Ì∂ı¿Ã ¿·¿·«ÿ¡≥Ω¿¥œ¥Ÿ.";
-            ShowResultThenFinalize(resultMessage, finalTitle);
+            // ÎÇòÎ®∏ÏßÄ (2~6): ÏπúÍµ¨Í∞Ä Í∏Ä Ïò¨Î¶º ‚Üí ÎÑòÏñ¥Í∞ê
+            finalDialogue = new string[] { $"ÏßÑÏã§ ÌåêÏ†ï Í≤∞Í≥º: {roll}", "Ìè≠Î°úÍ∏ÄÏù¥ Í±∞ÏßìÏúºÎ°ú ÎìúÎü¨ÎÇò ÎÖºÎûÄÏù¥ Î¨¥ÏÇ¨Ìûà ÎÑòÏñ¥Í∞îÏäµÎãàÎã§." };
+            GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
         }
     }
 
     #endregion
 
-    #region º˙ ¥„πË ≥Ì∂ı
-
+    #region Ïà† Îã¥Î∞∞ ÎÖºÎûÄ
     private void StartAlcoholTobacco()
     {
-        string[] dialogue = { "∆¿ø¯ ¡ﬂ «— ∏Ì¿« ∞˙∞≈ º˙/¥„πË ≥Ì∂ı ªÁ¡¯¿Ã ¿Ø√‚µ«æ˙Ω¿¥œ¥Ÿ.", "¡÷ªÁ¿ß∏¶ ±º∑¡ ø©∑– ºˆΩ¿ º∫∞¯ ø©∫Œ∏¶ ∆«¡§«’¥œ¥Ÿ. (º∫∞¯/Ω«∆–)" };
+        string[] dialogue = { "ÌåÄÏõê Ï§ë Ìïú Î™ÖÏùò Í≥ºÍ±∞ Ïà†/Îã¥Î∞∞ ÎÖºÎûÄ ÏÇ¨ÏßÑÏù¥ Ïú†Ï∂úÎêòÏóàÏäµÎãàÎã§.", "Ï£ºÏÇ¨ÏúÑÎ•º Íµ¥Î†§ Ïó¨Î°† ÏàòÏäµ ÏÑ±Í≥µ Ïó¨Î∂ÄÎ•º ÌåêÏ†ïÌï©ÎãàÎã§. (ÏÑ±Í≥µ/Ïã§Ìå®)" };
         GMManager.Instance.StartDialogue(dialogue,
             () => StartSingleRoll(ProcessAlcoholTobaccoResult, "Roll")
         );
@@ -324,33 +353,36 @@ public class MinieventManager2 : MonoBehaviour
     {
         DiceRoller.Instance.HideDicePanel();
         DiceCheckResult check = JudgeSuccessFailure(roll);
+
         string resultMessage;
-        string finalTitle;
+        string[] finalDialogue;
 
         if (check == DiceCheckResult.Success)
         {
-            resultMessage = $"º∫∞¯! (Roll: {roll}) ∆¿ø¯¿« ¡¯Ω«µ» ªÁ∞˙∑Œ ¥Ÿ«‡»˜ ≈´ πÆ¡¶∞° µ«¡ˆ æ æ“Ω¿¥œ¥Ÿ.";
-            finalTitle = "π´ªÁ»˜ ≥—æÓ∞¨Ω¿¥œ¥Ÿ.";
+            // ÏÑ±Í≥µ: ÎÑòÏñ¥Í∞ê
+            resultMessage = $"ÏÑ±Í≥µ! (Roll: {roll}) ÌåÄÏõêÏùò ÏßÑÏã§Îêú ÏÇ¨Í≥ºÎ°ú Îã§ÌñâÌûà ÌÅ∞ Î¨∏Ï†úÍ∞Ä ÎêòÏßÄ ÏïäÏïòÏäµÎãàÎã§.";
+            finalDialogue = new string[] { resultMessage, "Î¨¥ÏÇ¨Ìûà ÎÑòÏñ¥Í∞îÏäµÎãàÎã§." };
         }
         else
         {
-            int reduction = -20;
-            resultMessage = $"Ω«∆–! (Roll: {roll}) ø©∑–¿Ã æ«»≠µ«æ˙Ω¿¥œ¥Ÿ. ∏µÁ Ω∫≈»¿Ã {reduction} ∞®º“«ﬂΩ¿¥œ¥Ÿ.";
-            finalTitle = "¿ÃπÃ¡ˆ º’ªÛ¿∏∑Œ »∞µøø° ¡¶æ‡¿Ã ª˝∞ÂΩ¿¥œ¥Ÿ.";
-            tempStatValue += reduction;
-            Debug.Log($"¿”Ω√ Ω∫≈» ∞®º“: {tempStatValue}");
+            // Ïã§Ìå®: Ïä§ÌÉØ Í∞êÏÜå
+            int reduction = -20; // Ïä§ÌÉØ Í∞êÏÜåÎüâ ÏûÑÏãú ÏÑ§Ï†ï
+            resultMessage = $"Ïã§Ìå®! (Roll: {roll}) Ïó¨Î°†Ïù¥ ÏïÖÌôîÎêòÏóàÏäµÎãàÎã§. Î™®Îì† Ïä§ÌÉØÏù¥ {reduction} Í∞êÏÜåÌñàÏäµÎãàÎã§.";
+            finalDialogue = new string[] { "Ïù¥ÎØ∏ÏßÄ ÏÜêÏÉÅÏúºÎ°ú ÌôúÎèôÏóê Ï†úÏïΩÏù¥ ÏÉùÍ≤ºÏäµÎãàÎã§.", resultMessage };
+            tempStatValue += reduction; // ÏûÑÏãú Î≥ÄÏàò ÏóÖÎç∞Ïù¥Ìä∏
+            Debug.Log($"ÏûÑÏãú Ïä§ÌÉØ Í∞êÏÜå: {tempStatValue}");
             // TODO: PlayerManager.Instance.ApplyStatChangeAll(reduction);
         }
 
-        ShowResultThenFinalize(resultMessage, finalTitle);
+        GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
     }
 
     #endregion
 
-    #region ∆¿ø¯ ∞£ ∫“»≠
+    #region ÌåÄÏõê Í∞Ñ Î∂àÌôî
     private void StartTeamConflict()
     {
-        string[] dialogue = { "∆¿ø¯µÈ ªÁ¿Ãø° ªÁº“«— ∫“»≠∞° πﬂª˝«ﬂΩ¿¥œ¥Ÿ.", "¡÷ªÁ¿ß∏¶ ±º∑¡ ∫“»≠ ±ÿ∫π ∞·∞˙∏¶ ∆«¡§«’¥œ¥Ÿ. (º∫∞¯/∫∏≈Î/Ω«∆–)" };
+        string[] dialogue = { "ÌåÄÏõêÎì§ ÏÇ¨Ïù¥Ïóê ÏÇ¨ÏÜåÌïú Î∂àÌôîÍ∞Ä Î∞úÏÉùÌñàÏäµÎãàÎã§.", "Ï£ºÏÇ¨ÏúÑÎ•º Íµ¥Î†§ Î∂àÌôî Í∑πÎ≥µ Í≤∞Í≥ºÎ•º ÌåêÏ†ïÌï©ÎãàÎã§. (ÏÑ±Í≥µ/Î≥¥ÌÜµ/Ïã§Ìå®)" };
         GMManager.Instance.StartDialogue(dialogue,
             () => StartSingleRoll(ProcessTeamConflictResult, "Roll")
         );
@@ -360,81 +392,37 @@ public class MinieventManager2 : MonoBehaviour
     {
         DiceRoller.Instance.HideDicePanel();
         DiceCheckResult check = JudgeSuccessNormalFailure(roll);
+
         string resultMessage;
-        string finalTitle;
+        string[] finalDialogue;
 
         if (check == DiceCheckResult.Success)
         {
-            int gain = 10;
-            resultMessage = $"º∫∞¯! (Roll: {roll}) ¿ß±‚∏¶ ±ÿ∫π«œ∏Á ∆¿¿Ã ¥ı ¥‹¥‹«ÿ¡≥Ω¿¥œ¥Ÿ. ∆¿ ƒ√∑Ø∞° +{gain} ¡ı∞°«ﬂΩ¿¥œ¥Ÿ.";
-            finalTitle = "øÏ∏Æ¥¬ «œ≥™!";
-            tempTeamColor += gain;
-            Debug.Log($"¿”Ω√ ∆¿ ƒ√∑Ø ¡ı∞°: {tempTeamColor}");
+            // ÏÑ±Í≥µ: Îçî Îã®Ìï©Î†• ÎÜíÏïÑÏ°åÎã§. ÌåÄ Ïª¨Îü¨ Ï¶ùÍ∞Ä
+            int gain = 10; // ÌåÄ Ïª¨Îü¨ Ï¶ùÍ∞ÄÎüâ ÏûÑÏãú ÏÑ§Ï†ï
+            resultMessage = $"ÏÑ±Í≥µ! (Roll: {roll}) ÏúÑÍ∏∞Î•º Í∑πÎ≥µÌïòÎ©∞ ÌåÄÏù¥ Îçî Îã®Îã®Ìï¥Ï°åÏäµÎãàÎã§. ÌåÄ Ïª¨Îü¨Í∞Ä +{gain} Ï¶ùÍ∞ÄÌñàÏäµÎãàÎã§.";
+            finalDialogue = new string[] { "Ïö∞Î¶¨Îäî ÌïòÎÇò!", resultMessage };
+            tempTeamColor += gain; // ÏûÑÏãú Î≥ÄÏàò ÏóÖÎç∞Ïù¥Ìä∏
+            Debug.Log($"ÏûÑÏãú ÌåÄ Ïª¨Îü¨ Ï¶ùÍ∞Ä: {tempTeamColor}");
             // TODO: TeamManager.Instance.AddTeamColor(gain);
         }
         else if (check == DiceCheckResult.Normal)
         {
-            resultMessage = $"∫∏≈Î. (Roll: {roll}) ∫“»≠¥¬ ¿÷æ˙¡ˆ∏∏, ¿ﬂ «ÿ∞·«œ∞Ì ≥—æÓ∞¨Ω¿¥œ¥Ÿ.";
-            finalTitle = "¥Ÿ¿Ω »∞µøø° ¡˝¡ﬂ«’Ω√¥Ÿ.";
+            // Î≥¥ÌÜµ: ÎÑòÏñ¥Í∞ê
+            resultMessage = $"Î≥¥ÌÜµ. (Roll: {roll}) Î∂àÌôîÎäî ÏûàÏóàÏßÄÎßå, Ïûò Ìï¥Í≤∞ÌïòÍ≥† ÎÑòÏñ¥Í∞îÏäµÎãàÎã§.";
+            finalDialogue = new string[] { resultMessage, "Îã§Ïùå ÌôúÎèôÏóê ÏßëÏ§ëÌï©ÏãúÎã§." };
         }
         else // Failure
         {
-            resultMessage = $"Ω«∆–! (Roll: {roll}) ∫“»≠∞° ∞»¿‚¿ª ºˆ æ¯¿Ã ƒø¡Æ ∆¿ ƒ√∑Ø∞° ªË¡¶µ«æ˙Ω¿¥œ¥Ÿ.";
-            finalTitle = "∆¿øˆ≈©∞° π´≥ ¡≥Ω¿¥œ¥Ÿ.";
-            tempTeamColor = 0;
-            Debug.Log("¿”Ω√ ∆¿ ƒ√∑Ø ªË¡¶");
+            // Ïã§Ìå®: ÌåÄ Ïª¨Îü¨ ÏÇ≠Ï†ú
+            resultMessage = $"Ïã§Ìå®! (Roll: {roll}) Î∂àÌôîÍ∞Ä Í±∑Ïû°ÏùÑ Ïàò ÏóÜÏù¥ Ïª§Ï†∏ ÌåÄ Ïª¨Îü¨Í∞Ä ÏÇ≠Ï†úÎêòÏóàÏäµÎãàÎã§.";
+            finalDialogue = new string[] { "ÌåÄÏõåÌÅ¨Í∞Ä Î¨¥ÎÑàÏ°åÏäµÎãàÎã§.", resultMessage };
+            tempTeamColor = 0; // ÏûÑÏãú Î≥ÄÏàò ÏóÖÎç∞Ïù¥Ìä∏
+            Debug.Log("ÏûÑÏãú ÌåÄ Ïª¨Îü¨ ÏÇ≠Ï†ú");
             // TODO: TeamManager.Instance.ResetTeamColor();
         }
 
-        ShowResultThenFinalize(resultMessage, finalTitle);
+        GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
     }
-
     #endregion
-
-    private void ShowResultThenFinalize(string resultMessage, string finalTitle)
-    {
-        // 1. ¡÷ªÁ¿ß ∞·∞˙ ≈ÿΩ∫∆Æ∏¶ DiceRoller UIø° «•Ω√
-        if (DiceRoller.Instance != null)
-        {
-            DiceRoller.Instance.resultText.text = resultMessage;
-            DiceRoller.Instance.SetRollCompletedUI(); // Next πˆ∆∞ »∞º∫»≠
-
-            // 2. Next πˆ∆∞ø° √÷¡æ GM ¥Î»≠ ø¨∞·
-            DiceRoller.Instance.onNextAction = () =>
-            {
-                DiceRoller.Instance.HideDicePanel();
-                // [Final Title] -> [Result Message] -> [Finalize Crisis Event]
-                string[] finalDialogue = new string[] { finalTitle, resultMessage };
-                GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
-            };
-        }
-        else
-        {
-            // DiceRoller∞° æ¯¥¬ ∞ÊøÏ πŸ∑Œ GM ¥Î»≠∑Œ ¿¸»Ø
-            string[] finalDialogue = new string[] { finalTitle, resultMessage };
-            GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
-        }
-    }
-
-    private void ShowResultThenGameOver(string resultMessage, string finalTitle)
-    {
-        if (DiceRoller.Instance != null)
-        {
-            DiceRoller.Instance.resultText.text = resultMessage;
-            DiceRoller.Instance.SetRollCompletedUI();
-
-            // Next πˆ∆∞ø° √÷¡æ GM ¥Î»≠ (∞‘¿” ø¿πˆ) ø¨∞·
-            DiceRoller.Instance.onNextAction = () =>
-            {
-                DiceRoller.Instance.HideDicePanel();
-                string[] finalDialogue = new string[] { finalTitle, resultMessage };
-                GMManager.Instance.StartDialogue(finalDialogue, ShowGameOver);
-            };
-        }
-        else
-        {
-            string[] finalDialogue = new string[] { finalTitle, resultMessage };
-            GMManager.Instance.StartDialogue(finalDialogue, ShowGameOver);
-        }
-    }
 }

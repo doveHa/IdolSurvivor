@@ -17,6 +17,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PositionPart.unity
     guid: 49bd07ef8637506458a9285e1338d433
+  - enabled: 1
+    path: Assets/Scenes/MiniEvent1.unity
+    guid: 123a153a40554774ebc80789693a658f
+  - enabled: 1
+    path: Assets/Scenes/MiniEvent2.unity
+    guid: e949dd44087f5f9468e9afeee542658c
+  - enabled: 1
+    path: Assets/Scenes/StartScene.unity
+    guid: e6e7712766fa3e448a116b7e47e2b8de
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
