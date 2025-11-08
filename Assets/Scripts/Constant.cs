@@ -32,9 +32,21 @@
             public const float TEAM_COLOR_COFF = 1.2f;
         }
 
+        public static class Stage
+        {
+            public const int PROGRESS_TIME = 20;
+            public const string TITLE_STAGE = "TitleStage";
+        }
+
         public static class Scene
         {
             public const string GradingScene = "GradingScene";
+            public const string StageScene = "StageScene";
+        }
+
+        public static class UIAnimationNumber
+        {
+            public const int PROGRESS_BAR_KNOB_IDLE = 0;
         }
     }
 }

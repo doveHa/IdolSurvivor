@@ -5,11 +5,12 @@ using UnityEngine.EventSystems;
 
 namespace Script.UI.DragDrop
 {
-    [RequireComponent(typeof(Collider2D))]
+    [RequireComponent(typeof(Collider2D), typeof(IDrop))]
     public class DraggableObject : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
+        public bool CanDrag { get; set; }
         private Vector3 offset, originalPos;
-        private bool isDragging, canDrag;
+        private bool isDragging;
         private RectTransform rectTransform;
         private Canvas canvas;
 
@@ -17,12 +18,12 @@ namespace Script.UI.DragDrop
         {
             rectTransform = GetComponent<RectTransform>();
             canvas = GetComponentInParent<Canvas>();
-            canDrag = false;
+            CanDrag = false;
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            if (!canDrag)
+            if (!CanDrag)
             {
                 return;
             }
@@ -74,19 +75,24 @@ namespace Script.UI.DragDrop
 
             foreach (var result in results)
             {
-                if (result.gameObject.transform.TryGetComponent(out DroppableObject draggableObject))
+                if (result.gameObject.transform.TryGetComponent(out DraggableObject draggableObject))
                 {
-                    GetComponent<IDrop>().Drop(draggableObject);
+                    draggableObject.MoveOriginalSpot();
+                }
+
+                if (result.gameObject.transform.TryGetComponent(out DroppableObject droppableObject))
+                {
+                    GetComponent<IDrop>().Drop(droppableObject);
                     return;
                 }
             }
 
-            transform.position = originalPos;
+            MoveOriginalSpot();
         }
 
-        public void CanDrag()
+        public void MoveOriginalSpot()
         {
-            canDrag = true;
+            transform.position = originalPos;
         }
     }
 }

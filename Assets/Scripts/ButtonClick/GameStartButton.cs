@@ -15,7 +15,7 @@ namespace Script.ButtonClick
             {
                 CharacterSelectManager.Manager.Player.Data.name = inputField.text;
                 AllCharacterManager.Manager.GenerateAllCharacters();
-                SceneLoadManager.Manager.LoadMainScene();
+                SceneLoadManager.GradingScene();
             }
             else
             {

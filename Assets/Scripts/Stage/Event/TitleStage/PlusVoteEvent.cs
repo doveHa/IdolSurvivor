@@ -1,0 +1,21 @@
+﻿using Script.Manager;
+
+namespace Script.Stage.Event.TitleStage
+{
+    public class PlusVoteEvent : StageEvent
+    {
+        public override StageEvent Initialize()
+        {
+            title = "";
+            description = "";
+            dropSlotCount = 1;
+
+            return this;
+        }
+
+        public override void EventAction(int diceEye)
+        {
+            CharacterSelectManager.Manager.Player.AddVote(diceEye);
+        }
+    }
+}

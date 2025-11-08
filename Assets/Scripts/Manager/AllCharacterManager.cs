@@ -17,7 +17,8 @@ namespace Script.Manager
 
         public void GenerateAllCharacters()
         {
-            CharacterData[] data = ResourceManager.LoadAll<CharacterData>(Config.CharacterDataPath);
+            CharacterData[] data =
+                ResourceManager.LoadAll<CharacterData>(Config.Resource.CharacterData.CharacterDataPath());
             foreach (CharacterData character in data)
             {
                 if (character.name.Equals(CharacterSelectManager.Manager.Player.Data.name))

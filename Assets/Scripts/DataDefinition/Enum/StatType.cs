@@ -2,6 +2,6 @@
 {
     public enum StatType
     {
-        Sing, Dance, Charm, Appearance
+        Sing, Dance, Charm, Appearance, None
     }
 }

@@ -18,7 +18,7 @@ namespace Script.Manager
         protected override void Awake()
         {
             base.Awake();
-            Player = new Character(ResourceManager.Load<CharacterData>(Config.PlayerCharacterDataPath));
+            Player = new Character(ResourceManager.Load<CharacterData>(Config.Resource.CharacterData.PlayerCharacterDataPath()));
             settingCount = 0;
         }
 
@@ -27,11 +27,11 @@ namespace Script.Manager
             IsFemale = isFemale;
             if (IsFemale)
             {
-                Config.Gender = "Female";
+                Config.Resource.CharacterData.Gender = "Female";
             }
             else
             {
-                Config.Gender = "Male";
+                Config.Resource.CharacterData.Gender = "Male";
             }
         }
 
