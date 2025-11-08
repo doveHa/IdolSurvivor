@@ -12,6 +12,7 @@ namespace Script.Stage.Event
 
         public static void EventSetting()
         {
+            events.Clear();
             switch (Config.Resource.StageData.CurrentStage)
             {
                 case Constant.Stage.TITLE_STAGE:
