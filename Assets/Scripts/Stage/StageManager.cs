@@ -16,7 +16,6 @@ namespace Script.Stage
 
         [SerializeField] private RectTransform markerContainer;
         [SerializeField] private GameObject markerPrefab;
-        [SerializeField] public StageFlowHandler StageFlow;
         private int progressTime = Constant.Stage.PROGRESS_TIME;
         private float currentTime = 0;
 
@@ -63,7 +62,8 @@ namespace Script.Stage
 
             if (currentTime >= eventTimes[currentEvent])
             {
-                Stop();
+                Pause();
+                Debug.Log($"Event 발생! {currentTime}/{eventTimes[currentEvent]}");
                 currentEvent++;
             }
         }
@@ -84,26 +84,33 @@ namespace Script.Stage
                 RectTransform rect = marker.GetComponent<RectTransform>();
                 rect.anchoredPosition = new Vector2(xPos, 0);
 
-                eventTimes[currentEvent] = ratio;
+                eventTimes[currentEvent] = progressTime * ratio;
+                Debug.Log("이벤트 등록 " + eventTimes[currentEvent]);
+                currentEvent++;
             }
 
             currentEvent = 0;
         }
 
-        private void Stop()
+        public void StageStart()
+        {
+            isStop = false;
+        }
+
+        private void Pause()
         {
             isStop = true;
         }
 
         private void End()
         {
-            Stop();
+            Pause();
             progressBar.GetComponentInChildren<UIAnimationHandler>().EndAnimation();
         }
 
         private void TitleTest()
         {
-            isStop = false;
+            isStop = true;
             Config.Resource.StageData.NextStage = Constant.Stage.TITLE_STAGE;
             CurrentStage = ResourceManager.Load<StageData>(Config.Resource.StageData.NextStageDataPath());
             CurrentStage.eventCount = 4;

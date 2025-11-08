@@ -7,8 +7,9 @@ using UnityEngine.UI;
 
 public class DiceManager : ManagerBase<DiceManager>
 {
+    [SerializeField] public DiceSlotHandler DiceSlot;
     [SerializeField] private Button diceRollButton;
-
+    
     private OwnedDiceHandler ownedDices;
 
     protected override void Awake()
@@ -17,7 +18,12 @@ public class DiceManager : ManagerBase<DiceManager>
         ownedDices = new OwnedDiceHandler();
     }
 
-    public IEnumerator DiceRoll()
+    void Start()
+    {
+        DiceSlot.CreateSlots();
+    }
+
+    public IEnumerator InitialDiceSet()
     {
         for (int i = 0; i < StageManager.Manager.CurrentStage.eventCount; i++)
         {
@@ -25,14 +31,7 @@ public class DiceManager : ManagerBase<DiceManager>
             yield return new WaitUntil(() => diceRollButton.interactable == false);
             ownedDices.InputDice(DiceRoller.lastRollResult);
         }
-    }
-
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        diceRollButton.gameObject.SetActive(false);
+        StageDialogManager.Manager.InitialDiceEndDescription();
     }
 }

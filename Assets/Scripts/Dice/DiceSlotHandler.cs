@@ -1,5 +1,4 @@
-﻿using Script.Manager;
-using Script.Stage;
+﻿using Script.Stage;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,12 +13,13 @@ namespace Script
 
         void Start()
         {
-            slots = new GameObject[StageManager.Manager.CurrentStage.eventCount];
             addedCount = 0;
         }
 
         public void CreateSlots()
         {
+            slots = new GameObject[StageManager.Manager.CurrentStage.eventCount];
+
             for (int i = 0; i < slots.Length; i++)
             {
                 slots[i] = Instantiate(slotPrefab, transform);

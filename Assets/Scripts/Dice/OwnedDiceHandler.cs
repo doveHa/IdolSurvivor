@@ -18,7 +18,7 @@ namespace Script
         {
             OwnedDices[ALLCOUNT]++;
             OwnedDices[dice]++;
-            StageManager.Manager.StageFlow.DiceSlot.AddDice(dice);
+            DiceManager.Manager.DiceSlot.AddDice(dice);
         }
 
         public bool UseDice(int dice)
@@ -27,7 +27,7 @@ namespace Script
             {
                 OwnedDices[ALLCOUNT]--;
                 OwnedDices[dice]--;
-                StageManager.Manager.StageFlow.DiceSlot.UseDice(dice);
+                DiceManager.Manager.DiceSlot.UseDice(dice);
                 return true;
             }
 

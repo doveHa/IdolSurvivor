@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5308963394283843767}
   - component: {fileID: 780136768368256211}
   - component: {fileID: 8555911616213837247}
+  - component: {fileID: 7909566014046247371}
   m_Layer: 5
   m_Name: DiceSlotHandler
   m_TagString: Untagged
@@ -76,3 +77,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Script.DiceSlotHandler
   slotPrefab: {fileID: 272550253188884086, guid: f94c05be18275ec459b3e7451b094bc5, type: 3}
+--- !u!114 &7909566014046247371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6192604274011834067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
+  m_HorizontalFit: 2
+  m_VerticalFit: 0
