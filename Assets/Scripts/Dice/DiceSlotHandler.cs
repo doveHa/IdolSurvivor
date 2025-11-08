@@ -1,4 +1,7 @@
 ﻿using Script.Stage;
+using Script.Stage.Event;
+using Script.UI.DragDrop;
+using Script.UI.DragDrop.DropFunction;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,11 +21,20 @@ namespace Script
 
         public void CreateSlots()
         {
-            slots = new GameObject[StageManager.Manager.CurrentStage.eventCount];
+            slots = new GameObject[EventConfig.EventCount];
 
             for (int i = 0; i < slots.Length; i++)
             {
                 slots[i] = Instantiate(slotPrefab, transform);
+            }
+        }
+
+        public void AddDraggableScript()
+        {
+            foreach (GameObject slot in slots)
+            {
+                slot.AddComponent<EventDiceDrop>();
+                slot.AddComponent<DraggableObject>().CanDrag = true;
             }
         }
 
@@ -35,9 +47,14 @@ namespace Script
         {
             foreach (GameObject slot in slots)
             {
-                if (int.Parse(slot.GetComponent<TextMeshProUGUI>().text) == dice)
+                DraggableObject dragObject = slot.GetComponent<DraggableObject>();
+                if (dragObject != null && dragObject.CanDrag &&
+                    int.Parse(slot.GetComponentInChildren<TextMeshProUGUI>().text) == dice)
                 {
-                    slot.GetComponent<Button>().interactable = false;
+                    dragObject.MoveOriginalSpot();
+                    dragObject.CanDrag = false;
+                    dragObject.GetComponent<Image>().color = Color.gray;
+                    return;
                 }
             }
         }

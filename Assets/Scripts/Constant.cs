@@ -41,6 +41,7 @@
         public static class Scene
         {
             public const string GradingScene = "GradingScene";
+            public const string StageScene = "StageScene";
         }
 
         public static class UIAnimationNumber

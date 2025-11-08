@@ -1,5 +1,6 @@
 using Script.DataDefinition.ScriptableObjects;
 using Script.Manager;
+using Script.Stage.Event;
 using Script.UI;
 using TMPro;
 using UnityEngine;
@@ -26,12 +27,10 @@ namespace Script.Stage
         protected override void Awake()
         {
             base.Awake();
-            TitleTest();
-            /*
             isStop = true;
-            currentStage = ResourceManager.Load<StageData>(Config.Resource.StageData.NextStageDataPath());
-            eventTimes = new float[currentStage.eventCount];
-            */
+            CurrentStage = ResourceManager.Load<StageData>(Config.Resource.StageData.CurrentStageDataPath());
+            eventTimes = new float[EventConfig.EventCount];
+            EventConfig.EventSetting();
         }
 
         void Start()
@@ -43,14 +42,14 @@ namespace Script.Stage
 
         void Update()
         {
-            if (!isStop)
-            {
-                AdjustProgressBar();
-            }
-
             if (currentTime >= progressTime)
             {
                 End();
+            }
+
+            if (!isStop)
+            {
+                AdjustProgressBar();
             }
         }
 
@@ -60,10 +59,11 @@ namespace Script.Stage
             float ratio = currentTime / progressTime;
             progressBar.value = ratio;
 
-            if (currentTime >= eventTimes[currentEvent])
+            if (currentEvent < eventTimes.Length && currentTime >= eventTimes[currentEvent])
             {
-                Pause();
+                TimePause();
                 Debug.Log($"Event 발생! {currentTime}/{eventTimes[currentEvent]}");
+                StageFlowManager.Manager.EventOccured();
                 currentEvent++;
             }
         }
@@ -73,9 +73,9 @@ namespace Script.Stage
             float width = markerContainer.rect.width;
 
             float leftEdge = -width * markerContainer.pivot.x;
-            for (int i = 0; i < CurrentStage.eventCount; i++)
+            for (int i = 0; i < EventConfig.EventCount; i++)
             {
-                float ratio = (float)(i + 1) / (CurrentStage.eventCount + 1);
+                float ratio = (float)(i + 1) / (EventConfig.EventCount + 1);
                 float xPos = leftEdge + width * ratio;
 
                 GameObject marker = Instantiate(markerPrefab, markerContainer);
@@ -92,29 +92,22 @@ namespace Script.Stage
             currentEvent = 0;
         }
 
-        public void StageStart()
+        public void TimeStart()
         {
+            progressBar.GetComponentInChildren<UIAnimationHandler>().StartAnimation();
             isStop = false;
         }
 
-        private void Pause()
+        private void TimePause()
         {
+            progressBar.GetComponentInChildren<UIAnimationHandler>().PauseAnimation();
             isStop = true;
         }
 
         private void End()
         {
-            Pause();
             progressBar.GetComponentInChildren<UIAnimationHandler>().EndAnimation();
-        }
-
-        private void TitleTest()
-        {
-            isStop = true;
-            Config.Resource.StageData.NextStage = Constant.Stage.TITLE_STAGE;
-            CurrentStage = ResourceManager.Load<StageData>(Config.Resource.StageData.NextStageDataPath());
-            CurrentStage.eventCount = 4;
-            eventTimes = new float[CurrentStage.eventCount];
+            // 결과 화면으로 Scene 전환
         }
     }
 }

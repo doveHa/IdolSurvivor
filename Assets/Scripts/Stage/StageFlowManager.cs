@@ -1,10 +1,9 @@
 ﻿using Script.Manager;
-using UnityEngine;
-using UnityEngine.Serialization;
+using Script.Stage.Event;
 
 namespace Script.Stage
 {
-    public class StageFlowManager :ManagerBase<StageFlowManager>
+    public class StageFlowManager : ManagerBase<StageFlowManager>
     {
         void Start()
         {
@@ -18,7 +17,16 @@ namespace Script.Stage
 
         public void StageStart()
         {
-            StageManager.Manager.StageStart();
+            StageManager.Manager.TimeStart();
+        }
+
+        public void EventOccured()
+        {
+            EventManager.Manager.CurrentEvent = EventConfig.GetEvent();
+            EventManager.Manager.CreateDropSlot();
+            EventManager.Manager.SetEventTexts();
+            EventManager.Manager.ShowEventPanel();
+            DiceManager.Manager.ShowDiceSlot();
         }
     }
 }

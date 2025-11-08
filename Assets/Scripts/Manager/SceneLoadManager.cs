@@ -1,16 +1,19 @@
-﻿using UnityEngine.SceneManagement;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Script.Manager
 {
-    public class SceneLoadManager : ManagerBase<SceneLoadManager>
+    public class SceneLoadManager : MonoBehaviour
     {
-        public void LoadCharacterSelectScene()
-        {
-        }
 
-        public void LoadMainScene()
+        public static void GradingScene()
         {
             SceneManager.LoadScene(Constant.Scene.GradingScene);
+        }
+
+        public static void StageScene()
+        {
+            SceneManager.LoadScene(Constant.Scene.StageScene);
         }
     }
 }

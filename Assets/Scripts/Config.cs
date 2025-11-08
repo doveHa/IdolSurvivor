@@ -21,12 +21,11 @@
 
             public static class StageData
             {
-                public static string NextStage { private get; set; }
+                public static string CurrentStage { get; set; }
 
-
-                public static string NextStageDataPath()
+                public static string CurrentStageDataPath()
                 {
-                    return $"ScriptableObjects/Stage/{NextStage}";
+                    return $"ScriptableObjects/Stage/{CurrentStage}";
                 }
             }
         }

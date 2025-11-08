@@ -12,6 +12,5 @@ namespace Script.DataDefinition.ScriptableObjects
 
         //public Sound sound;
         public StatType plusStat, minusStat;
-        public int eventCount;
     }
 }

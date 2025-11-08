@@ -26,7 +26,7 @@ namespace Script.ButtonClick
             DiceRoller.RollDice(DiceRoller.SIX_DICE_EYE);
             diceEyes.Add(DiceRoller.lastRollResult);
             GameObject dice = dices[currentCount++];
-            dice.GetComponent<DraggableObject>().CanDrag();
+            dice.GetComponent<DraggableObject>().CanDrag = true;
             dice.GetComponentInChildren<TextMeshProUGUI>().text = DiceRoller.lastRollResult.ToString();
 
             if (currentCount >= Constant.Stat.NUMBER_OF_TYPES)

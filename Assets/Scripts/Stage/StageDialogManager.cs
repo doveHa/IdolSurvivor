@@ -1,4 +1,5 @@
 ﻿using Script.Manager;
+using Script.Stage.Event;
 using TMPro;
 using UnityEngine;
 
@@ -21,7 +22,7 @@ namespace Script.Stage
         private void InitialDiceSettingDescription()
         {
             initialDiceSetDialog.text =
-                $"\n 총 {StageManager.Manager.CurrentStage.eventCount}개의 이벤트가 발생할 예정이야! 주사위를 굴려보자!";
+                $"\n 총 {EventConfig.EventCount}개의 이벤트가 발생할 예정이야! 주사위를 굴려보자!";
         }
 
         public void InitialDiceEndDescription()

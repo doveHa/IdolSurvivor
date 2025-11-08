@@ -22,12 +22,24 @@ namespace Script.UI
 
         public void StartAnimation()
         {
-            StartCoroutine(WaitBeforeAnimation());
+            if (animator.GetBool("Pause"))
+            {
+                animator.SetBool("Pause", false);
+            }
+            else
+            {
+                StartCoroutine(WaitBeforeAnimation());
+            }
+        }
+
+        public void PauseAnimation()
+        {
+            animator.SetBool("Pause", true);
         }
 
         public void EndAnimation()
         {
-            animator.SetTrigger("Exit");
+            animator.enabled = false;
         }
 
         private IEnumerator WaitBeforeAnimation()

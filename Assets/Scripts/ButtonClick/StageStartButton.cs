@@ -9,7 +9,8 @@ namespace Script.ButtonClick
         protected override void OnClick()
         {
             initializeDicePanel.SetActive(false);
-            DiceManager.Manager.DiceSlot.gameObject.SetActive(false);
+            DiceManager.Manager.AddDraggableScript();
+            DiceManager.Manager.HideDiceSlot();
             StageFlowManager.Manager.StageStart();
         }
     }
