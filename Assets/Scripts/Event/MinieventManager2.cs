@@ -232,34 +232,6 @@ public class MinieventManager2 : MonoBehaviour
     {
         if (specialOfferPanel != null) specialOfferPanel.SetActive(false);
 
-        /*string[] finalDialogue;
-
-        if (accepted)
-        {
-            // 수락
-            DiceCheckResult check = JudgeSuccessFailure(UnityEngine.Random.Range(1, 7)); // 랜덤 굴림
-
-            if (check == DiceCheckResult.Success)
-            {
-                // 성공: 원하는 포지션과 노래 바로 선택 가능
-                finalDialogue = new string[] { "소속사의 특혜가 비밀리에 성공했습니다.", "원하는 포지션과 노래를 선택하세요." };
-                // TODO: 포지션/노래 선택 UI 활성화 로직
-                GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
-            }
-            else
-            {
-                // 실패: 특혜가 걸렸다. 게임 오버
-                finalDialogue = new string[] { "비밀이 폭로되었습니다!", "특혜가 걸린 것이 대중에 알려져 프로그램에서 하차합니다." };
-                GMManager.Instance.StartDialogue(finalDialogue, ShowGameOver);
-            }
-        }
-        else
-        {
-            // 거절: 넘어감
-            finalDialogue = new string[] { "소속사의 제안을 거절했습니다.", "정정당당하게 하겠습니다!" };
-            GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
-        }*/
-
         if (accepted)
         {
             // 수락 시: GM 대사 후 주사위 굴림 시작
