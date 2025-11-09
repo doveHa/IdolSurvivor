@@ -19,7 +19,7 @@ namespace Script.TeamBuilding
 
         [SerializeField] private GameObject nextSceneButton;
         private int currentMaking { get; set; } = 1;
-        private Team[] teams;
+        public Team[] teams; //private -> public
         public Team PlayerTeam { get; private set; }
 
         private List<GameObject> remainCards;

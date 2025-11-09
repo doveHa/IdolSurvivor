@@ -7,14 +7,17 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Script.Characters;
+using Script.TeamBuilding;
+
 
 public class PositionSelectManager : MonoBehaviour
 {
     private PositionResultData playerPositionResult;
     private LineDistributionData playerDistributionResult;
 
-    private PositionResultData positionResult;
-    private LineDistributionData distributionResult;
+    //private PositionResultData positionResult;
+    //private LineDistributionData distributionResult;
 
     // 포지션 결정에 필요한 데이터 목록
     private PositionResultData[] positionData = new PositionResultData[]
@@ -88,19 +91,19 @@ public class PositionSelectManager : MonoBehaviour
     {
         DiceCheckResult check = JudgeRollResult(roll);
 
-        positionResult = Array.Find(positionData, d => d.checkResult == check);
+        playerPositionResult = Array.Find(positionData, d => d.checkResult == check);
 
         if (DiceRoller.Instance != null)
         {
             DiceRoller.Instance.resultText.text =
-                $"[D{roll}] {check}!\n포지션은 {positionResult.positionName}으로 결정되었습니다.";
+                $"[D{roll}] {check}!\n포지션은 {playerPositionResult.positionName}으로 결정되었습니다.";
 
             DiceRoller.Instance.SetRollCompletedUI();
             //DiceRoller.Instance.onNextAction = StartDistributionDialogue;
             DiceRoller.Instance.onNextAction = StartDistributionDialogue;
         }
 
-        Debug.Log($"포지션 결정: {positionResult.positionName}, 득표 비율: {positionResult.voteRatio}");
+        Debug.Log($"포지션 결정: {playerPositionResult.positionName}, 득표 비율: {playerPositionResult.voteRatio}");
     }
 
     private void StartDistributionDialogue()
@@ -145,29 +148,29 @@ public class PositionSelectManager : MonoBehaviour
     {
         DiceCheckResult check = JudgeRollResult(roll);
 
-        distributionResult = Array.Find(distributionData, d => d.checkResult == check);
+        playerDistributionResult = Array.Find(distributionData, d => d.checkResult == check);
 
         if (DiceRoller.Instance != null)
         {
             DiceRoller.Instance.resultText.text =
-                $"[D{roll}] {check}!\n분량은 {distributionResult.distributionLabel} ({distributionResult.eventCount}개)로 결정되었습니다.";
+                $"[D{roll}] {check}!\n분량은 {playerDistributionResult.distributionLabel} ({playerDistributionResult.eventCount}개)로 결정되었습니다.";
 
             DiceRoller.Instance.SetRollCompletedUI();
 
             //팀원 포지션
             DiceRoller.Instance.onNextAction = FinalizeTeamAndLoadScene;
 
-            DiceRoller.Instance.onNextAction = () =>
+/*            DiceRoller.Instance.onNextAction = () =>
             {
                 Debug.Log("모든 결정 완료! 다음 단계로...");
                 SceneManager.LoadScene("Practice");
-            };
+            };*/
         }
 
-        Debug.Log($"분량 결정: {distributionResult.distributionLabel}, 이벤트 수: {distributionResult.eventCount}");
+        Debug.Log($"분량 결정: {playerDistributionResult.distributionLabel}, 이벤트 수: {playerDistributionResult.eventCount}");
 
-        //공연에 이벤트 수 반영
-        Config.Event.EventCount = distributionResult.eventCount;
+        // 공연에 이벤트 수 반영
+        Config.Event.EventCount = playerDistributionResult.eventCount;
         Debug.Log($"Config.Event.EventCount가 {Config.Event.EventCount}로 설정되었습니다.");
     }
 
@@ -180,65 +183,102 @@ public class PositionSelectManager : MonoBehaviour
 
     private void FinalizeTeamAndLoadScene()
     {
-        DetermineOtherCharactersPositions();
+        if (TeamBuildingManager.Manager.PlayerTeam.Teams.Count < 3)
+        {
+            Debug.LogError("팀 빌딩이 완료되지 않았습니다. 팀원 수가 3명이 아닙니다.");
+            // 팀 빌딩이 완료되지 않은 경우를 위한 예외 처리 필요
+            return;
+        }
+
+        DetermineTeamPositions(TeamBuildingManager.Manager.PlayerTeam);
+        DetermineAllTeamsPositions();
 
         Debug.Log("모든 결정 완료! 다음 단계로...");
         // 씬 로드
         SceneManager.LoadScene("Practice");
     }
 
-    private void DetermineOtherCharactersPositions()
+    private void DetermineTeamPositions(Team playerTeam)
     {
-        // 1. 모든 포지션 이름을 리스트로 준비
-        List<string> remainingPositionNames = positionData.Select(d => d.positionName).ToList();
+        List<string> availablePositions = positionData.Select(d => d.positionName).ToList();
 
-        // 2. 플레이어가 선택한 포지션 제거
-        PositionResultData playerPos = playerPositionResult;
-        remainingPositionNames.Remove(playerPos.positionName);
+        // 플레이어
+        Character playerChar = playerTeam.Teams[0];
+        playerChar.PositionName = playerPositionResult.positionName;
+        playerChar.VoteRatio = playerPositionResult.voteRatio;
 
-        // 3. 나머지 포지션을 랜덤으로 2명에게 할당
+        availablePositions.Remove(playerPositionResult.positionName);
+
+        // 나머지 팀원
+        List<Character> otherTeammates = playerTeam.Teams.Skip(1).Take(2).ToList();
         System.Random rnd = new System.Random();
 
-        // Character 1: 남은 포지션 중 랜덤 선택
-        int index1 = rnd.Next(0, remainingPositionNames.Count);
-        string char1PosName = remainingPositionNames[index1];
-        remainingPositionNames.RemoveAt(index1); // 중복 방지를 위해 제거
-
-        // Character 2: 마지막 남은 포지션
-        string char2PosName = remainingPositionNames[0];
-
-        // 4. GameData에 최종 결과 저장
-
-        // 이전 결과 초기화 및 플레이어 데이터 저장
-        GameData.CurrentTeamComposition.Clear();
-        GameData.CurrentTeamComposition.Add(new CharacterPositionInfo
+        foreach (Character teammate in otherTeammates)
         {
-            characterName = "플레이어",
-            position = playerPos
-        });
+            int randomIndex = rnd.Next(0, availablePositions.Count);
+            string assignedPosName = availablePositions[randomIndex];
+            availablePositions.RemoveAt(randomIndex);
 
-        // 캐릭터 1 데이터 저장
-        GameData.CurrentTeamComposition.Add(new CharacterPositionInfo
-        {
-            characterName = "멤버 A", // 다른 캐릭터의 이름은 임의로 설정
-            position = Array.Find(positionData, d => d.positionName == char1PosName)
-        });
+            PositionResultData assignedPosData = Array.Find(positionData, d => d.positionName == assignedPosName);
 
-        // 캐릭터 2 데이터 저장
-        GameData.CurrentTeamComposition.Add(new CharacterPositionInfo
-        {
-            characterName = "멤버 B", // 다른 캐릭터의 이름은 임의로 설정
-            position = Array.Find(positionData, d => d.positionName == char2PosName)
-        });
+            teammate.PositionName = assignedPosData.positionName;
+            teammate.VoteRatio = assignedPosData.voteRatio;
 
-        // 플레이어의 분량 정보는 별도로 저장
-        GameData.PlayerLineDistribution = playerDistributionResult;
-
-        Debug.Log("팀 포지션 결정 완료:");
-        foreach (var info in GameData.CurrentTeamComposition)
-        {
-            Debug.Log($"캐릭터: {info.characterName}, 포지션: {info.position.positionName}");
+            Debug.Log($"팀원 포지션 결정: {teammate.Data.name} - {teammate.PositionName}");
         }
-        Debug.Log($"플레이어 분량: {GameData.PlayerLineDistribution.distributionLabel} ({GameData.PlayerLineDistribution.eventCount}개)");
+
+        Debug.Log("---우리 팀 포지션---");
+        foreach (Character chara in playerTeam.Teams)
+        {
+            Debug.Log($"[{chara.Data.name}] 포지션: {chara.PositionName}, 투표 비율: {chara.VoteRatio}");
+        }
+    }
+
+    private void DetermineAllTeamsPositions()
+    {
+        Team[] allTeams = TeamBuildingManager.Manager.teams;
+
+        if (allTeams == null || allTeams.Length == 0)
+        {
+            Debug.LogWarning("TeamBuildingManager에서 팀 목록을 가져올 수 없거나, 팀이 구성되지 않았습니다.");
+            return;
+        }
+
+        Debug.Log("------");
+        foreach (Team team in allTeams)
+        {
+            if (team == TeamBuildingManager.Manager.PlayerTeam)
+            {
+                continue;
+            }
+
+            List<string> remainingPositions = positionData.Select(d => d.positionName).ToList();
+            System.Random rnd = new System.Random();
+
+            foreach (Character character in team.Teams)
+            {
+                // 팀원이 3명이라고 가정
+                if (string.IsNullOrEmpty(character.PositionName))
+                {
+                    if (remainingPositions.Count == 0)
+                    {
+                        // 남은 포지션이 없으면 랜덤으로 전체 중에서 다시 하나 선택
+                        remainingPositions = positionData.Select(d => d.positionName).ToList();
+                    }
+
+                    int randomIndex = rnd.Next(0, remainingPositions.Count);
+                    string assignedPosName = remainingPositions[randomIndex];
+                    remainingPositions.RemoveAt(randomIndex);
+
+                    PositionResultData assignedPosData = Array.Find(positionData, d => d.positionName == assignedPosName);
+
+                    character.PositionName = assignedPosData.positionName;
+                    character.VoteRatio = assignedPosData.voteRatio;
+
+                    Debug.Log($"캐릭터: {character.Data.name} 포지션: {character.PositionName} 투표 비율:{character.VoteRatio}");
+                }
+            }
+        }
+        Debug.Log("------");
     }
 }

@@ -100,7 +100,7 @@ public class AnnouncementManager : MonoBehaviour
     public IEnumerator StartResultsAnnouncement()
     {
         // �� ���� ���
-        yield return StartDialogueCoroutine(new string[] { "���ݺ��� ������ �������� ��ǥ�մϴ�." });
+        yield return StartDialogueCoroutine(new string[] { "지금부터 순위를 발표하겠습니다." });
 
         if (Config.Resource.StageData.CurrentStage.Equals(Constant.Stage.FINAL_STAGE))
         {

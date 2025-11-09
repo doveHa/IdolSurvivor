@@ -8,6 +8,9 @@ namespace Script.Characters
     {
         public CharacterStats Stat { get; private set; }
         public int VoteCount { get; private set; }
+        public float VoteRatio { get; set; }
+        public string PositionName { get; set; }
+
         public int Rank { get; set; }
         public CharacterData Data { get; private set; }
 
