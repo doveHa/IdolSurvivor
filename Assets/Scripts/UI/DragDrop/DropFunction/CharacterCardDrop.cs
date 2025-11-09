@@ -26,7 +26,7 @@ namespace Script.UI.DragDrop.DropFunction
         {
             transform.SetParent(drop.transform);
             TeamBuildingManager.Manager.UseCharacterCard(gameObject);
-            TeamBuildingManager.Manager.AddPlayerTeam(GetComponent<CharacterCardHandler>().Character.Stat);
+            TeamBuildingManager.Manager.AddPlayerTeam(GetComponent<CharacterCardHandler>().Character);
             TeamBuildingManager.Manager.ShowTeamStat();
             Destroy(GetComponent<DraggableObject>());
         }

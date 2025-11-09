@@ -6,7 +6,7 @@ namespace Script.ButtonClick
     {
         protected override void OnClick()
         {
-            SceneLoadManager.StageEndScene();
+            SceneLoadManager.SelectSongScene();
         }
     }
 }

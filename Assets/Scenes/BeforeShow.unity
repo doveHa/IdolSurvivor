@@ -2660,6 +2660,7 @@ GameObject:
   - component: {fileID: 1449415618}
   - component: {fileID: 1449415617}
   - component: {fileID: 1449415619}
+  - component: {fileID: 1449415620}
   m_Layer: 5
   m_Name: MyTeam
   m_TagString: Untagged
@@ -2754,6 +2755,27 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &1449415620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1449415615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34349ec4215c41a1a10ff73fa60d073e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Script.UI.BeforeShowDisplayStats
+  names:
+  - {fileID: 511999173}
+  - {fileID: 36212112}
+  - {fileID: 159024949}
+  stats:
+  - {fileID: 1363422563}
+  - {fileID: 645728289}
+  - {fileID: 7635120}
+  allStats: {fileID: 289605765}
 --- !u!1 &1467571245
 GameObject:
   m_ObjectHideFlags: 0

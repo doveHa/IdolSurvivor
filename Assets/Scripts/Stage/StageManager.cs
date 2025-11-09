@@ -1,4 +1,5 @@
 using Script.Characters;
+using Script.DataDefinition.Data;
 using Script.DataDefinition.Enum;
 using Script.DataDefinition.ScriptableObjects;
 using Script.Manager;

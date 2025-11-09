@@ -11,14 +11,14 @@ namespace Script.Characters
     {
         private static Dictionary<StatType, float> statCoffs;
 
-        private CharacterStats leader;
-        private List<CharacterStats> team;
+        private Character leader;
+        public List<Character> Teams { get; private set; }
 
         public GameObject teammateSlot;
 
         private TeamColor teamColor;
 
-        public Team(CharacterStats leader)
+        public Team(Character leader)
         {
             statCoffs = new Dictionary<StatType, float>();
             statCoffs.Add(StatType.Sing, 1);
@@ -26,13 +26,13 @@ namespace Script.Characters
             statCoffs.Add(StatType.Appearance, 1);
             statCoffs.Add(StatType.Charm, 1);
             this.leader = leader;
-            team = new List<CharacterStats>();
-            team.Add(leader);
+            Teams = new List<Character>();
+            Teams.Add(leader);
         }
 
-        public void AddTeamMate(CharacterStats teammate)
+        public void AddTeamMate(Character teammate)
         {
-            team.Add(teammate);
+            Teams.Add(teammate);
         }
 
         public void SetSlot(GameObject slot)
@@ -75,11 +75,11 @@ namespace Script.Characters
         {
             CharacterStats totalStat = new CharacterStats();
 
-            foreach (CharacterStats stat in team)
+            foreach (Character stat in Teams)
             {
                 if (stat != null)
                 {
-                    totalStat.AddStat(stat);
+                    totalStat.AddStat(stat.Stat);
                 }
             }
 
@@ -111,11 +111,11 @@ namespace Script.Characters
 
         private bool IsOneManTeam()
         {
-            int leaderSumStat = leader.SumStat();
+            int leaderSumStat = leader.Stat.SumStat();
             int teamSumStat = 0;
-            foreach (CharacterStats stat in team)
+            foreach (Character stat in Teams)
             {
-                teamSumStat += stat.SumStat();
+                teamSumStat += stat.Stat.SumStat();
             }
 
             teamSumStat -= leaderSumStat;

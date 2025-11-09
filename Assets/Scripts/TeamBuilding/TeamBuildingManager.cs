@@ -33,7 +33,7 @@ namespace Script.TeamBuilding
         void Start()
         {
             int leaderIndex = 0;
-            PlayerTeam = new Team(AllCharacterManager.Manager.Player.Stat);
+            PlayerTeam = new Team(AllCharacterManager.Manager.Player);
             teams[leaderIndex++] = PlayerTeam;
             Destroy(AddCard(AllCharacterManager.Manager.Player, leaderObject).GetComponent<DraggableObject>());
             remainCards = new List<GameObject>();
@@ -51,7 +51,7 @@ namespace Script.TeamBuilding
                 {
                     GameObject card = AddCard(character, leaderObject);
                     GameObject slot = card.GetComponentInChildren<DroppableObject>().gameObject;
-                    teams[leaderIndex] = new Team(character.Stat);
+                    teams[leaderIndex] = new Team(character);
                     teams[leaderIndex].SetSlot(slot);
                     Destroy(slot.GetComponent<DroppableObject>());
                     Destroy(card.GetComponent<DraggableObject>());
@@ -80,7 +80,7 @@ namespace Script.TeamBuilding
             return predictionTeamStat;
         }
 
-        public void AddPlayerTeam(CharacterStats characterCard)
+        public void AddPlayerTeam(Character characterCard)
         {
             PlayerTeam.AddTeamMate(characterCard);
             currentMaking++;
@@ -123,7 +123,7 @@ namespace Script.TeamBuilding
             {
                 Team team = teams[i];
                 int randomIndex = Random.Range(0, remainCards.Count);
-                team.AddTeamMate(remainCards[randomIndex].GetComponent<CharacterCardHandler>().Character.Stat);
+                team.AddTeamMate(remainCards[randomIndex].GetComponent<CharacterCardHandler>().Character);
                 remainCards[randomIndex].transform.SetParent(team.teammateSlot.transform);
                 Destroy(remainCards[randomIndex].GetComponent<DraggableObject>());
                 remainCards.RemoveAt(randomIndex);

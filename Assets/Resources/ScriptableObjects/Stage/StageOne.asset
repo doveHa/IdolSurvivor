@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: StageOne
   m_EditorClassIdentifier: Assembly-CSharp::Script.DataDefinition.ScriptableObjects.StageData
   backGround: {fileID: 2914337801791336378, guid: e7b99da4a6802f240957e04e726ff722, type: 3}
-  title: "\uD0C0\uC774\uD2C0\uACE1 \uACBD\uC5F0"
+  title: "1\uCC28 \uACBD\uC5F0"
   plusStat: 4
   minusStat: 4
