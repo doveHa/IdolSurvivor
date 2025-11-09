@@ -157,6 +157,9 @@ public class PositionSelectManager : MonoBehaviour
         }
 
         Debug.Log($"분량 결정: {distributionResult.distributionLabel}, 이벤트 수: {distributionResult.eventCount}");
+
+        //공연에 이벤트 수 반영
+        Config.Event.EventCount = distributionResult.eventCount;
     }
 
     private DiceCheckResult JudgeRollResult(int roll)

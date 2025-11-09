@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 public class PracticeManager : MonoBehaviour
 {
+    [HideInInspector]
+    public string targetStageConstant = Constant.Stage.STAGE_ONE;
+
     private int firstRoll = 0;
     private int secondRoll = 0;
     private int thirdRoll = 0;
@@ -180,7 +183,10 @@ public class PracticeManager : MonoBehaviour
 
         if (GMManager.Instance != null)
         {
-            GMManager.Instance.StartDialogue(dialogue, () => UnityEngine.SceneManagement.SceneManager.LoadScene("StageScene"));
+            GMManager.Instance.StartDialogue(dialogue, () => {
+                Config.Resource.StageData.CurrentStage = targetStageConstant;
+                UnityEngine.SceneManagement.SceneManager.LoadScene("StageScene");
+                });
         }
     }
 }

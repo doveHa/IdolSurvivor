@@ -1,5 +1,7 @@
 using Script;
+using Script.DataDefinition.Enum;
 using Script.Manager;
+using Script.Stage;
 using Script.TeamBuilding;
 using System;
 using System.Collections.Generic;
@@ -118,16 +120,22 @@ public class SongSelectManager : MonoBehaviour
     {
         if (roll == 6)
         {
+            StageManager.Manager.SetPlusStat(currentSelectedSong.increaseStat);
+            StageManager.Manager.SetMinusStat(StatType.None); // 감소 스탯 없음
             Debug.Log($"{currentSelectedSong.decreaseStat} 스탯이 제거 예정.");
             return DiceCheckResult.CriticalSuccess; // 대성공
         }
         else if (roll == 4 || roll == 5)
         {
+            StageManager.Manager.SetPlusStat(currentSelectedSong.increaseStat);
+            StageManager.Manager.SetMinusStat(currentSelectedSong.decreaseStat);
             Debug.Log($"{currentSelectedSong.songName} 진행 예정.");
             return DiceCheckResult.Success; // 성공
         }
         else // roll == 1, 2, 3
         {
+            StageManager.Manager.SetPlusStat(StatType.None); // 증가 스탯 없음
+            StageManager.Manager.SetMinusStat(currentSelectedSong.decreaseStat);
             Debug.Log($"{currentSelectedSong.increaseStat} 스탯이 제거 예정.");
             return DiceCheckResult.Failure; // 실패
         }
