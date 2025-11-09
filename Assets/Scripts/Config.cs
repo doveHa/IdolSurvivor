@@ -43,12 +43,18 @@ namespace Script
 
             public static void EventSetting()
             {
-                switch (Config.Resource.StageData.CurrentStage)
+                switch (Resource.StageData.CurrentStage)
                 {
                     case Constant.Stage.TITLE_STAGE:
                         events.Add(new MinusVoteEvent().Initialize());
                         events.Add(new PlusVoteEvent().Initialize());
                         events.Add(new PlusVoteEvent().Initialize());
+                        break;
+                    case Constant.Stage.STAGE_ONE:
+                        break;
+                    case Constant.Stage.STAGE_TWO:
+                        break;
+                    case Constant.Stage.FINAL_STAGE:
                         break;
                 }
             }
@@ -66,8 +72,7 @@ namespace Script
                 return randomEvent;
             }
         }
-
-
+        
         public static class Team
         {
             public static int TeamCount { get; set; } = 4;

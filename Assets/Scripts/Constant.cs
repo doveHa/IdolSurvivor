@@ -36,6 +36,9 @@
         {
             public const int PROGRESS_TIME = 10;
             public const string TITLE_STAGE = "TitleStage";
+            public const string STAGE_ONE = "StageOne";
+            public const string STAGE_TWO = "StageTwo";
+            public const string FINAL_STAGE = "FinalStage";
         }
 
         public static class Scene
@@ -43,6 +46,7 @@
             public const string GRADING_SCENE = "GradingScene";
             public const string STAGE_SCENE = "StageScene";
             public const string TEAM_BUILDING = "TeamBuildingScene";
+            public const string SELECT_SONG = "BeforeShow";
         }
 
         public static class UIAnimationNumber

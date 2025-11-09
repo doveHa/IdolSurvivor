@@ -1,4 +1,5 @@
 using Script.Characters;
+using Script.DataDefinition.Enum;
 using Script.DataDefinition.ScriptableObjects;
 using Script.Manager;
 using Script.Stage.Event;
@@ -98,6 +99,17 @@ namespace Script.Stage
         {
             progressBar.GetComponentInChildren<UIAnimationHandler>().StartAnimation();
             isStop = false;
+        }
+
+        public void SetPlusStat(StatType plusType)
+        {
+            CurrentStage.plusStat = plusType;
+        }
+        
+        
+        public void SetMinusStat(StatType minusType)
+        {
+            CurrentStage.minusStat = minusType;
         }
 
         private void TimePause()
