@@ -3,36 +3,34 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Script;
+using Script.Characters;
+using Script.Manager;
 using TMPro;
 
 public class AnnouncementManager : MonoBehaviour
 {
     public static AnnouncementManager Instance { get; private set; }
 
-    [Header("Data")]
-    public List<TraineeData> allTrainees; // ¸ðµç ¿¬½À»ý µ¥ÀÌÅÍ (¼øÀ§ È®Á¤µÈ »óÅÂ)
-    public int currentRound = 1;         // ÇöÀç ¸î ¹øÂ° °á°ú ¹ßÇ¥ÀÎÁö (1, 2, ¶Ç´Â 3)
+    [Header("Data")] public List<TraineeData> allTrainees; // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
     private TraineeData playerTrainee;
     private bool isPlayerEliminated = false;
 
-    [Header("UI Panels")]
-    public GameObject rankingPanelGroup;   // ·©Å· ÆÐ³Î ÀüÃ¼ (VerticalLayoutGroup Æ÷ÇÔ)
-    public GameObject rankingEntryPrefab;  // ·©Å· ÆÐ³Î¿¡ µé¾î°¥ 1ÀÎ¿ë Ç×¸ñ ÇÁ¸®ÆÕ
-    public Transform rankingListParent;    // VerticalLayoutGroupÀÌ Àû¿ëµÈ ºÎ¸ð Transform
+    [Header("UI Panels")] public GameObject rankingPanelGroup; // ï¿½ï¿½Å· ï¿½Ð³ï¿½ ï¿½ï¿½Ã¼ (VerticalLayoutGroup ï¿½ï¿½ï¿½ï¿½)
+    public GameObject rankingEntryPrefab; // ï¿½ï¿½Å· ï¿½Ð³Î¿ï¿½ ï¿½ï¿½î°¥ 1ï¿½Î¿ï¿½ ï¿½×¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public Transform rankingListParent; // VerticalLayoutGroupï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î¸ï¿½ Transform
     public GameObject characterPanel;
     public GameObject divisionPanel;
     public GameObject gameOverPanel;
 
-    [Header("Character Panel Details")]
-    public TMPro.TextMeshProUGUI charRankText;
+    [Header("Character Panel Details")] public TMPro.TextMeshProUGUI charRankText;
     public TMPro.TextMeshProUGUI charRankText2;
     public TMPro.TextMeshProUGUI charAgencyText;
     public TMPro.TextMeshProUGUI charNameText;
     public TMPro.TextMeshProUGUI charVotesText;
     public Image charImage;
 
-    [Header("Division Panel Details")]
-    public Image[] divisionImages = new Image[4];
+    [Header("Division Panel Details")] public Image[] divisionImages = new Image[4];
 
     private int startingRankIndex;
 
@@ -45,29 +43,47 @@ public class AnnouncementManager : MonoBehaviour
         else
             Destroy(gameObject);
 
-        // ÃÊ±âÈ­
+        // ï¿½Ê±ï¿½È­
         characterPanel.SetActive(false);
         divisionPanel.SetActive(false);
         gameOverPanel.SetActive(false);
 
-        // ¼øÀ§ Á¤·Ä
-        allTrainees = allTrainees.OrderBy(t => t.rank).ToList();
-        playerTrainee = allTrainees.FirstOrDefault(t => t.isPlayer);
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        SetAllTrainees();
+        playerTrainee = new TraineeData(AllCharacterManager.Manager.Player);
+        playerTrainee.isPlayer = true;
+
+        //allTrainees = allTrainees.OrderBy(t => t.rank).ToList();
+        //playerTrainee = allTrainees.FirstOrDefault(t => t.isPlayer);
 
         SetStartingRank();
     }
 
+    private void SetAllTrainees()
+    {
+        foreach (Character character in AllCharacterManager.Manager.Ranks)
+        {
+            allTrainees.Add(new TraineeData(character));
+        }
+    }
+
     private void SetStartingRank()
     {
-        // ¼øÀ§´Â 1ºÎÅÍ ½ÃÀÛÇÕ´Ï´Ù.
-        if (currentRound == 1)
-            startingRankIndex = 9; // 9À§ºÎÅÍ ¹ßÇ¥ ½ÃÀÛ
-        else if (currentRound == 2)
-            startingRankIndex = 6; // 6À§ºÎÅÍ ¹ßÇ¥ ½ÃÀÛ (9, 8, 7À§´Â Å»¶ôÀÚ·Î °£ÁÖ)
-        else if (currentRound == 3)
-            startingRankIndex = 2; // 6?? 3?? 2??
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+        switch (Config.Resource.StageData.CurrentStage)
+        {
+            case Constant.Stage.STAGE_ONE:
+                startingRankIndex = 9; // 9ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½
+                break;
+            case Constant.Stage.STAGE_TWO:
+                startingRankIndex = 6; // 6ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½ (9, 8, 7ï¿½ï¿½ï¿½ï¿½ Å»ï¿½ï¿½ï¿½Ú·ï¿½ ï¿½ï¿½ï¿½ï¿½)
+                break;
+            case Constant.Stage.FINAL_STAGE:
+                startingRankIndex = 2; // 6?? 3?? 2??
+                break;
+        }
 
-        // ·©Å· ÆÐ³Î UI ÃÊ±âÈ­
+        // ï¿½ï¿½Å· ï¿½Ð³ï¿½ UI ï¿½Ê±ï¿½È­
         foreach (Transform child in rankingListParent)
             Destroy(child.gameObject);
     }
@@ -78,64 +94,75 @@ public class AnnouncementManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀüÃ¼ °á°ú ¹ßÇ¥ ½ÃÄö½º¸¦ ½ÃÀÛÇÕ´Ï´Ù.
+    /// ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
     /// </summary>
     public IEnumerator StartResultsAnnouncement()
     {
-        // ¾À ½ÃÀÛ ´ë»ç
-        yield return StartDialogueCoroutine(new string[] { "Áö±ÝºÎÅÍ »ýÁ¸ÇÒ ¿¬½À»ýÀ» ¹ßÇ¥ÇÕ´Ï´Ù." });
+        // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+        yield return StartDialogueCoroutine(new string[] { "ï¿½ï¿½ï¿½Ýºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½Õ´Ï´ï¿½." });
 
-        if (currentRound == 3)
+        if (Config.Resource.StageData.CurrentStage.Equals(Constant.Stage.FINAL_STAGE))
         {
             yield return StartCoroutine(AnnounceFinalRound());
         }
         else
         {
             yield return StartCoroutine(AnnounceNormalRound());
+            AllCharacterManager.Manager.DropOut();
         }
 
-        // ÃÖÁ¾ Á¤¸® (Å»¶ô ¿©ºÎ È®ÀÎ)
+
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Å»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½)
         yield return StartCoroutine(FinalizeResults());
     }
 
     // -----------------------------------------------------------
-    // 1, 2Â÷ ¹ßÇ¥ (ÀÏ¹ÝÀûÀÎ ¼øÀ§ ¹ßÇ¥)
+    // 1, 2ï¿½ï¿½ ï¿½ï¿½Ç¥ (ï¿½Ï¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥)
     // -----------------------------------------------------------
 
     private IEnumerator AnnounceNormalRound()
     {
-        int totalToAnnounce = (currentRound == 1) ? 9 : 6;
-        int currentRank = startingRankIndex; // 9À§ ¶Ç´Â 6À§ºÎÅÍ ½ÃÀÛ
+        int totalToAnnounce;
+        if (Config.Resource.StageData.CurrentStage.Equals(Constant.Stage.STAGE_ONE))
+        {
+            totalToAnnounce = 9;
+        }
+        else
+        {
+            totalToAnnounce = 6;
+        }
 
-        // 9À§ (¶Ç´Â 6À§)ºÎÅÍ 1À§±îÁö ¼øÂ÷ÀûÀ¸·Î ¹ßÇ¥
+        int currentRank = startingRankIndex; // 9ï¿½ï¿½ ï¿½Ç´ï¿½ 6ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+
+        // 9ï¿½ï¿½ (ï¿½Ç´ï¿½ 6ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥
         while (currentRank >= 1 && currentRank <= totalToAnnounce)
         {
             TraineeData trainee = allTrainees.Find(t => t.rank == currentRank);
 
-            if (trainee.rank == 0) // ÇØ´ç ¼øÀ§¿¡ ¿¬½À»ýÀÌ ¾ø´Â °æ¿ì (¹üÀ§¸¦ ¹þ¾î³­ °æ¿ì)
+            if (trainee.rank == 0) // ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î³­ ï¿½ï¿½ï¿½)
             {
                 currentRank--;
                 continue;
             }
 
-            // ·©Å· ÆÐ³Î ¾÷µ¥ÀÌÆ® (ÁÂÃø ÀÌ¸§ ¸ñ·Ï Ãâ·Â)
+            // ï¿½ï¿½Å· ï¿½Ð³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® (ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½)
             UpdateRankingList(trainee, currentRank);
 
-            // ÇÃ·¹ÀÌ¾î È®ÀÎ
+            // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ È®ï¿½ï¿½
             if (trainee.isPlayer)
             {
                 playerFinalRank = currentRank;
                 yield return StartCoroutine(PlayerAnnounceSequence(trainee));
-                // ÇÃ·¹ÀÌ¾î ¹ßÇ¥ ÈÄ RankingPanel ºñÈ°¼ºÈ­, CharacterPanel È°¼ºÈ­ »óÅÂ À¯Áö
+                // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ RankingPanel ï¿½ï¿½È°ï¿½ï¿½È­, CharacterPanel È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-                // ÇÃ·¹ÀÌ¾î ¹ßÇ¥ ÈÄ, ´ÙÀ½ ¼øÀ§·Î ÀÌµ¿
+                // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
                 currentRank--;
                 continue;
             }
 
-            // ÀÏ¹Ý ¿¬½À»ý ¼øÀ§ ¹ßÇ¥
-            yield return StartDialogueCoroutine(new string[] { $"´ÙÀ½Àº {currentRank}À§ ÀÔ´Ï´Ù." });
-            yield return new WaitForSeconds(1.0f); // ±äÀå°¨ À¯Áö
+            // ï¿½Ï¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥
+            yield return StartDialogueCoroutine(new string[] { $"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ {currentRank}ï¿½ï¿½ ï¿½Ô´Ï´ï¿½." });
+            yield return new WaitForSeconds(1.0f); // ï¿½ï¿½ï¿½å°¨ ï¿½ï¿½ï¿½ï¿½
 
             currentRank--;
         }
@@ -143,22 +170,22 @@ public class AnnouncementManager : MonoBehaviour
 
     private void UpdateRankingList(TraineeData trainee, int rank)
     {
-        // ·©Å· ¸ñ·Ï¿¡ ÇØ´ç ¼øÀ§¿Í ÀÌ¸§¸¸ Ç¥½Ã (VerticalLayoutGroup)
+        // ï¿½ï¿½Å· ï¿½ï¿½Ï¿ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½ (VerticalLayoutGroup)
         GameObject newEntry = Instantiate(rankingEntryPrefab, rankingListParent);
-        // TMP ÄÄÆ÷³ÍÆ®¸¦ Ã£¾Æ ¼øÀ§¿Í ÀÌ¸§ ÇÒ´ç (ÇÁ¸®ÆÕ ±¸Á¶¿¡ ¸Â°Ô ¼öÁ¤ ÇÊ¿ä)
-        newEntry.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = $"{rank}À§: {trainee.traineeName}";
+        // TMP ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½Ò´ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½)
+        newEntry.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = $"{rank}ï¿½ï¿½: {trainee.traineeName}";
     }
 
     // -----------------------------------------------------------
-    // ÇÃ·¹ÀÌ¾î ¹ßÇ¥ ½ÃÄö½º
+    // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     // -----------------------------------------------------------
 
     private IEnumerator PlayerAnnounceSequence(TraineeData player)
     {
-        // RankingPanel (¿ÞÂÊ ¸ñ·Ï) ºñÈ°¼ºÈ­
+        // RankingPanel (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½) ï¿½ï¿½È°ï¿½ï¿½È­
         rankingPanelGroup.SetActive(false);
 
-        // CharacterPanel È°¼ºÈ­ ¹× µ¥ÀÌÅÍ ÇÒ´ç
+        // CharacterPanel È°ï¿½ï¿½È­ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½
         characterPanel.SetActive(true);
         charRankText.text = player.rank.ToString();
         charNameText.text = player.traineeName;
@@ -167,27 +194,27 @@ public class AnnouncementManager : MonoBehaviour
         charImage.sprite = player.characterImage;
 
         yield return StartDialogueCoroutine(new string[]
-            {
-                $"¸ðµÎ°¡ ÁÖ¸ñÇÏ°í ÀÖ½À´Ï´Ù! {player.traineeName} ¿¬½À»ý!",
-                $"{player.traineeName} ¿¬½À»ýÀÌ ÃÖÁ¾ {player.rank}À§·Î »ýÁ¸ÇÕ´Ï´Ù!"
-            });
+        {
+            $"ï¿½ï¿½Î°ï¿½ ï¿½Ö¸ï¿½ï¿½Ï°ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½! {player.traineeName} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!",
+            $"{player.traineeName} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ {player.rank}ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½!"
+        });
 
         yield return new WaitForSeconds(2.0f);
     }
 
     // -----------------------------------------------------------
-    // 3Â÷ ¹ßÇ¥ (Division Panel »ç¿ë)
+    // 3ï¿½ï¿½ ï¿½ï¿½Ç¥ (Division Panel ï¿½ï¿½ï¿½)
     // -----------------------------------------------------------
 
     private IEnumerator AnnounceFinalRound()
     {
-        // 1. 2À§ ¹ßÇ¥
+        // 1. 2ï¿½ï¿½ ï¿½ï¿½Ç¥
         TraineeData secondPlace = allTrainees.Find(t => t.rank == 2);
-        yield return StartDialogueCoroutine(new string[] { "ÀÌÁ¦ ÃÖÁ¾ µ¥ºßÁ¶, 2À§¸¦ ¹ßÇ¥ÇÕ´Ï´Ù." });
+        yield return StartDialogueCoroutine(new string[] { "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, 2ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½Õ´Ï´ï¿½." });
         UpdateRankingList(secondPlace, 2);
         yield return new WaitForSeconds(1.5f);
 
-        // 2. 1À§ ¹ßÇ¥ (ÇÃ·¹ÀÌ¾îÀÏ ¼öµµ ÀÖÀ½)
+        // 2. 1ï¿½ï¿½ ï¿½ï¿½Ç¥ (ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         TraineeData firstPlace = allTrainees.Find(t => t.rank == 1);
         if (firstPlace.isPlayer)
         {
@@ -196,18 +223,18 @@ public class AnnouncementManager : MonoBehaviour
         }
         else
         {
-            yield return StartDialogueCoroutine(new string[] { "´ë¸ÁÀÇ 1À§! °ú¿¬ ´©°¡ µÉ±î¿ä?" });
+            yield return StartDialogueCoroutine(new string[] { "ï¿½ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½! ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½É±ï¿½ï¿½?" });
             UpdateRankingList(firstPlace, 1);
             yield return new WaitForSeconds(1.5f);
         }
 
-        // 3. Division Panel È°¼ºÈ­ ¹× 6À§~3À§ ÀÌ¹ÌÁö ÇÒ´ç
+        // 3. Division Panel È°ï¿½ï¿½È­ ï¿½ï¿½ 6ï¿½ï¿½~3ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½
         divisionPanel.SetActive(true);
-        yield return StartDialogueCoroutine(new string[] { "³²Àº 6À§ºÎÅÍ 3À§±îÁöÀÇ ¿¬½À»ýÀ» °ø°³ÇÕ´Ï´Ù!" });
+        yield return StartDialogueCoroutine(new string[] { "ï¿½ï¿½ï¿½ï¿½ 6ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½!" });
 
         var divisionTrainees = allTrainees.Where(t => t.rank >= 3 && t.rank <= 6)
-                                          .OrderByDescending(t => t.rank) // 6À§ºÎÅÍ ¼øÂ÷ÀûÀ¸·Î Ã³¸®
-                                          .ToList();
+            .OrderByDescending(t => t.rank) // 6ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
+            .ToList();
 
         for (int i = 0; i < divisionTrainees.Count; i++)
         {
@@ -218,55 +245,56 @@ public class AnnouncementManager : MonoBehaviour
             }
         }
 
-        // 4. 3À§ ¹ßÇ¥ (Division Panel¿¡ ÀÌ¹ÌÁö ÇÒ´ç ÈÄ 3À§ ¹ßÇ¥)
+        // 4. 3ï¿½ï¿½ ï¿½ï¿½Ç¥ (Division Panelï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ ï¿½ï¿½ 3ï¿½ï¿½ ï¿½ï¿½Ç¥)
         TraineeData thirdPlace = allTrainees.Find(t => t.rank == 3);
-        yield return StartDialogueCoroutine(new string[] { $"ÃÖÁ¾ µ¥ºßÁ¶, ¸¶Áö¸· ¸â¹ö {thirdPlace.traineeName} ¿¬½À»ý!" });
+        yield return StartDialogueCoroutine(
+            new string[] { $"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ {thirdPlace.traineeName} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!" });
         UpdateRankingList(thirdPlace, 3);
 
         yield return new WaitForSeconds(2.0f);
     }
 
     // -----------------------------------------------------------
-    // ÃÖÁ¾ ¸¶¹«¸® (Å»¶ô Ã³¸®)
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (Å»ï¿½ï¿½ Ã³ï¿½ï¿½)
     // -----------------------------------------------------------
 
     private IEnumerator FinalizeResults()
     {
-        // ÇÃ·¹ÀÌ¾î°¡ ¼øÀ§¿¡ ¾ø°í (Å»¶ôÇß°í), Å»¶ô ¹ßÇ¥°¡ ÇÊ¿äÇÑ °æ¿ì
+        // ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Å»ï¿½ï¿½ï¿½ß°ï¿½), Å»ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         if (playerTrainee.rank > startingRankIndex || playerFinalRank == -1)
         {
             yield return StartDialogueCoroutine(new string[]
-                {
-                    "¾Æ½±°Ôµµ ÀÌ¹ø ¹ßÇ¥¿¡¼­´Â ÀÌ¸§À» ¿Ã¸®Áö ¸øÇß½À´Ï´Ù.",
-                    $"{playerTrainee.traineeName} ¿¬½À»ýÀº ¾Æ½±°Ô Å»¶ôÇß½À´Ï´Ù..."
-                });
+            {
+                "ï¿½Æ½ï¿½ï¿½Ôµï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½Ã¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.",
+                $"{playerTrainee.traineeName} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ½ï¿½ï¿½ï¿½ Å»ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½..."
+            });
 
-            gameOverPanel.SetActive(true); // °ÔÀÓ ¿À¹ö ÆÐ³Î È°¼ºÈ­
+            gameOverPanel.SetActive(true); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð³ï¿½ È°ï¿½ï¿½È­
         }
         else
         {
-            yield return StartDialogueCoroutine(new string[] { "¹ßÇ¥¸¦ ¸ðµÎ ¸¶ÃÆ½À´Ï´Ù. °¨»çÇÕ´Ï´Ù." });
+            yield return StartDialogueCoroutine(new string[] { "ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½." });
         }
     }
 
     // -----------------------------------------------------------
-    // GMManager ¿¬µ¿ µµ¿ì¹Ì (GMManager°¡ DontDestroyOnLoad µÇ¾î ÀÖ¾î¾ß ÇÔ)
+    // GMManager ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ (GMManagerï¿½ï¿½ DontDestroyOnLoad ï¿½Ç¾ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½ï¿½)
     // -----------------------------------------------------------
 
     private IEnumerator StartDialogueCoroutine(string[] dialogue)
     {
         if (GMManager.Instance == null)
         {
-            Debug.LogError("GMManager ÀÎ½ºÅÏ½º¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError("GMManager ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             yield break;
         }
 
         bool waitingForDialogue = true;
 
-        // GMManagerÀÇ ÄÝ¹éÀ» ¼³Á¤ÇÏ¿© ´ëÈ­ Á¾·á ½Ã waitingForDialogue¸¦ false·Î º¯°æ
+        // GMManagerï¿½ï¿½ ï¿½Ý¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ waitingForDialogueï¿½ï¿½ falseï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         GMManager.Instance.StartDialogue(dialogue, () => waitingForDialogue = false);
 
-        // ´ëÈ­°¡ ³¡³¯ ¶§±îÁö ´ë±â
+        // ï¿½ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         while (waitingForDialogue)
         {
             yield return null;

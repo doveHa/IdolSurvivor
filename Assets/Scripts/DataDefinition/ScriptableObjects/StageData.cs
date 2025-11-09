@@ -9,7 +9,7 @@ namespace Script.DataDefinition.ScriptableObjects
         public Sprite backGround;
 
         public string title;
-
+        
         //public Sound sound;
         public StatType plusStat, minusStat;
     }

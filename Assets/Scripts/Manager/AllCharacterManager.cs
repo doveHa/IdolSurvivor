@@ -55,6 +55,13 @@ namespace Script.Manager
             Ranks = set.ToList();
         }
 
+        public void DropOut()
+        {
+            Ranks.RemoveAt(Ranks.Count - 1);
+            Ranks.RemoveAt(Ranks.Count - 2);
+            Ranks.RemoveAt(Ranks.Count - 3);
+        }
+        
         private SortedDictionary<int, List<Character>> Ranking()
         {
             SortedDictionary<int, List<Character>> ranks = new SortedDictionary<int, List<Character>>();

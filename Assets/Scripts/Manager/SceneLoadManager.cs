@@ -17,11 +17,13 @@ namespace Script.Manager
 
         public static void StageEndScene()
         {
-            switch (Config.Resource.StageData.CurrentStage)
+            if (Config.Resource.StageData.CurrentStage.Equals(Constant.Stage.TITLE_STAGE))
             {
-                case Constant.Stage.TITLE_STAGE:
-                    SceneManager.LoadScene(Constant.Scene.TEAM_BUILDING);
-                    break;
+                SceneManager.LoadScene(Constant.Scene.TEAM_BUILDING);
+            }
+            else
+            {
+                SceneManager.LoadScene(Constant.Scene.RANKING_ANNOUNCE);
             }
         }
 
