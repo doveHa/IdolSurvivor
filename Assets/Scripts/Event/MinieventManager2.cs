@@ -1,12 +1,13 @@
-﻿using UnityEngine;
+﻿using Script;
+using Script.DataDefinition.Enum;
 using System;
 using System.Linq;
-using Script;
-using Script.DataDefinition.Enum;
-using UnityEngine.UI;
 using TMPro;
-
-
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Script.Manager;
+using Script.Characters;
 
 public class MinieventManager2 : MonoBehaviour
 {
@@ -52,8 +53,8 @@ public class MinieventManager2 : MonoBehaviour
     private void StartCrisisEvent()
     {
         // 1. 랜덤으로 위기 이벤트 선택
-        //CrisisEventType selectedEvent = GetRandomCrisisEvent();
-        CrisisEventType selectedEvent = CrisisEventType.SpecialOffer; // 테스트용 고정
+        CrisisEventType selectedEvent = GetRandomCrisisEvent();
+        //CrisisEventType selectedEvent = CrisisEventType.AlcoholTobacco; // 테스트용 고정
 
         // 2. 선택된 이벤트 시작
         switch (selectedEvent)
@@ -142,11 +143,16 @@ public class MinieventManager2 : MonoBehaviour
 
     private void FinalizeCrisisEvent()
     {
-        if (DiceRoller.Instance != null) DiceRoller.Instance.HideDicePanel();
+        /*if (DiceRoller.Instance != null) DiceRoller.Instance.HideDicePanel();
 
-        string[] finalDialogue = { "위기 이벤트가 종료되었습니다.", "다음 단계로 이동합니다." };
+        string[] finalDialogue = { "위기 이벤트가 종료되었습니다.", "다음 단계로 이동합니다." };*/
 
-        GMManager.Instance.StartDialogue(finalDialogue, () => Debug.Log("위기 이벤트 종료. 다음 씬/단계로 전환."));
+        Debug.Log("위기 이벤트 종료");
+        Config.Team.TeamCount = 2;
+        Config.Team.AllCharacterCount = 6;
+
+        // 씬 로드 실행
+        SceneManager.LoadScene("TeamBuildingScene");
     }
 
     private void ShowGameOver()
@@ -158,7 +164,6 @@ public class MinieventManager2 : MonoBehaviour
         {
             gameOverPanel.SetActive(true);
             Debug.Log("게임 오버!");
-            // TODO: 여기에 게임 재시작 또는 메인 메뉴로 돌아가는 로직 추가
         }
 
         else
@@ -191,7 +196,7 @@ public class MinieventManager2 : MonoBehaviour
             // 성공: 득표수 100 획득
             resultMessage = "팬들에게 어필하여 득표수 100표를 획득했습니다.";
             finalDialogue = new string[] { $"결과: {roll} 성공!", resultMessage };
-            // TODO: TeamManager.Instance.AddVotes(100);
+            AllCharacterManager.Manager.Player.AddVote(100);
         }
         else
         {
@@ -208,7 +213,7 @@ public class MinieventManager2 : MonoBehaviour
     #region 특혜 제안
     private void StartSpecialOffer()
     {
-        string[] dialogue = { "소속사로부터 은밀한 제안이 들어왔습니다.", "이번 포지션과 노래를 원하는 대로 선택할 수 있게 해주겠답니다. 수락하시겠습니까?" };
+        string[] dialogue = { "소속사로부터 은밀한 제안이 들어왔습니다.", "투표수를 조작해 더 높은 순위를 얻을 수 있게 제안합니다. 수락하시겠습니까?" };
         GMManager.Instance.StartDialogue(dialogue, ShowSpecialOfferOptions);
     }
 
@@ -263,10 +268,11 @@ public class MinieventManager2 : MonoBehaviour
         if (check == DiceCheckResult.Success)
         {
             // 성공: 원하는 포지션과 노래 바로 선택 가능
-            resultMessage = "원하는 포지션과 노래를 선택하세요.";
+            resultMessage = "득표 수에서 100표가 추가되었습니다.";
             finalDialogue = new string[] { $"판정 결과: {roll} (성공)", "소속사의 특혜가 비밀리에 성공했습니다.", resultMessage };
             finalAction = FinalizeCrisisEvent;
-            // TODO: 포지션/노래 선택 UI 활성화 로직
+            
+            AllCharacterManager.Manager.Player.AddVote(100);
         }
         else
         {
@@ -328,6 +334,7 @@ public class MinieventManager2 : MonoBehaviour
 
         string resultMessage;
         string[] finalDialogue;
+        float reductionRatio = 0.20f; // 20% 감소
 
         if (check == DiceCheckResult.Success)
         {
@@ -341,9 +348,8 @@ public class MinieventManager2 : MonoBehaviour
             int reduction = -20; // 스탯 감소량 임시 설정
             resultMessage = $"실패! (Roll: {roll}) 여론이 악화되었습니다. 모든 스탯이 {reduction} 감소했습니다.";
             finalDialogue = new string[] { "이미지 손상으로 활동에 제약이 생겼습니다.", resultMessage };
-            tempStatValue += reduction; // 임시 변수 업데이트
-            Debug.Log($"임시 스탯 감소: {tempStatValue}");
-            // TODO: PlayerManager.Instance.ApplyStatChangeAll(reduction);
+
+            ApplyStatChangeRatioAll(reductionRatio);
         }
 
         GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
@@ -394,7 +400,72 @@ public class MinieventManager2 : MonoBehaviour
             // TODO: TeamManager.Instance.ResetTeamColor();
         }
 
+        if (DiceRoller.Instance != null) DiceRoller.Instance.HideDicePanel();
         GMManager.Instance.StartDialogue(finalDialogue, FinalizeCrisisEvent);
     }
     #endregion
+
+    private void ApplyStatChangeAll(int amount)
+    {
+        if (AllCharacterManager.Manager != null && AllCharacterManager.Manager.Player != null)
+        {
+            var playerStats = AllCharacterManager.Manager.Player.Stat;
+
+            // CharacterStats의 AddStatValue를 사용하여 모든 스탯을 업데이트
+            playerStats.AddStatValue(StatType.Sing, amount);
+            playerStats.AddStatValue(StatType.Dance, amount);
+            playerStats.AddStatValue(StatType.Appearance, amount);
+            playerStats.AddStatValue(StatType.Charm, amount);
+
+            Debug.Log($"[AlcoholTobacco] 모든 스탯에 {amount} 반영 완료. 최종 스탯: {playerStats.ToString()}");
+        }
+        else
+        {
+            Debug.LogError("AllCharacterManager나 Player 스탯 객체를 찾을 수 없어 일괄 변경을 적용할 수 없습니다.");
+        }
+    }
+
+    private int GetPlayerStatValue(StatType type)
+    {
+        if (AllCharacterManager.Manager != null && AllCharacterManager.Manager.Player != null)
+        {
+            var playerStats = AllCharacterManager.Manager.Player.Stat;
+            switch (type)
+            {
+                case StatType.Sing: return playerStats.Sing.Value;
+                case StatType.Dance: return playerStats.Dance.Value;
+                case StatType.Charm: return playerStats.Charm.Value;
+                case StatType.Appearance: return playerStats.Appearance.Value;
+            }
+        }
+        return 10;
+    }
+
+    private void ApplyStatChangeRatioAll(float ratio) // ratio: 0.20f (20%)
+    {
+        if (AllCharacterManager.Manager != null && AllCharacterManager.Manager.Player != null)
+        {
+            var playerStats = AllCharacterManager.Manager.Player.Stat;
+
+            foreach (var stat in playerStats.ToStatArray())
+            {
+                // 현재 스탯 값의 비율만큼 감소량 계산
+                int reductionAmount = (int)(stat.Value * ratio);
+
+                // 감소는 음수(-)를 사용합니다.
+                int finalChange = -reductionAmount;
+
+                // AddStatValue(StatType, int)를 호출하여 변경 적용
+                playerStats.AddStatValue(stat.StatType, finalChange);
+
+                Debug.Log($"[AlcoholTobacco] {stat.StatType} 감소량: {reductionAmount}, 최종 값: {stat.Value}");
+            }
+
+            Debug.Log($"모든 스탯 20% 감소 완료. 최종 스탯: {playerStats.ToString()}");
+        }
+        else
+        {
+            Debug.LogError("AllCharacterManager나 Player 스탯 객체를 찾을 수 없어 비율 변경을 적용할 수 없습니다.");
+        }
+    }
 }

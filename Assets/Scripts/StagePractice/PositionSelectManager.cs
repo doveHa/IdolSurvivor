@@ -160,6 +160,7 @@ public class PositionSelectManager : MonoBehaviour
 
         //공연에 이벤트 수 반영
         Config.Event.EventCount = distributionResult.eventCount;
+        Debug.Log($"Config.Event.EventCount가 {Config.Event.EventCount}로 설정되었습니다.");
     }
 
     private DiceCheckResult JudgeRollResult(int roll)

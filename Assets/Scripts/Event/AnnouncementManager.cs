@@ -7,6 +7,7 @@ using Script;
 using Script.Characters;
 using Script.Manager;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class AnnouncementManager : MonoBehaviour
 {
@@ -298,6 +299,22 @@ public class AnnouncementManager : MonoBehaviour
         while (waitingForDialogue)
         {
             yield return null;
+        }
+    }
+
+    public void OnNextStage()
+    {
+        switch (Config.Resource.StageData.CurrentStage)
+        {
+            case Constant.Stage.STAGE_ONE:
+                SceneManager.LoadScene("MiniEvent1");
+                break;
+            case Constant.Stage.STAGE_TWO:
+                SceneManager.LoadScene("MiniEvent2");
+                break;
+            case Constant.Stage.FINAL_STAGE:
+                Debug.Log("Congratulations!");
+                break;
         }
     }
 }

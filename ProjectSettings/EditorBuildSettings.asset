@@ -26,6 +26,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Practice.unity
     guid: e02739aba5472d440ada3c54e5bbaba7
+  - enabled: 1
+    path: Assets/Scenes/MiniEvent1.unity
+    guid: 123a153a40554774ebc80789693a658f
+  - enabled: 1
+    path: Assets/Scenes/MiniEvent2.unity
+    guid: e949dd44087f5f9468e9afeee542658c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

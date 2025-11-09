@@ -35,10 +35,10 @@ public class GMManager : MonoBehaviour
     {
         //gmPanel.SetActive(false);
 
-        if (NextBtn != null)
+/*        if (NextBtn != null)
         {
             NextBtn.onClick.AddListener(OnClickNext);
-        }
+        }*/
 
         if (PrevBtn != null)
         {

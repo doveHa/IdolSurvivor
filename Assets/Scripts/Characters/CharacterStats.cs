@@ -35,6 +35,28 @@ namespace Script.Characters
             Charm.AddValue(stat.Charm.Value);
         }
 
+        public void AddStatValue(StatType statType, int value)
+        {
+            switch (statType)
+            {
+                case StatType.Sing:
+                    Sing.AddValue(value);
+                    break;
+                case StatType.Dance:
+                    Dance.AddValue(value);
+                    break;
+                case StatType.Appearance:
+                    Appearance.AddValue(value);
+                    break;
+                case StatType.Charm:
+                    Charm.AddValue(value);
+                    break;
+                default:
+                    Debug.LogWarning($"StatType {statType}에 대한 값을 추가할 수 없습니다.");
+                    break;
+            }
+        }
+
         public void NewStat(StatType statType, int value)
         {
             Stat stat = new Stat(statType, value);

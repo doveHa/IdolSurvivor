@@ -1,10 +1,13 @@
-using UnityEngine;
-using System;
 using Script; // DiceRoller 네임스페이스
 using Script.DataDefinition.Enum;
-using UnityEngine.UI;
-using TMPro; // TMPro 네임스페이스
+using Script.Manager;
+using System;
 using System.Linq;
+using TMPro; // TMPro 네임스페이스
+using UnityEngine;
+using UnityEngine.UI;
+using Script.Characters;
+using UnityEngine.SceneManagement;
 
 public class MinieventManager : MonoBehaviour
 {
@@ -168,6 +171,14 @@ public class MinieventManager : MonoBehaviour
         }
     }
 
+    private void NextScene()
+    {
+        SceneManager.LoadScene("TeamBuildingScene");
+        Config.Team.TeamCount = 3; // 4 -> 3
+        Config.Team.AllCharacterCount = 9; // 12 -> 9
+        //MiniEvnet1은 전체 게임 플로우에서 한번만 호출되므로 걍 하드코딩 했습니다...
+    }
+
 
     // =================================================================
     // 1분 PR 이벤트 (Roll 2회)
@@ -216,6 +227,7 @@ public class MinieventManager : MonoBehaviour
         finalVotesResult = finalVotes;
 
         // 득표수 적용 여기에
+        AllCharacterManager.Manager.Player.AddVote(finalVotesResult);
 
         FinalPRDialogue();
     }
@@ -225,7 +237,7 @@ public class MinieventManager : MonoBehaviour
         string[] dialogue = { $"1분 PR이 끝났습니다. 득표수 {finalVotesResult}표를 획득하였습니다.", "다음 이벤트로 이동합니다." };
         if (GMManager.Instance != null)
         {
-            GMManager.Instance.StartDialogue(dialogue, () => Debug.Log("미니 이벤트 끝. 다음 씬으로 전환"));
+            GMManager.Instance.StartDialogue(dialogue, () => NextScene());
         }
     }
 
@@ -273,7 +285,7 @@ public class MinieventManager : MonoBehaviour
         string[] dialogue = { $"연습이 끝났습니다. 총 {practicePoints} 포인트를 스탯에 분배했습니다.", "다음 이벤트로 이동합니다." };
         if (GMManager.Instance != null)
         {
-            GMManager.Instance.StartDialogue(dialogue, () => Debug.Log("연습 이벤트 종료"));
+            GMManager.Instance.StartDialogue(dialogue, () => NextScene());
         }
     }
 
@@ -386,7 +398,7 @@ public class MinieventManager : MonoBehaviour
         string translatedStat = GetKoreanStatName(selectedStatForStreet);
 
         // 1. 스탯 값 가져오기 (임시)
-        int baseValue = 10;
+        int baseValue = GetPlayerStatValue(selectedStatForStreet);
 
         DiceCheckResult check = JudgeStreetRoll(roll);
         string resultMessage;
@@ -395,11 +407,14 @@ public class MinieventManager : MonoBehaviour
         // 2. 성공/실패 판정 및 스탯 변경 계산
         if (check == DiceCheckResult.Success)
         {
-            change = (int)(baseValue * StreetSuccessMultiplier);
+            change = (int)(baseValue * StreetSuccessMultiplier) - baseValue; // 순수 증가량 계산 (예: 10 -> 30, change = 20)
+
             resultMessage =
                 $"[굴림: {roll}] 성공!\n" +
-                $"스탯이 {StreetSuccessMultiplier}배 증가하여 {change}가 되었습니다!";
-            // TODO: PlayerManager.Instance.ApplyStatChange(selectedStatForStreet, change);
+                $"{translatedStat} 스탯이 {StreetSuccessMultiplier}배 증가하여 총 {baseValue + change}가 되었습니다! (+{change})";
+
+            // 스탯 증가
+            ApplyStatChange(selectedStatForStreet, change);
         }
         else
         {
@@ -408,8 +423,9 @@ public class MinieventManager : MonoBehaviour
 
             resultMessage =
                 $"[굴림: {roll}] 실패!\n" +
-                $"스탯이 20% 감소하여 {change}가 되었습니다.";
-            // TODO: PlayerManager.Instance.ApplyStatChange(selectedStatForStreet, reduction);
+                $"스탯이 20% 감소하여 {reductionAmount}만큼 줄어들었습니다.";
+
+            ApplyStatChange(selectedStatForStreet, change);
         }
 
         // 3. UI 업데이트 및 Next 버튼 설정
@@ -447,6 +463,7 @@ public class MinieventManager : MonoBehaviour
     private void FinalActionOfStreetEvent()
     {
         Debug.Log("길거리 공연 이벤트 종료");
+        NextScene();
         // 여기에 씬 전환 또는 다음 이벤트 시작 로직을 넣습니다.
     }
 
@@ -471,9 +488,46 @@ public class MinieventManager : MonoBehaviour
         {
             GMManager.Instance.StartDialogue(dialogue, () =>
             {
-                // TeamManager.Instance.AddVotes(guaranteedVotes);
+                // 득표수 추가
+                AllCharacterManager.Manager.Player.AddVote(guaranteedVotes);
+                NextScene();
                 Debug.Log("예능 이벤트 끝. 다음 씬으로 전환");
             });
+        }
+    }
+
+    private int GetPlayerStatValue(StatType type)
+    {
+        if (AllCharacterManager.Manager != null && AllCharacterManager.Manager.Player != null)
+        {
+            CharacterStats playerStats = AllCharacterManager.Manager.Player.Stat;
+            switch (type)
+            {
+                case StatType.Sing: return playerStats.Sing.Value;
+                case StatType.Dance: return playerStats.Dance.Value;
+                case StatType.Charm: return playerStats.Charm.Value;
+                case StatType.Appearance: return playerStats.Appearance.Value;
+            }
+        }
+        return 10; // 디버깅을 위해 기본값 반환 
+    }
+
+    private void ApplyStatChange(StatType type, int amount)
+    {
+        if (AllCharacterManager.Manager != null && AllCharacterManager.Manager.Player != null)
+        {
+            var playerStats = AllCharacterManager.Manager.Player.Stat;
+
+            // CharacterStats의 AddStatValue 또는 NewStat을 활용하여 스탯을 업데이트합니다.
+            // AddStatValue(StatType, int) 함수가 CharacterStats에 있다고 가정합니다.
+            playerStats.AddStatValue(type, amount);
+
+            Debug.Log($"[StreetPerformance] {type} 스탯에 {amount} 반영 완료.");
+            Debug.Log($"[StreetPerformance] 최종 스탯: {playerStats.ToString()}");
+        }
+        else
+        {
+            Debug.LogError("AllCharacterManager나 Player 스탯 객체를 찾을 수 없어 스탯 변경을 적용할 수 없습니다.");
         }
     }
 }
