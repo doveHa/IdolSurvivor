@@ -1,4 +1,6 @@
-﻿using Script.Characters;
+﻿using System.Diagnostics;
+using Script.Characters;
+using Script.DataDefinition.Enum;
 using Script.TeamBuilding;
 
 namespace Script.UI.DragDrop.DropFunction
@@ -12,7 +14,12 @@ namespace Script.UI.DragDrop.DropFunction
 
         public override void Click()
         {
-            TeamBuildingManager.Manager.ShowPredictionTeamStat(GetComponent<CharacterCardHandler>().Character.Stat);
+            CharacterStats predictTeamStat =
+                TeamBuildingManager.Manager.ShowAndGetPredictionTeamStat(GetComponent<CharacterCardHandler>().Character
+                    .Stat);
+            TeamBuildingManager.Manager.ShowTeamColor(
+                TeamBuildingManager.Manager.PlayerTeam.GetTeamColor(predictTeamStat));
+
         }
 
         public override void Drop(DroppableObject drop)

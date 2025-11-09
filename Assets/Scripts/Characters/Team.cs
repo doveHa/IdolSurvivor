@@ -40,9 +40,8 @@ namespace Script.Characters
             teammateSlot = slot;
         }
 
-        public TeamColor GetTeamColor()
+        public TeamColor GetTeamColor(CharacterStats totalStat)
         {
-            CharacterStats totalStat = TotalStat();
             Stat maxStat = new Stat(StatType.Sing, -1);
             int sumValue = 0;
             foreach (Stat stat in totalStat.ToStatArray())

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Script.Characters;
+using Script.DataDefinition.Enum;
 using Script.Manager;
 using Script.UI.DragDrop;
 using TMPro;
@@ -14,10 +15,12 @@ namespace Script.TeamBuilding
         [SerializeField] private GameObject followerObject;
 
         [SerializeField] private TextMeshProUGUI teamAllStat;
+        [SerializeField] private TextMeshProUGUI teamColorText;
 
+        [SerializeField] private GameObject nextSceneButton;
         private int currentMaking { get; set; } = 1;
         private Team[] teams;
-        private Team playerTeam;
+        public Team PlayerTeam { get; private set; }
 
         private List<GameObject> remainCards;
 
@@ -30,8 +33,8 @@ namespace Script.TeamBuilding
         void Start()
         {
             int leaderIndex = 0;
-            playerTeam = new Team(AllCharacterManager.Manager.Player.Stat);
-            teams[leaderIndex++] = playerTeam;
+            PlayerTeam = new Team(AllCharacterManager.Manager.Player.Stat);
+            teams[leaderIndex++] = PlayerTeam;
             Destroy(AddCard(AllCharacterManager.Manager.Player, leaderObject).GetComponent<DraggableObject>());
             remainCards = new List<GameObject>();
 
@@ -67,17 +70,19 @@ namespace Script.TeamBuilding
 
         public void ShowTeamStat()
         {
-            teamAllStat.text = playerTeam.TotalStat().ToString();
+            teamAllStat.text = PlayerTeam.TotalStat().ToString();
         }
 
-        public void ShowPredictionTeamStat(CharacterStats stat)
+        public CharacterStats ShowAndGetPredictionTeamStat(CharacterStats stat)
         {
-            teamAllStat.text = playerTeam.PredictionAddStat(stat).ToString();
+            CharacterStats predictionTeamStat = PlayerTeam.PredictionAddStat(stat);
+            teamAllStat.text = predictionTeamStat.ToString();
+            return predictionTeamStat;
         }
 
         public void AddPlayerTeam(CharacterStats characterCard)
         {
-            playerTeam.AddTeamMate(characterCard);
+            PlayerTeam.AddTeamMate(characterCard);
             currentMaking++;
 
             RandomTeammateAdd();
@@ -90,6 +95,18 @@ namespace Script.TeamBuilding
         public void UseCharacterCard(GameObject characterCard)
         {
             remainCards.Remove(characterCard);
+        }
+
+        public void ShowTeamColor(TeamColor teamColor)
+        {
+            if (teamColor != TeamColor.None)
+            {
+                teamColorText.text = teamColor.ToString();
+            }
+            else
+            {
+                teamColorText.text = "";
+            }
         }
 
         private GameObject AddCard(Character character, GameObject slot)
@@ -105,7 +122,7 @@ namespace Script.TeamBuilding
             for (int i = 1; i < teams.Length; i++)
             {
                 Team team = teams[i];
-                int randomIndex = Random.Range(0, remainCards.Count); 
+                int randomIndex = Random.Range(0, remainCards.Count);
                 team.AddTeamMate(remainCards[randomIndex].GetComponent<CharacterCardHandler>().Character.Stat);
                 remainCards[randomIndex].transform.SetParent(team.teammateSlot.transform);
                 Destroy(remainCards[randomIndex].GetComponent<DraggableObject>());
@@ -116,6 +133,7 @@ namespace Script.TeamBuilding
         private void TeamBuildingEnd()
         {
             Debug.Log("Team building end");
+            nextSceneButton.SetActive(true);
         }
     }
 }
