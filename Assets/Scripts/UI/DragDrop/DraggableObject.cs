@@ -28,7 +28,7 @@ namespace Script.UI.DragDrop
                 return;
             }
 
-            Debug.Log("Click");
+            GetComponent<IDrop>().Click();
 
             isDragging = true;
             originalPos = transform.position;
@@ -40,6 +40,8 @@ namespace Script.UI.DragDrop
                 out Vector2 mousePos
             );
             offset = rectTransform.localPosition - (Vector3)mousePos;
+            
+
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -49,7 +51,6 @@ namespace Script.UI.DragDrop
                 return;
             }
 
-            Debug.Log("Dragging");
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 canvas.transform as RectTransform,
                 eventData.position,
@@ -68,7 +69,6 @@ namespace Script.UI.DragDrop
             }
 
             isDragging = false;
-            Debug.Log("MouseUp");
 
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(eventData, results);

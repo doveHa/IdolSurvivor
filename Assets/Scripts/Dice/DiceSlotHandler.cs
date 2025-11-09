@@ -21,7 +21,7 @@ namespace Script
 
         public void CreateSlots()
         {
-            slots = new GameObject[EventConfig.EventCount];
+            slots = new GameObject[Config.Event.EventCount];
 
             for (int i = 0; i < slots.Length; i++)
             {

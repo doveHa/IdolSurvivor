@@ -1,12 +1,14 @@
-﻿using Script.DataDefinition.ScriptableObjects;
+﻿using System;
+using Script.DataDefinition.ScriptableObjects;
+using Unity.VisualScripting;
 
 namespace Script.Characters
 {
-    public class Character
+    public class Character : IComparable<Character>
     {
         public CharacterStats Stat { get; private set; }
         public int VoteCount { get; private set; }
-        public int Rank { get; private set; }
+        public int Rank { get; set; }
         public CharacterData Data { get; private set; }
 
         public Character(CharacterData data)
@@ -20,6 +22,17 @@ namespace Script.Characters
         public void AddVote(int voteCount)
         {
             VoteCount += voteCount;
+        }
+
+        public int CompareTo(Character other)
+        {
+            int cmp = other.VoteCount.CompareTo(VoteCount);
+            if (cmp == 0)
+            {
+                cmp = Data.name.CompareTo(other.Data.name);
+            }
+
+            return cmp;
         }
     }
 }

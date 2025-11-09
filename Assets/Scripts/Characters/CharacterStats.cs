@@ -19,12 +19,12 @@ namespace Script.Characters
             Charm = new Stat(StatType.Charm, 0);
         }
 
-        public CharacterStats(Stat sing, Stat dance, Stat appearance, Stat charm)
+        public CharacterStats(CharacterStats stat)
         {
-            Sing = sing;
-            Dance = dance;
-            Appearance = appearance;
-            Charm = charm;
+            Sing = new Stat(StatType.Sing, stat.Sing.Value);
+            Dance = new Stat(StatType.Dance, stat.Dance.Value);
+            Appearance = new Stat(StatType.Appearance, stat.Appearance.Value);
+            Charm = new Stat(StatType.Charm, stat.Charm.Value);
         }
 
         public void AddStat(CharacterStats stat)
@@ -35,27 +35,39 @@ namespace Script.Characters
             Charm.AddValue(stat.Charm.Value);
         }
 
-        public void AddStat(StatType statType, int value)
+        public void NewStat(StatType statType, int value)
         {
+            Stat stat = new Stat(statType, value);
             switch (statType)
             {
                 case StatType.Sing:
-                    Sing.AddValue(value);
+                    Sing = stat;
                     break;
                 case StatType.Dance:
-                    Dance.AddValue(value);
+                    Dance = stat;
                     break;
                 case StatType.Appearance:
-                    Appearance.AddValue(value);
+                    Appearance = stat;
                     break;
                 case StatType.Charm:
-                    Charm.AddValue(value);
+                    Charm = stat;
                     break;
                 default:
                     break;
             }
         }
 
+        public void SetRandomStat()
+        {
+            DiceRoller.RollDice(DiceRoller.SIX_DICE_EYE);
+            Sing = new Stat(StatType.Sing, DiceRoller.lastRollResult);
+            DiceRoller.RollDice(DiceRoller.SIX_DICE_EYE);
+            Dance = new Stat(StatType.Dance, DiceRoller.lastRollResult);
+            DiceRoller.RollDice(DiceRoller.SIX_DICE_EYE);
+            Appearance = new Stat(StatType.Appearance, DiceRoller.lastRollResult);
+            DiceRoller.RollDice(DiceRoller.SIX_DICE_EYE);
+            Charm = new Stat(StatType.Charm, DiceRoller.lastRollResult);
+        }
         public int SumStat()
         {
             return Sing.Value + Dance.Value + Appearance.Value + Charm.Value;
@@ -69,6 +81,12 @@ namespace Script.Characters
         public int[] ToValueArray()
         {
             return new int[] { Sing.Value, Dance.Value, Appearance.Value, Charm.Value, };
+        }
+
+        public override string ToString()
+        {
+            return
+                $"Sing: {Sing.Value:D2} | Dance: {Dance.Value:D2} | Appearance: {Appearance.Value:D2} | Charm: {Charm.Value:D2}";
         }
     }
 }

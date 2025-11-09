@@ -8,7 +8,7 @@ namespace Script.ButtonClick
         protected override void OnClick()
         {
             Config.Resource.StageData.CurrentStage = Constant.Stage.TITLE_STAGE;
-            EventConfig.EventCount = 3;
+            Config.Event.EventCount = 3;
             SceneLoadManager.StageScene();
         }
     }

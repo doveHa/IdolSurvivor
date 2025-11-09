@@ -6,6 +6,10 @@ namespace Script.UI.DragDrop.DropFunction
 {
     public class SetCharacterStat : IDrop
     {
+        public override void Click()
+        {
+        }
+
         public override void Drop(DroppableObject drop)
         {
             TextMeshProUGUI textMesh = GetComponentInChildren<TextMeshProUGUI>();

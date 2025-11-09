@@ -34,14 +34,15 @@
 
         public static class Stage
         {
-            public const int PROGRESS_TIME = 20;
+            public const int PROGRESS_TIME = 10;
             public const string TITLE_STAGE = "TitleStage";
         }
 
         public static class Scene
         {
-            public const string GradingScene = "GradingScene";
-            public const string StageScene = "StageScene";
+            public const string GRADING_SCENE = "GradingScene";
+            public const string STAGE_SCENE = "StageScene";
+            public const string TEAM_BUILDING = "TeamBuildingScene";
         }
 
         public static class UIAnimationNumber

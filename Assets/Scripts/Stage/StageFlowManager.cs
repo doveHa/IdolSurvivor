@@ -22,7 +22,7 @@ namespace Script.Stage
 
         public void EventOccured()
         {
-            EventManager.Manager.CurrentEvent = EventConfig.GetEvent();
+            EventManager.Manager.CurrentEvent = Config.Event.GetEvent();
             EventManager.Manager.CreateDropSlot();
             EventManager.Manager.SetEventTexts();
             EventManager.Manager.ShowEventPanel();
