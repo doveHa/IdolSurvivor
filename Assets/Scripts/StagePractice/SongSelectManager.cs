@@ -1,10 +1,12 @@
 using Script;
+using Script.Manager;
+using Script.TeamBuilding;
 using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SongSelectManager : MonoBehaviour
 {
@@ -30,6 +32,9 @@ public class SongSelectManager : MonoBehaviour
         }
 
         SongPanel.SetActive(false);
+
+        //Debug.Log(AllCharacterManager.Manager.Player.Stat.ToString());
+        //Debug.Log(TeamBuildingManager.Manager.PlayerTeam.TotalStat());   
     }
 
     // ฤÝน้

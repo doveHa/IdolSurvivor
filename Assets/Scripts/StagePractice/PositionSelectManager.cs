@@ -3,7 +3,8 @@ using UnityEngine.UI;
 using System;
 using Script;
 using Script.DataDefinition.Enum;
-
+using Script.Manager;
+using UnityEngine.SceneManagement;
 
 public class PositionSelectManager : MonoBehaviour
 {
@@ -151,7 +152,7 @@ public class PositionSelectManager : MonoBehaviour
             DiceRoller.Instance.onNextAction = () =>
             {
                 Debug.Log("모든 결정 완료! 다음 단계로...");
-                // SceneManager.LoadScene("NextScene"); // 예시
+                SceneManager.LoadScene("Practice");
             };
         }
 

@@ -180,7 +180,7 @@ public class PracticeManager : MonoBehaviour
 
         if (GMManager.Instance != null)
         {
-            GMManager.Instance.StartDialogue(dialogue, () => Debug.Log("연습 이벤트 종료 및 다음 씬 전환"));
+            GMManager.Instance.StartDialogue(dialogue, () => UnityEngine.SceneManagement.SceneManager.LoadScene("StageScene"));
         }
     }
 }
