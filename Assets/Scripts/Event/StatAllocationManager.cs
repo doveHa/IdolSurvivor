@@ -1,9 +1,12 @@
-using UnityEngine;
-using UnityEngine.UI;
+using Script.Characters;
+using Script.DataDefinition.Enum;
+using Script.Manager;
+using System;
 using System.Collections.Generic;
 using TMPro;
-using System;
-using Script.DataDefinition.Enum;
+using UnityEngine;
+using UnityEngine.UI;
+using Unity.Collections;
 
 public class StatAllocationManager : MonoBehaviour
 {
@@ -67,13 +70,28 @@ public class StatAllocationManager : MonoBehaviour
         allocationPanel.SetActive(true);
         remainingPointsText.text = remainingPoints.ToString();
 
-        // 모든 할당 값을 0으로 초기화
-        foreach (ref var entry in allocationEntries.AsSpan())
+        CharacterStats playerStats = null;
+        if (AllCharacterManager.Manager != null && AllCharacterManager.Manager.Player != null)
+        {
+            playerStats = AllCharacterManager.Manager.Player.Stat;
+        }
+
+        foreach (var entry in allocationEntries)
         {
             entry.currentAllocation = 0;
             entry.allocationValueText.text = "+0";
-            // 기존 스탯 값도 0으로 임시 설정 (나중에 로드 기능 구현)
-            entry.currentValueText.text = "0";
+
+            // 기존 스탯 값 출력
+            if (playerStats != null)
+            {
+                int baseStat = GetStatValue(playerStats, entry.statType);
+                entry.currentValueText.text = baseStat.ToString();
+            }
+            else
+            {
+                entry.currentValueText.text = "Error";
+                Debug.LogError("AllCharacterManager나 Player 스탯을 찾을 수 없습니다.");
+            }
         }
 
         UpdateButtonsInteractable();
@@ -82,6 +100,23 @@ public class StatAllocationManager : MonoBehaviour
     // -----------------------------------------------------------
     // 내부 로직: 포인트 할당/제거
     // -----------------------------------------------------------
+
+    private int GetStatValue(CharacterStats stats, StatType type)
+    {
+        switch (type)
+        {
+            case StatType.Sing:
+                return stats.Sing.Value;
+            case StatType.Dance:
+                return stats.Dance.Value;
+            case StatType.Charm:
+                return stats.Charm.Value;
+            case StatType.Appearance:
+                return stats.Appearance.Value;
+            default:
+                return 0;
+        }
+    }
 
     private void AddPoint(StatType type)
     {
@@ -152,19 +187,30 @@ public class StatAllocationManager : MonoBehaviour
 
     private void OnApplyClicked()
     {
-        // 1. 최종 결과 콘솔에 출력 (추후 스탯 적용 로직으로 대체)
         Debug.Log("--- 스탯 분배 결과 ---");
+
+        // 1. 분배된 포인트를 담을 임시 CharacterStats 객체 생성
+        CharacterStats distributionStats = new CharacterStats();
 
         foreach (var entry in allocationEntries)
         {
             if (entry.currentAllocation > 0)
             {
                 Debug.Log($"{entry.statType}에 {entry.currentAllocation} 포인트 적용 예정.");
-                // PlayerManager.Instance.AddStat(entry.statType, entry.currentAllocation); // 실제 스탯 적용
+
+                // 2. 임시 객체에 분배된 포인트 할당
+                // NewStat 함수가 StatType과 int 값을 받으므로 사용합니다.
+                distributionStats.NewStat(entry.statType, entry.currentAllocation);
             }
         }
 
-        // 2. UI 닫기 및 콜백 실행
+        // 3. 플레이어의 기존 스탯에 임시 객체 (분배 포인트)를 합산
+        var playerStats = AllCharacterManager.Manager.Player.Stat;
+        playerStats.AddStat(distributionStats);
+
+        Debug.Log("스탯 분배 완료. 플레이어 최종 스탯: " + playerStats.ToString());
+
+        // UI 닫기 및 콜백 실행
         allocationPanel.SetActive(false);
         onApplyCallback?.Invoke();
         onApplyCallback = null;

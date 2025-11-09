@@ -1,5 +1,6 @@
 using Script;
 using Script.DataDefinition.Enum;
+using Script.DataDefinition.ScriptableObjects;
 using Script.Manager;
 using Script.Stage;
 using Script.TeamBuilding;
@@ -57,6 +58,22 @@ public class SongSelectManager : MonoBehaviour
         currentSelectedSong = selectedSong;
 
         Debug.Log($"선택된 노래: {selectedSong.songName}, 콘셉트: {selectedSong.concept}, 감소스탯: {selectedSong.decreaseStat}, 증가스탯: {selectedSong.increaseStat}");
+        string bgmPath = "BGM/" + selectedSong.songName;
+        AudioClip bgmClip = Resources.Load<AudioClip>(bgmPath);
+        Debug.Log($"BGM 경로: {bgmPath}");
+
+        if (StageManager.Manager != null)
+        {
+            StageManager.SetNextBGM(bgmClip);
+            if (bgmClip != null)
+            {
+                Debug.Log($"[BGM SUCCESS] 다음 BGM으로 '{bgmClip.name}'이(가) 설정되었습니다.");
+            }
+            else
+            {
+                Debug.LogError($"[BGM FAILURE] 경로 '{bgmPath}'에서 AudioClip을 로드하지 못했습니다. StageManager.BGMClip이 null입니다.");
+            }
+        }
 
         if (GMManager.Instance != null)
         {
@@ -122,6 +139,7 @@ public class SongSelectManager : MonoBehaviour
         {
             StageManager.Manager.SetPlusStat(currentSelectedSong.increaseStat);
             StageManager.Manager.SetMinusStat(StatType.None); // 감소 스탯 없음
+            
             Debug.Log($"{currentSelectedSong.decreaseStat} 스탯이 제거 예정.");
             return DiceCheckResult.CriticalSuccess; // 대성공
         }

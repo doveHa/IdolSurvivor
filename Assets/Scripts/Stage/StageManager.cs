@@ -14,6 +14,8 @@ namespace Script.Stage
 {
     public class StageManager : ManagerBase<StageManager>
     {
+        public static AudioClip BGMClip { get; private set; }
+
         public StageData CurrentStage { get; private set; }
         [SerializeField] private SpriteRenderer backGround;
         [SerializeField] private TextMeshProUGUI title;
@@ -42,6 +44,10 @@ namespace Script.Stage
             backGround.sprite = CurrentStage.backGround;
             title.text = CurrentStage.title;
             CreateMarker();
+
+            // BGM 재생
+            gameObject.GetComponent<AudioSource>().clip = StageManager.BGMClip;
+            gameObject.GetComponent<AudioSource>().Play();
         }
 
         void Update()
@@ -141,6 +147,12 @@ namespace Script.Stage
             else
             {
             }
+        }
+
+        // BGM 설정
+        public static void SetNextBGM(AudioClip bgm)
+        {
+            BGMClip = bgm;
         }
     }
 }
