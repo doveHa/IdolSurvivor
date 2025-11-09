@@ -1,5 +1,20 @@
-using UnityEngine;
 using Script.DataDefinition.Enum;
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class CharacterPositionInfo
+{
+    public string characterName;
+    public PositionResultData position;
+}
+
+public static class GameData
+{
+    public static List<CharacterPositionInfo> CurrentTeamComposition { get; private set; } 
+        = new List<CharacterPositionInfo>();
+    public static LineDistributionData PlayerLineDistribution;
+}
 
 [System.Serializable]
 public struct PositionResultData

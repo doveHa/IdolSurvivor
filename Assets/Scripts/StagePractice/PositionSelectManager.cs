@@ -1,13 +1,18 @@
-using UnityEngine;
-using UnityEngine.UI;
-using System;
 using Script;
 using Script.DataDefinition.Enum;
 using Script.Manager;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PositionSelectManager : MonoBehaviour
 {
+    private PositionResultData playerPositionResult;
+    private LineDistributionData playerDistributionResult;
+
     private PositionResultData positionResult;
     private LineDistributionData distributionResult;
 
@@ -149,6 +154,9 @@ public class PositionSelectManager : MonoBehaviour
 
             DiceRoller.Instance.SetRollCompletedUI();
 
+            //팀원 포지션
+            DiceRoller.Instance.onNextAction = FinalizeTeamAndLoadScene;
+
             DiceRoller.Instance.onNextAction = () =>
             {
                 Debug.Log("모든 결정 완료! 다음 단계로...");
@@ -168,5 +176,69 @@ public class PositionSelectManager : MonoBehaviour
         if (roll == 6) return DiceCheckResult.CriticalSuccess;
         if (roll == 4 || roll == 5) return DiceCheckResult.Success;
         return DiceCheckResult.Failure;
+    }
+
+    private void FinalizeTeamAndLoadScene()
+    {
+        DetermineOtherCharactersPositions();
+
+        Debug.Log("모든 결정 완료! 다음 단계로...");
+        // 씬 로드
+        SceneManager.LoadScene("Practice");
+    }
+
+    private void DetermineOtherCharactersPositions()
+    {
+        // 1. 모든 포지션 이름을 리스트로 준비
+        List<string> remainingPositionNames = positionData.Select(d => d.positionName).ToList();
+
+        // 2. 플레이어가 선택한 포지션 제거
+        PositionResultData playerPos = playerPositionResult;
+        remainingPositionNames.Remove(playerPos.positionName);
+
+        // 3. 나머지 포지션을 랜덤으로 2명에게 할당
+        System.Random rnd = new System.Random();
+
+        // Character 1: 남은 포지션 중 랜덤 선택
+        int index1 = rnd.Next(0, remainingPositionNames.Count);
+        string char1PosName = remainingPositionNames[index1];
+        remainingPositionNames.RemoveAt(index1); // 중복 방지를 위해 제거
+
+        // Character 2: 마지막 남은 포지션
+        string char2PosName = remainingPositionNames[0];
+
+        // 4. GameData에 최종 결과 저장
+
+        // 이전 결과 초기화 및 플레이어 데이터 저장
+        GameData.CurrentTeamComposition.Clear();
+        GameData.CurrentTeamComposition.Add(new CharacterPositionInfo
+        {
+            characterName = "플레이어",
+            position = playerPos
+        });
+
+        // 캐릭터 1 데이터 저장
+        GameData.CurrentTeamComposition.Add(new CharacterPositionInfo
+        {
+            characterName = "멤버 A", // 다른 캐릭터의 이름은 임의로 설정
+            position = Array.Find(positionData, d => d.positionName == char1PosName)
+        });
+
+        // 캐릭터 2 데이터 저장
+        GameData.CurrentTeamComposition.Add(new CharacterPositionInfo
+        {
+            characterName = "멤버 B", // 다른 캐릭터의 이름은 임의로 설정
+            position = Array.Find(positionData, d => d.positionName == char2PosName)
+        });
+
+        // 플레이어의 분량 정보는 별도로 저장
+        GameData.PlayerLineDistribution = playerDistributionResult;
+
+        Debug.Log("팀 포지션 결정 완료:");
+        foreach (var info in GameData.CurrentTeamComposition)
+        {
+            Debug.Log($"캐릭터: {info.characterName}, 포지션: {info.position.positionName}");
+        }
+        Debug.Log($"플레이어 분량: {GameData.PlayerLineDistribution.distributionLabel} ({GameData.PlayerLineDistribution.eventCount}개)");
     }
 }
