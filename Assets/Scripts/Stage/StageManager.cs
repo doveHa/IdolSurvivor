@@ -3,11 +3,10 @@ using Script.DataDefinition.Data;
 using Script.DataDefinition.Enum;
 using Script.DataDefinition.ScriptableObjects;
 using Script.Manager;
-using Script.Stage.Event;
+using Script.TeamBuilding;
 using Script.UI;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Script.Stage
@@ -112,8 +111,8 @@ namespace Script.Stage
         {
             CurrentStage.plusStat = plusType;
         }
-        
-        
+
+
         public void SetMinusStat(StatType minusType)
         {
             CurrentStage.minusStat = minusType;
@@ -129,10 +128,15 @@ namespace Script.Stage
         {
             progressBar.GetComponentInChildren<UIAnimationHandler>().EndAnimation();
             AdjustOtherCharacterResult();
+
             AllCharacterManager.Manager.CalculateRank();
             SceneLoadManager.StageEndScene();
-            Destroy(this);
+            Destroy(gameObject);
             // 결과 화면으로 Scene 전환
+        }
+
+        private void AdjustPlayerCharacterResult()
+        {
         }
 
         private void AdjustOtherCharacterResult()
@@ -141,11 +145,12 @@ namespace Script.Stage
             {
                 foreach (Character character in AllCharacterManager.Manager.OtherCharacters)
                 {
-                    character.AddVote(Random.Range(5, 15));
+                    character.AddVote(Random.Range(2, 6));
                 }
             }
             else
             {
+                //투표 수 반영
             }
         }
 

@@ -1,12 +1,25 @@
 ﻿using Script.Manager;
 using Script.Stage.Event;
+using UnityEngine;
 
 namespace Script.Stage
 {
-    public class StageFlowManager : ManagerBase<StageFlowManager>
+    public class StageFlowManager : MonoBehaviour
     {
+        public static StageFlowManager Manager;
+        [SerializeField] private GameObject initialDicePanel;
+
+        void Awake()
+        {
+            if (Manager == null)
+            {
+                Manager = this;
+            }
+        }
+
         void Start()
         {
+            initialDicePanel.SetActive(true);
             DiceInitialSetting();
         }
 

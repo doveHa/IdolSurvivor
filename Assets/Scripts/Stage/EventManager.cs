@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Script.Stage
 {
-    public class EventManager : ManagerBase<EventManager>
+    public class EventManager : MonoBehaviour
     {
         [SerializeField] private GameObject eventPanel;
         [SerializeField] private GameObject selectButton;
@@ -16,12 +16,16 @@ namespace Script.Stage
         [SerializeField] private TextMeshProUGUI title;
         [SerializeField] private TextMeshProUGUI description;
 
+        public static EventManager Manager { get; private set; }
         public StageEvent CurrentEvent { private get; set; }
         public int OnDiceSlotEye { get; set; }
 
-        protected override void Awake()
+        void Awake()
         {
-            base.Awake();
+            if (Manager == null)
+            {
+                Manager = this;
+            }
         }
 
         public void ShowEventPanel()

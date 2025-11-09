@@ -6,10 +6,11 @@ namespace Script.Stage.Event.TitleStage
     {
         public override StageEvent Initialize()
         {
-            title = "";
-            description = "";
+            title = "앗차차";
+            description = "무대에서 사소한 실수를 범했다." +
+                          "\n투표 수 - 주사위 눈금";
             dropSlotCount = 1;
-            
+
             return this;
         }
 

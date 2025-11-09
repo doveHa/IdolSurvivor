@@ -6,8 +6,9 @@ namespace Script.Stage.Event.TitleStage
     {
         public override StageEvent Initialize()
         {
-            title = "";
-            description = "";
+            title = "날 지켜봐줘!";
+            description = "관객들을 사로잡아 투표 수를 늘린다!" +
+                          "\n 투표 수 + 주사위 눈금";
             dropSlotCount = 1;
 
             return this;
