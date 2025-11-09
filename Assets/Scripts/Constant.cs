@@ -47,7 +47,7 @@
             public const string STAGE_SCENE = "StageScene";
             public const string TEAM_BUILDING = "TeamBuildingScene";
             public const string SELECT_SONG = "BeforeShow";
-            public const string RANKING_ANNOUNCE = "RankingAnnounce";
+            public const string RANKING_ANNOUNCE = "RankingAnnouncement";
         }
 
         public static class UIAnimationNumber

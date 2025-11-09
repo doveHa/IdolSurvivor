@@ -5,10 +5,18 @@ using UnityEngine;
 
 namespace Script.Stage
 {
-    public class StageDialogManager : ManagerBase<StageDialogManager>
+    public class StageDialogManager : MonoBehaviour
     {
+        public static StageDialogManager Manager { get; private set; }
         [SerializeField] private TextMeshProUGUI initialDiceSetDialog;
 
+        void Awake()
+        {
+            if (Manager == null)
+            {
+                Manager = this;
+            }
+        }
         void Start()
         {
             DialogInitialize();

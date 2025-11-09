@@ -6,16 +6,21 @@ using Script.Stage.Event;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DiceManager : ManagerBase<DiceManager>
+public class DiceManager : MonoBehaviour
 {
+    public static DiceManager Manager { get; private set; }
     [SerializeField] public DiceSlotHandler DiceSlot;
     [SerializeField] private Button diceRollButton;
 
     private OwnedDiceHandler ownedDices;
 
-    protected override void Awake()
+    void Awake()
     {
-        base.Awake();
+        if (Manager == null)
+        {
+            Manager = this;
+        }
+
         ownedDices = new OwnedDiceHandler();
     }
 

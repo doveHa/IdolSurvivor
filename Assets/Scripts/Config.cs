@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Script.Stage.Event;
+using Script.Stage.Event.StageOne;
 using Script.Stage.Event.TitleStage;
 using UnityEngine;
 
@@ -51,10 +52,20 @@ namespace Script
                         events.Add(new PlusVoteEvent().Initialize());
                         break;
                     case Constant.Stage.STAGE_ONE:
+                        events.Add(new DuetSingEvent().Initialize());
+                        events.Add(new FindCameraEvent().Initialize());
+                        events.Add(new SingStatPlusMinus().Initialize());
+                        events.Add(new SoundDelayEvent().Initialize());
+                        events.Add(new SpotLightPoseEvent().Initialize());
+                        events.Add(new StageErrorEvent().Initialize());
+                        events.Add(new PlusVoteEvent().Initialize());
+                        events.Add(new MinusVoteEvent().Initialize());
                         break;
                     case Constant.Stage.STAGE_TWO:
+                        
                         break;
                     case Constant.Stage.FINAL_STAGE:
+                        
                         break;
                 }
             }
