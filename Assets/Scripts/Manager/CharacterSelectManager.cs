@@ -11,14 +11,13 @@ namespace Script.Manager
     {
         [SerializeField] private GameObject nextSceneButton;
         public bool IsFemale { get; private set; }
-        public Character Player { get; private set; }
+        //public Character Player { get; private set; }
 
         private int settingCount;
 
         protected override void Awake()
         {
             base.Awake();
-            Player = new Character(ResourceManager.Load<CharacterData>(Config.Resource.CharacterData.PlayerCharacterDataPath()));
             settingCount = 0;
         }
 
@@ -38,7 +37,7 @@ namespace Script.Manager
         public void SetStat(string statType, int statValue)
         {
             StatType type = (StatType)Enum.Parse(typeof(StatType), statType);
-            Player.Stat.AddStat(type, statValue);
+            AllCharacterManager.Manager.Player.Stat.NewStat(type, statValue);
             settingCount++;
 
             Debug.Log(settingCount);

@@ -6,6 +6,10 @@ namespace Script.UI.DragDrop.DropFunction
 {
     public class EventDiceDrop : IDrop
     {
+        public override void Click()
+        {
+        }
+
         public override void Drop(DroppableObject drop)
         {
             GetComponent<RectTransform>().transform.position = drop.GetComponent<RectTransform>().transform.position;

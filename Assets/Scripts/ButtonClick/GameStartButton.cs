@@ -13,7 +13,7 @@ namespace Script.ButtonClick
         {
             if (inputField.text.Length > 0)
             {
-                CharacterSelectManager.Manager.Player.Data.name = inputField.text;
+                AllCharacterManager.Manager.Player.Data.name = inputField.text;
                 AllCharacterManager.Manager.GenerateAllCharacters();
                 SceneLoadManager.GradingScene();
             }

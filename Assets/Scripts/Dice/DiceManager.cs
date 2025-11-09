@@ -26,7 +26,7 @@ public class DiceManager : ManagerBase<DiceManager>
 
     public IEnumerator InitialDiceSet()
     {
-        for (int i = 0; i < EventConfig.EventCount; i++)
+        for (int i = 0; i < Config.Event.EventCount; i++)
         {
             diceRollButton.interactable = true;
             yield return new WaitUntil(() => diceRollButton.interactable == false);

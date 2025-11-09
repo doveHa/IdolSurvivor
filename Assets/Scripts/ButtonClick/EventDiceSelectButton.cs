@@ -10,6 +10,7 @@ namespace Script.ButtonClick
             EventManager.Manager.AdjustEvent();
             DiceManager.Manager.HideDiceSlot();
             StageManager.Manager.TimeStart();
+            gameObject.SetActive(false);
         }
     }
 }

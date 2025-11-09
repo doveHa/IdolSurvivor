@@ -11,7 +11,7 @@ namespace Script.UI
 
         void Start()
         {
-            nameText.text = CharacterSelectManager.Manager.Player.Data.name;
+            nameText.text = AllCharacterManager.Manager.Player.Data.name;
         }
 
         public void SetText(string text)
@@ -21,11 +21,11 @@ namespace Script.UI
 
         public void Display()
         {
-            singText.text = CharacterSelectManager.Manager.Player.Stat.Sing.Value.ToString();
-            danceText.text = CharacterSelectManager.Manager.Player.Stat.Dance.Value.ToString();
-            appearanceText.text = CharacterSelectManager.Manager.Player.Stat.Appearance.Value.ToString();
-            charmText.text = CharacterSelectManager.Manager.Player.Stat.Charm.Value.ToString();
-            voteText.text = CharacterSelectManager.Manager.Player.VoteCount.ToString();
+            singText.text = AllCharacterManager.Manager.Player.Stat.Sing.Value.ToString();
+            danceText.text = AllCharacterManager.Manager.Player.Stat.Dance.Value.ToString();
+            appearanceText.text = AllCharacterManager.Manager.Player.Stat.Appearance.Value.ToString();
+            charmText.text = AllCharacterManager.Manager.Player.Stat.Charm.Value.ToString();
+            voteText.text = AllCharacterManager.Manager.Player.VoteCount.ToString();
         }
     }
 }

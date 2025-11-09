@@ -8,5 +8,6 @@ namespace Script.DataDefinition.ScriptableObjects
         public string name;
         [TextArea] public string description;
         public Sprite standingImage;
+        public Sprite portrait;
     }
 }

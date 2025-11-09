@@ -22,7 +22,7 @@ namespace Script.Stage
         private void InitialDiceSettingDescription()
         {
             initialDiceSetDialog.text =
-                $"\n 총 {EventConfig.EventCount}개의 이벤트가 발생할 예정이야! 주사위를 굴려보자!";
+                $"\n 총 {Config.Event.EventCount}개의 이벤트가 발생할 예정이야! 주사위를 굴려보자!";
         }
 
         public void InitialDiceEndDescription()

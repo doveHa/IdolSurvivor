@@ -15,7 +15,7 @@ namespace Script.Stage.Event.TitleStage
 
         public override void EventAction(int diceEye)
         {
-            CharacterSelectManager.Manager.Player.AddVote(diceEye);
+            AllCharacterManager.Manager.Player.AddVote(diceEye);
         }
     }
 }

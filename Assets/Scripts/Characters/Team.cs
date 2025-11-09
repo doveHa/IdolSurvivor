@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using Script.DataDefinition.Data;
 using Script.DataDefinition.Enum;
+using UnityEngine;
 
 namespace Script.Characters
 {
-    public class Teams
+    public class Team
     {
         private static Dictionary<StatType, float> statCoffs;
 
         private CharacterStats leader;
-        private CharacterStats[] team;
+        private List<CharacterStats> team;
+
+        public GameObject teammateSlot;
 
         private TeamColor teamColor;
 
-        public Teams(CharacterStats leader)
+        public Team(CharacterStats leader)
         {
             statCoffs = new Dictionary<StatType, float>();
             statCoffs.Add(StatType.Sing, 1);
@@ -23,8 +26,18 @@ namespace Script.Characters
             statCoffs.Add(StatType.Appearance, 1);
             statCoffs.Add(StatType.Charm, 1);
             this.leader = leader;
-            team = new CharacterStats[Constant.Team.MAX_MEMBER];
-            team[0] = leader;
+            team = new List<CharacterStats>();
+            team.Add(leader);
+        }
+
+        public void AddTeamMate(CharacterStats teammate)
+        {
+            team.Add(teammate);
+        }
+
+        public void SetSlot(GameObject slot)
+        {
+            teammateSlot = slot;
         }
 
         public TeamColor GetTeamColor()
@@ -65,10 +78,20 @@ namespace Script.Characters
 
             foreach (CharacterStats stat in team)
             {
-                totalStat.AddStat(stat);
+                if (stat != null)
+                {
+                    totalStat.AddStat(stat);
+                }
             }
 
             return totalStat;
+        }
+
+        public CharacterStats PredictionAddStat(CharacterStats stat)
+        {
+            CharacterStats tempStat = new CharacterStats(TotalStat());
+            tempStat.AddStat(stat);
+            return tempStat;
         }
 
         public float CalculateTotalPerformance()

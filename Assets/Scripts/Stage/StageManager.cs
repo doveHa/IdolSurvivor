@@ -1,9 +1,11 @@
+using Script.Characters;
 using Script.DataDefinition.ScriptableObjects;
 using Script.Manager;
 using Script.Stage.Event;
 using Script.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Script.Stage
@@ -29,8 +31,8 @@ namespace Script.Stage
             base.Awake();
             isStop = true;
             CurrentStage = ResourceManager.Load<StageData>(Config.Resource.StageData.CurrentStageDataPath());
-            eventTimes = new float[EventConfig.EventCount];
-            EventConfig.EventSetting();
+            eventTimes = new float[Config.Event.EventCount];
+            Config.Event.EventSetting();
         }
 
         void Start()
@@ -73,9 +75,9 @@ namespace Script.Stage
             float width = markerContainer.rect.width;
 
             float leftEdge = -width * markerContainer.pivot.x;
-            for (int i = 0; i < EventConfig.EventCount; i++)
+            for (int i = 0; i < Config.Event.EventCount; i++)
             {
-                float ratio = (float)(i + 1) / (EventConfig.EventCount + 1);
+                float ratio = (float)(i + 1) / (Config.Event.EventCount + 1);
                 float xPos = leftEdge + width * ratio;
 
                 GameObject marker = Instantiate(markerPrefab, markerContainer);
@@ -107,7 +109,25 @@ namespace Script.Stage
         private void End()
         {
             progressBar.GetComponentInChildren<UIAnimationHandler>().EndAnimation();
+            AdjustOtherCharacterResult();
+            AllCharacterManager.Manager.CalculateRank();
+            SceneLoadManager.StageEndScene();
+            Destroy(this);
             // 결과 화면으로 Scene 전환
+        }
+
+        private void AdjustOtherCharacterResult()
+        {
+            if (Config.Resource.StageData.CurrentStage.Equals(Constant.Stage.TITLE_STAGE))
+            {
+                foreach (Character character in AllCharacterManager.Manager.OtherCharacters)
+                {
+                    character.AddVote(Random.Range(5, 15));
+                }
+            }
+            else
+            {
+            }
         }
     }
 }

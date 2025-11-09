@@ -18,3 +18,4 @@ MonoBehaviour:
     \uC2E4\uB825\uC73C\uB85C \uBAA8\uB450\uB97C \uC555\uB3C4\uD568. \uB178\uB825\uD30C\uC784\uC744
     \uC228\uAE40."
   standingImage: {fileID: 557345339600556794, guid: 6267508e609d43040af9bb35d8aa35da, type: 3}
+  portrait: {fileID: 557345339600556794, guid: 025289bd1dc45d84d9ca9b342221777e, type: 3}

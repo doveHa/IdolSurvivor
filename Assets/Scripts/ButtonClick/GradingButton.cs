@@ -55,31 +55,28 @@ namespace Script.ButtonClick
                     break;
             }
 
-            foreach (Character character in AllCharacterManager.Manager.AllCharacters)
+            foreach (Character character in AllCharacterManager.Manager.OtherCharacters)
             {
-                if (character != CharacterSelectManager.Manager.Player)
+                if (gradeA > 0)
                 {
-                    if (gradeA > 0)
-                    {
-                        character.AddVote(Constant.InitialVoteCount.GRADE_A);
-                        gradeA--;
-                    }
-                    else if (gradeB > 0)
-                    {
-                        character.AddVote(Constant.InitialVoteCount.GRADE_B);
-                        gradeB--;
-                    }
-                    else
-                    {
-                        character.AddVote(Constant.InitialVoteCount.GRADE_C);
-                    }
+                    character.AddVote(Constant.InitialVoteCount.GRADE_A);
+                    gradeA--;
+                }
+                else if (gradeB > 0)
+                {
+                    character.AddVote(Constant.InitialVoteCount.GRADE_B);
+                    gradeB--;
+                }
+                else
+                {
+                    character.AddVote(Constant.InitialVoteCount.GRADE_C);
                 }
             }
         }
 
         private void AdjustResult(int initialVoteCount)
         {
-            CharacterSelectManager.Manager.Player.AddVote(initialVoteCount);
+            AllCharacterManager.Manager.Player.AddVote(initialVoteCount);
             foreach (KeyValuePair<int, GameObject> pair in panels)
             {
                 if (pair.Key == initialVoteCount)
