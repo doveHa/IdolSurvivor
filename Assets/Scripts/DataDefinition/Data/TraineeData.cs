@@ -1,3 +1,4 @@
+using Script.Characters;
 using UnityEngine;
 using TMPro;
 using Script.DataDefinition.Enum;
@@ -12,4 +13,15 @@ public struct TraineeData
     public Sprite characterImage;
     public bool isPlayer;
     public StatType position;
+
+    public TraineeData(Character character)
+    {
+        rank = character.Rank;
+        agency = "";
+        traineeName = character.Data.name;
+        votes = character.VoteCount;
+        characterImage = character.Data.standingImage;
+        isPlayer = false;
+        position = StatType.None;
+    }
 }
