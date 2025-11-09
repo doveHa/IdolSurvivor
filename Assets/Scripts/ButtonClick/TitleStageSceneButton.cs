@@ -11,5 +11,5 @@ namespace Script.ButtonClick
             Config.Event.EventCount = 3;
             SceneLoadManager.StageScene();
         }
-    }
+     }
 }

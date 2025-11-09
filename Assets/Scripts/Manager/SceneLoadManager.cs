@@ -24,5 +24,10 @@ namespace Script.Manager
                     break;
             }
         }
+
+        public static void SelectSongScene()
+        {
+            SceneManager.LoadScene(Constant.Scene.SELECT_SONG);
+        }
     }
 }
