@@ -23,6 +23,7 @@ public class AnnouncementManager : MonoBehaviour
     public Image Ranking_charImage;
     public TMPro.TextMeshProUGUI Ranking_charNameText;
     public TextMeshProUGUI Ranking_charRankText;
+    public GameObject NextBtn;
     public GameObject characterPanel;
     public GameObject divisionPanel;
     public GameObject gameOverPanel;
@@ -448,6 +449,7 @@ public class AnnouncementManager : MonoBehaviour
             });
 
             gameOverPanel.SetActive(true); // 게임 오버 패널 활성화 (요청하신 순서)
+            NextBtn.SetActive(false); // 다음 스테이지 버튼 비활성화
         }
         else
         {
@@ -486,6 +488,7 @@ public class AnnouncementManager : MonoBehaviour
         {
             case Constant.Stage.STAGE_ONE:
                 SceneManager.LoadScene("MiniEvent1");
+                
                 break;
             case Constant.Stage.STAGE_TWO:
                 SceneManager.LoadScene("MiniEvent2");

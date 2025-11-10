@@ -182,6 +182,8 @@ public class MinieventManager : MonoBehaviour
         SceneManager.LoadScene("TeamBuildingScene");
         Config.Team.TeamCount = 3; // 4 -> 3
         Config.Team.AllCharacterCount = 9; // 12 -> 9
+        Debug.Log(Config.Team.TeamCount);
+        Debug.Log(Config.Team.AllCharacterCount);
         //MiniEvnet1�� ��ü ���� �÷ο쿡�� �ѹ��� ȣ��ǹǷ� �� �ϵ��ڵ� �߽��ϴ�...
     }
 

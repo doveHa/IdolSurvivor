@@ -1620,6 +1620,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8335698631609814283, guid: 665d8bbd7df08864c9c6271fadfc49ae, type: 3}
   m_PrefabInstance: {fileID: 835469451}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &835469453 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2476776012604968550, guid: 665d8bbd7df08864c9c6271fadfc49ae, type: 3}
+  m_PrefabInstance: {fileID: 835469451}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &922255569
 GameObject:
   m_ObjectHideFlags: 0
@@ -3176,6 +3181,7 @@ MonoBehaviour:
   Ranking_charImage: {fileID: 922255571}
   Ranking_charNameText: {fileID: 74284363}
   Ranking_charRankText: {fileID: 1648874729}
+  NextBtn: {fileID: 835469453}
   characterPanel: {fileID: 1375015530}
   divisionPanel: {fileID: 487520697}
   gameOverPanel: {fileID: 530453026}
