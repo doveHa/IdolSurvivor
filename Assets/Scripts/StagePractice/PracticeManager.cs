@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class PracticeManager : MonoBehaviour
 {
+    public static PracticeManager Instance { get; private set; }
+
     [HideInInspector]
     public string targetStageConstant = Constant.Stage.STAGE_ONE;
 
@@ -13,6 +15,14 @@ public class PracticeManager : MonoBehaviour
     private int secondRoll = 0;
     private int thirdRoll = 0;
     private int totalDiceSum = 0;
+
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
 
     public void Start()
     {
@@ -184,7 +194,7 @@ public class PracticeManager : MonoBehaviour
         if (GMManager.Instance != null)
         {
             GMManager.Instance.StartDialogue(dialogue, () => {
-                Config.Resource.StageData.CurrentStage = targetStageConstant;
+                //Config.Resource.StageData.CurrentStage = targetStageConstant;
                 UnityEngine.SceneManagement.SceneManager.LoadScene("StageScene");
                 });
         }

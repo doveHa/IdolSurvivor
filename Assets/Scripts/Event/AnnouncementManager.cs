@@ -83,6 +83,8 @@ public class AnnouncementManager : MonoBehaviour
 
     private void SetStartingRank()
     {
+        Debug.Log(Config.Resource.StageData.CurrentStage);
+
         // 최저 순위부터 발표하기 위해 순위 인덱스를 설정합니다.
         switch (Config.Resource.StageData.CurrentStage)
         {
@@ -484,16 +486,29 @@ public class AnnouncementManager : MonoBehaviour
 
     public void OnNextStage()
     {
+        if (PracticeManager.Instance == null)
+        {
+            Debug.LogError("PracticeManager instance not found! Cannot set target stage constant.");
+        }
+
         switch (Config.Resource.StageData.CurrentStage)
         {
             case Constant.Stage.STAGE_ONE:
-                SceneManager.LoadScene("MiniEvent1");
                 Config.Team.TeamCount = 3; // 4 -> 3
                 Config.Team.AllCharacterCount = 9; // 12 -> 9
                 Debug.Log(Config.Team.TeamCount);
                 Debug.Log(Config.Team.AllCharacterCount);
+                Config.Resource.StageData.CurrentStage = Constant.Stage.STAGE_TWO;
+                PracticeManager.Instance.targetStageConstant = Constant.Stage.STAGE_TWO;
+                SceneManager.LoadScene("MiniEvent1");
                 break;
             case Constant.Stage.STAGE_TWO:
+                Config.Team.TeamCount = 2;
+                Config.Team.AllCharacterCount = 6;
+                Debug.Log(Config.Team.TeamCount);
+                Debug.Log(Config.Team.AllCharacterCount);
+                Config.Resource.StageData.CurrentStage = Constant.Stage.FINAL_STAGE;
+                PracticeManager.Instance.targetStageConstant = Constant.Stage.FINAL_STAGE;
                 SceneManager.LoadScene("MiniEvent2");
                 break;
             case Constant.Stage.FINAL_STAGE:
