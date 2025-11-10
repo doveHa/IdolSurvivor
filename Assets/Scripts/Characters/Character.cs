@@ -13,13 +13,15 @@ namespace Script.Characters
 
         public int Rank { get; set; }
         public CharacterData Data { get; private set; }
+        public bool IsPlayer { get; private set; }
 
-        public Character(CharacterData data)
+        public Character(CharacterData data, bool isPlayer = false)
         {
             Stat = new CharacterStats();
             VoteCount = 0;
             Rank = 0;
             Data = data;
+            IsPlayer = isPlayer;
         }
 
         public void AddVote(int voteCount)

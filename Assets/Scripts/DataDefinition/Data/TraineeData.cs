@@ -21,7 +21,8 @@ public struct TraineeData
         traineeName = character.Data.name;
         votes = character.VoteCount;
         characterImage = character.Data.standingImage;
-        isPlayer = false;
+        //isPlayer = false;
+        isPlayer = character.IsPlayer;
         position = StatType.None;
     }
 }

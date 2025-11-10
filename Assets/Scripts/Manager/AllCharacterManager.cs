@@ -15,8 +15,12 @@ namespace Script.Manager
         protected override void Awake()
         {
             base.Awake();
+            /*Player = new Character(
+                ResourceManager.Load<CharacterData>(Config.Resource.CharacterData.PlayerCharacterDataPath()));*/
             Player = new Character(
-                ResourceManager.Load<CharacterData>(Config.Resource.CharacterData.PlayerCharacterDataPath()));
+                ResourceManager.Load<CharacterData>(Config.Resource.CharacterData.PlayerCharacterDataPath()),
+                true // isPlayer = true
+            );
             OtherCharacters = new List<Character>();
             Ranks = new List<Character>();
         }
