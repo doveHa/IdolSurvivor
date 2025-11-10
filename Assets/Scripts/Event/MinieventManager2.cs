@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Script.Manager;
 using Script.Characters;
+using Script.TeamBuilding;
 
 public class MinieventManager2 : MonoBehaviour
 {
@@ -151,6 +152,7 @@ public class MinieventManager2 : MonoBehaviour
         Config.Team.TeamCount = 2;
         Config.Team.AllCharacterCount = 6;
 
+        Destroy(TeamBuildingManager.Manager.gameObject);
         // 씬 로드 실행
         SceneManager.LoadScene("TeamBuildingScene");
     }

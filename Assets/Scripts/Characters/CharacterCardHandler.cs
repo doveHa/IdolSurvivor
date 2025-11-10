@@ -27,10 +27,10 @@ namespace Script.Characters
 
         private string StatVoteFormatting(Character character)
         {
-            return $"{character.Stat.Sing}/" +
-                   $"{character.Stat.Dance}/" +
-                   $"{character.Stat.Appearance}/" +
-                   $"{character.Stat.Charm}" +
+            return $"{character.Stat.Sing.Value}/" +
+                   $"{character.Stat.Dance.Value}/" +
+                   $"{character.Stat.Appearance.Value}/" +
+                   $"{character.Stat.Charm.Value}" +
                    $"{character.VoteCount}표 ({character.Rank}위)";
         }
     }
