@@ -488,7 +488,10 @@ public class AnnouncementManager : MonoBehaviour
         {
             case Constant.Stage.STAGE_ONE:
                 SceneManager.LoadScene("MiniEvent1");
-                
+                Config.Team.TeamCount = 3; // 4 -> 3
+                Config.Team.AllCharacterCount = 9; // 12 -> 9
+                Debug.Log(Config.Team.TeamCount);
+                Debug.Log(Config.Team.AllCharacterCount);
                 break;
             case Constant.Stage.STAGE_TWO:
                 SceneManager.LoadScene("MiniEvent2");

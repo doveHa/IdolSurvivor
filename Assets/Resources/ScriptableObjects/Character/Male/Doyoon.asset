@@ -10,9 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16192965b93b4709b633a7c9e17ecd95, type: 3}
-  m_Name: NewCharacter
+  m_Name: Doyoon
   m_EditorClassIdentifier: Assembly-CSharp::Script.DataDefinition.ScriptableObjects.CharacterData
-  name: 
-  description: 
+  name: "\uAE40\uB3C4\uC724"
+  description: "\uBC1D\uACE0 \uAE0D\uC815\uC801\uC778 '\uBE44\uD0C0\uBBFC' \uAC19\uC740
+    \uC131\uACA9. \uB204\uAD6C\uC640\uB3C4 \uC798 \uC9C0\uB0B4\uB294 \uC0AC\uAD50\uC131\uC744
+    \uAC00\uC84C\uC73C\uB098, \uACBD\uC7C1\uC5D0\uB294 \uC57D\uD55C \uD3B8."
   standingImage: {fileID: 0}
   portrait: {fileID: 0}
