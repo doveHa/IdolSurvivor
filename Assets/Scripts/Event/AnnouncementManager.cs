@@ -499,7 +499,6 @@ public class AnnouncementManager : MonoBehaviour
                 Debug.Log(Config.Team.TeamCount);
                 Debug.Log(Config.Team.AllCharacterCount);
                 Config.Resource.StageData.CurrentStage = Constant.Stage.STAGE_TWO;
-                PracticeManager.Instance.targetStageConstant = Constant.Stage.STAGE_TWO;
                 SceneManager.LoadScene("MiniEvent1");
                 break;
             case Constant.Stage.STAGE_TWO:
@@ -508,7 +507,6 @@ public class AnnouncementManager : MonoBehaviour
                 Debug.Log(Config.Team.TeamCount);
                 Debug.Log(Config.Team.AllCharacterCount);
                 Config.Resource.StageData.CurrentStage = Constant.Stage.FINAL_STAGE;
-                PracticeManager.Instance.targetStageConstant = Constant.Stage.FINAL_STAGE;
                 SceneManager.LoadScene("MiniEvent2");
                 break;
             case Constant.Stage.FINAL_STAGE:

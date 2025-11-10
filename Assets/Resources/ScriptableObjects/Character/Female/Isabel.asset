@@ -17,5 +17,5 @@ MonoBehaviour:
     \uD48D\uBD80\uD568. \uAC00\uB054 \uD1B5\uC81C \uBD88\uAC00\uB2A5\uD560 \uC815\uB3C4\uB85C
     \uC989\uD765\uC801\uC778 \uD589\uB3D9\uC744 \uD558\uC9C0\uB9CC \uBBF8\uC6CC\uD560
     \uC218 \uC5C6\uB294 \uB9E4\uB825."
-  standingImage: {fileID: -166966734, guid: 323e8b201bfa0124b9e0f7fa56d03ad3, type: 3}
-  portrait: {fileID: 4300864846566260561, guid: f902ef37127d6554daff1f0b2f2a3f42, type: 3}
+  standingImage: {fileID: -6308083328039672284, guid: 7bb64fdc04c858d4bb1fd191341a3174, type: 3}
+  portrait: {fileID: -1374705359, guid: 7bb64fdc04c858d4bb1fd191341a3174, type: 3}

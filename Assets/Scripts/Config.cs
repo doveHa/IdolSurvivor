@@ -23,6 +23,11 @@ namespace Script
                 {
                     return $"ScriptableObjects/Player/{Gender}/Player";
                 }
+
+                public static string PlayerCharacterUpperBodyPath()
+                {
+                    return $"ScriptableObjects/Player/{Gender}/UpperBody";
+                }
             }
 
             public static class StageData
@@ -62,10 +67,24 @@ namespace Script
                         events.Add(new MinusVoteEvent().Initialize());
                         break;
                     case Constant.Stage.STAGE_TWO:
-                        
+                        events.Add(new DuetSingEvent().Initialize());
+                        events.Add(new FindCameraEvent().Initialize());
+                        events.Add(new SingStatPlusMinus().Initialize());
+                        events.Add(new SoundDelayEvent().Initialize());
+                        events.Add(new SpotLightPoseEvent().Initialize());
+                        events.Add(new StageErrorEvent().Initialize());
+                        events.Add(new PlusVoteEvent().Initialize());
+                        events.Add(new MinusVoteEvent().Initialize());
                         break;
                     case Constant.Stage.FINAL_STAGE:
-                        
+                        events.Add(new DuetSingEvent().Initialize());
+                        events.Add(new FindCameraEvent().Initialize());
+                        events.Add(new SingStatPlusMinus().Initialize());
+                        events.Add(new SoundDelayEvent().Initialize());
+                        events.Add(new SpotLightPoseEvent().Initialize());
+                        events.Add(new StageErrorEvent().Initialize());
+                        events.Add(new PlusVoteEvent().Initialize());
+                        events.Add(new MinusVoteEvent().Initialize());
                         break;
                 }
             }
