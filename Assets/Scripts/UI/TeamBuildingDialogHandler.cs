@@ -19,22 +19,7 @@ namespace UI
 
         void Start()
         {
-            string text = string.Empty;
-            Debug.Log(Config.Resource.StageData.CurrentStage);
-            switch (Config.Resource.StageData.CurrentStage)
-            {
-                case Constant.Stage.STAGE_ONE:
-                    text = "1차 공연 전 팀빌딩";
-                    break;
-                case Constant.Stage.STAGE_TWO:
-                    text = "2차 공연 전 팀빌딩";
-                    break;
-                case Constant.Stage.FINAL_STAGE:
-                    text = "최종 공연 전 팀빌딩";
-                    break;
-            }
-
-            titleText.text = text;
+            titleText.text = "팀빌딩";
         }
     }
 }
