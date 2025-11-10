@@ -5,6 +5,8 @@ using Script.Manager;
 using Script.UI.DragDrop;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 namespace Script.TeamBuilding
 {
@@ -27,14 +29,24 @@ namespace Script.TeamBuilding
         protected override void Awake()
         {
             base.Awake();
-            teams = new Team[Config.Team.TeamCount];
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
-        void Start()
+        private void OnDestroy()
         {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (scene.name != Constant.Scene.TEAM_BUILDING) return;
+
             int leaderIndex = 0;
+            teams = new Team[Config.Team.TeamCount];
+
             PlayerTeam = new Team(AllCharacterManager.Manager.Player);
             teams[leaderIndex++] = PlayerTeam;
+
             Destroy(AddCard(AllCharacterManager.Manager.Player, leaderObject).GetComponent<DraggableObject>());
             remainCards = new List<GameObject>();
 
@@ -43,9 +55,7 @@ namespace Script.TeamBuilding
                 Character character = AllCharacterManager.Manager.Ranks[index];
 
                 if (character == AllCharacterManager.Manager.Player)
-                {
                     continue;
-                }
 
                 if (leaderIndex < Config.Team.TeamCount)
                 {
@@ -106,6 +116,18 @@ namespace Script.TeamBuilding
             else
             {
                 teamColorText.text = "";
+            }
+        }
+
+        public void AdjustResult()
+        {
+            foreach (Team team in teams)
+            {
+                float performance = team.CalculateTotalPerformance();
+                foreach (Character character in team.Teams)
+                {
+                    character.AddVote(Mathf.RoundToInt(character.VoteRatio * performance));
+                }
             }
         }
 

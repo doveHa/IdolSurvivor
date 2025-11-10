@@ -1,52 +1,57 @@
-using Script; // DiceRoller ³×ÀÓ½ºÆäÀÌ½º
+using Script; // DiceRoller ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½
 using Script.DataDefinition.Enum;
 using Script.Manager;
 using System;
 using System.Linq;
-using TMPro; // TMPro ³×ÀÓ½ºÆäÀÌ½º
+using TMPro; // TMPro ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½
 using UnityEngine;
 using UnityEngine.UI;
 using Script.Characters;
+using Script.TeamBuilding;
 using UnityEngine.SceneManagement;
 
 public class MinieventManager : MonoBehaviour
 {
-    public enum EventType { PR_1Min, Practice, StreetPerformance, Entertainment }
+    public enum EventType
+    {
+        PR_1Min,
+        Practice,
+        StreetPerformance,
+        Entertainment
+    }
 
-    [Header("Event Settings")]
-    public EventType currentEvent = EventType.PR_1Min;
+    [Header("Event Settings")] public EventType currentEvent = EventType.PR_1Min;
 
-    [Header("Street Performance UI")]
-    public GameObject statSelectionPanel; // Inspector¿¡¼­ ÇÒ´ç ÇÊ¿ä
+    [Header("Street Performance UI")] public GameObject statSelectionPanel; // Inspectorï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ ï¿½Ê¿ï¿½
 
     public StatButton[] statButtons;
 
-    // ±¼¸² »óÅÂ °ü¸® ÇÊµå
-    private int[] currentRolls;       // ÇöÀç ÀÌº¥Æ®ÀÇ ¸ðµç ÁÖ»çÀ§ °á°ú¸¦ ÀúÀå
-    private int requiredRolls = 0;    // ÇÊ¿äÇÑ ÃÑ ±¼¸² È½¼ö
-    private int currentRollIndex = 0; // ÇöÀç ±¼¸² È½¼ö ÀÎµ¦½º
-    private Action<int[]> onRollsCompleteCallback; // ¸ðµç ±¼¸² ¿Ï·á ÈÄ ½ÇÇàµÉ ÄÝ¹é
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½
+    private int[] currentRolls; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ö»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    private int requiredRolls = 0; // ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È½ï¿½ï¿½
+    private int currentRollIndex = 0; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½
+    private Action<int[]> onRollsCompleteCallback; // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¹ï¿½
 
-    // ÀÌº¥Æ® °á°ú ÇÊµå
+    // ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ ï¿½Êµï¿½
     private int firstRoll = 0;
     private int finalVotesResult = 0;
     private int practicePoints = 0;
     private StatType selectedStatForStreet;
 
-    // ±æ°Å¸® °ø¿¬ ½ºÅÈ º¯È­·® »ó¼ö
+    // ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½
     private const float StreetSuccessMultiplier = 3.0f;
-    private const float StreetFailureReduction = 0.20f; // 20% °¨¼Ò
+    private const float StreetFailureReduction = 0.20f; // 20% ï¿½ï¿½ï¿½ï¿½
 
     void Start()
     {
         currentEvent = GetRandomEventType();
-        Debug.Log($"¼±ÅÃµÈ ÀÌº¥Æ®: {currentEvent}");
+        Debug.Log($"ï¿½ï¿½ï¿½Ãµï¿½ ï¿½Ìºï¿½Æ®: {currentEvent}");
         StartCurrentEvent();
     }
 
     private void StartCurrentEvent()
     {
-        // StartCurrentEvent°¡ È£ÃâµÉ ¶§¸¶´Ù ÇØ´ç ÀÌº¥Æ®°¡ ½ÃÀÛµÇµµ·Ï Ã³¸®
+        // StartCurrentEventï¿½ï¿½ È£ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ÛµÇµï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
         switch (currentEvent)
         {
             case EventType.PR_1Min:
@@ -66,17 +71,17 @@ public class MinieventManager : MonoBehaviour
 
     private string GetKoreanStatName(StatType type)
     {
-        // ¸ðµç StatType¿¡ ´ëÇØ ÇÊ¿äÇÑ ¹ø¿ªÀ» Ãß°¡ÇÏ¼¼¿ä.
+        // ï¿½ï¿½ï¿½ StatTypeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.
         switch (type)
         {
             case StatType.Sing:
-                return "³ë·¡";
+                return "ï¿½ë·¡";
             case StatType.Dance:
-                return "Ãã";
+                return "ï¿½ï¿½";
             case StatType.Charm:
-                return "¸Å·Â";
+                return "ï¿½Å·ï¿½";
             case StatType.Appearance:
-                return "¿Ü¸ð";
+                return "ï¿½Ü¸ï¿½";
             default:
                 return type.ToString();
         }
@@ -88,7 +93,7 @@ public class MinieventManager : MonoBehaviour
 
         if (allEvents.Length == 0)
         {
-            Debug.LogError("EventType Enum¿¡ Á¤ÀÇµÈ ÀÌº¥Æ®°¡ ¾ø½À´Ï´Ù. PR_1MinÀ» ±âº»°ªÀ¸·Î ¹ÝÈ¯ÇÕ´Ï´Ù.");
+            Debug.LogError("EventType Enumï¿½ï¿½ ï¿½ï¿½ï¿½Çµï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. PR_1Minï¿½ï¿½ ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Õ´Ï´ï¿½.");
             return EventType.PR_1Min;
         }
 
@@ -98,11 +103,11 @@ public class MinieventManager : MonoBehaviour
     }
 
     // =================================================================
-    // ¹ü¿ë ¸ÖÆ¼ ·Ñ ½Ã½ºÅÛ (È¿À²È­ÀÇ ÇÙ½É)
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½ (È¿ï¿½ï¿½È­ï¿½ï¿½ ï¿½Ù½ï¿½)
     // =================================================================
 
     /// <summary>
-    /// N¹øÀÇ ÁÖ»çÀ§¸¦ ±¼¸®°í °á°ú¸¦ ¹è¿­¿¡ ÀúÀåÇÑ ÈÄ, ÃÖÁ¾ ÄÝ¹éÀ» ½ÇÇàÇÏ´Â ¹ü¿ë ÇÔ¼öÀÔ´Ï´Ù.
+    /// Nï¿½ï¿½ï¿½ï¿½ ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½Ô´Ï´ï¿½.
     /// </summary>
     private void StartMultiRoll(int numRolls, Action<int[]> finalCallback)
     {
@@ -111,7 +116,7 @@ public class MinieventManager : MonoBehaviour
         currentRolls = new int[numRolls];
         onRollsCompleteCallback = finalCallback;
 
-        // Ã¹ ¹øÂ° ±¼¸²À» ½ÃÀÛÇÏµµ·Ï UI ¼³Á¤ ¹× ¸®½º³Ê ¿¬°á
+        // Ã¹ ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ UI ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         ShowDiceAndSetRollListener();
         DiceRoller.Instance.rollButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = $"Roll (1/{numRolls})";
         DiceRoller.Instance.rollButton.interactable = true;
@@ -127,7 +132,7 @@ public class MinieventManager : MonoBehaviour
             rollBtn.onClick.RemoveAllListeners();
             rollBtn.onClick.AddListener(() =>
             {
-                // ±¼¸²ÀÌ ³¡³­ ÈÄ NextDiceOrFinalize¸¦ È£ÃâÇÏµµ·Ï ¿äÃ»
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ NextDiceOrFinalizeï¿½ï¿½ È£ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½Ã»
                 DiceRoller.Instance.RollDiceWithCallback(NextDiceOrFinalize);
                 rollBtn.interactable = false;
             });
@@ -141,15 +146,15 @@ public class MinieventManager : MonoBehaviour
 
         if (currentRollIndex < requiredRolls)
         {
-            // ±¼¸± ÁÖ»çÀ§°¡ ³²Àº °æ¿ì: ´ÙÀ½ ±¼¸² ÁØºñ (Next ¹öÆ°À¸·Î ÀüÈ¯)
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½ (Next ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯)
             DiceRoller.Instance.resultText.text =
-                $"±¼¸² #{currentRollIndex} °á°ú: {rollResult}!\n´ÙÀ½ ±¼¸²À» ÁØºñÇÏ¼¼¿ä.";
+                $"ï¿½ï¿½ï¿½ï¿½ #{currentRollIndex} ï¿½ï¿½ï¿½: {rollResult}!\nï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.";
 
-            DiceRoller.Instance.SetRollCompletedUI(); // Roll -> Next ¹öÆ° ÀüÈ¯
+            DiceRoller.Instance.SetRollCompletedUI(); // Roll -> Next ï¿½ï¿½Æ° ï¿½ï¿½È¯
 
             DiceRoller.Instance.onNextAction = () =>
             {
-                // Next ¹öÆ° Å¬¸¯ ½Ã ´ÙÀ½ ÁÖ»çÀ§ ±¼¸² ¹öÆ° ÅØ½ºÆ® ¼³Á¤ ¹× ¸®½º³Ê ÀçÇÒ´ç
+                // Next ï¿½ï¿½Æ° Å¬ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ° ï¿½Ø½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ò´ï¿½
                 ShowDiceAndSetRollListener();
                 DiceRoller.Instance.rollButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text =
                     $"Roll ({currentRollIndex + 1}/{requiredRolls})";
@@ -157,15 +162,15 @@ public class MinieventManager : MonoBehaviour
         }
         else
         {
-            // ¸ðµç ±¼¸² ¿Ï·á: ÃÖÁ¾ Ã³¸® ½ÃÀÛ
-            DiceRoller.Instance.resultText.text = $"¸ðµç ±¼¸² ¿Ï·á! ÃÖÁ¾ °á°ú¸¦ È®ÀÎÇÏ¼¼¿ä.";
-            DiceRoller.Instance.SetRollCompletedUI(); // Roll -> Next ¹öÆ° ÀüÈ¯
+            // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½: ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            DiceRoller.Instance.resultText.text = $"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½! ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.";
+            DiceRoller.Instance.SetRollCompletedUI(); // Roll -> Next ï¿½ï¿½Æ° ï¿½ï¿½È¯
 
-            // Next ¹öÆ°¿¡ ÃÖÁ¾ Ã³¸® ÄÝ¹é ¿¬°á
+            // Next ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½Ý¹ï¿½ ï¿½ï¿½ï¿½ï¿½
             DiceRoller.Instance.onNextAction = () =>
             {
                 //DiceRoller.Instance.HideDicePanel();
-                //onRollsCompleteCallback.Invoke(currentRolls); // ÃÖÁ¾ Ã³¸® ÇÔ¼ö¿¡ °á°ú ¹è¿­ Àü´Þ
+                //onRollsCompleteCallback.Invoke(currentRolls); // ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½è¿­ ï¿½ï¿½ï¿½ï¿½
                 onRollsCompleteCallback.Invoke(currentRolls);
             };
         }
@@ -173,23 +178,24 @@ public class MinieventManager : MonoBehaviour
 
     private void NextScene()
     {
+        Destroy(TeamBuildingManager.Manager.gameObject);
         SceneManager.LoadScene("TeamBuildingScene");
         Config.Team.TeamCount = 3; // 4 -> 3
         Config.Team.AllCharacterCount = 9; // 12 -> 9
-        //MiniEvnet1Àº ÀüÃ¼ °ÔÀÓ ÇÃ·Î¿ì¿¡¼­ ÇÑ¹ø¸¸ È£ÃâµÇ¹Ç·Î °Á ÇÏµåÄÚµù Çß½À´Ï´Ù...
+        //MiniEvnet1ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·Î¿ì¿¡ï¿½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ È£ï¿½ï¿½Ç¹Ç·ï¿½ ï¿½ï¿½ ï¿½Ïµï¿½ï¿½Úµï¿½ ï¿½ß½ï¿½ï¿½Ï´ï¿½...
     }
 
 
     // =================================================================
-    // 1ºÐ PR ÀÌº¥Æ® (Roll 2È¸)
+    // 1ï¿½ï¿½ PR ï¿½Ìºï¿½Æ® (Roll 2È¸)
     // =================================================================
 
     private void StartOneMinPR()
     {
-        string[] dialogue = { "¹Ì´Ï ÀÌº¥Æ® '1ºÐ PR'¿¡ ¿À½Å °ÍÀ» È¯¿µÇÕ´Ï´Ù!", "ÁÖ»çÀ§¸¦ µÎ ¹ø ±¼·Á µæÇ¥¼ö¸¦ °áÁ¤ÇÕ´Ï´Ù." };
+        string[] dialogue = { "ï¿½Ì´ï¿½ ï¿½Ìºï¿½Æ® '1ï¿½ï¿½ PR'ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¯ï¿½ï¿½ï¿½Õ´Ï´ï¿½!", "ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½." };
         if (GMManager.Instance != null)
         {
-            // StartMultiRollÀ» »ç¿ëÇÏ¿© RollFirstPRDice, RollSecondPRDice ÇÔ¼ö¸¦ Á¦°ÅÇÔ
+            // StartMultiRollï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ RollFirstPRDice, RollSecondPRDice ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             GMManager.Instance.StartDialogue(dialogue,
                 () => StartMultiRoll(2, ProcessFinalPRResult));
         }
@@ -202,7 +208,7 @@ public class MinieventManager : MonoBehaviour
         int finalVotes = 0;
         string formula = "";
 
-        // µæÇ¥¼ö °è»ê ·ÎÁ÷
+        // ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (firstRoll <= 3 && secondRoll <= 3)
         {
             finalVotes = (int)Mathf.Pow(firstRoll, secondRoll);
@@ -226,7 +232,7 @@ public class MinieventManager : MonoBehaviour
 
         finalVotesResult = finalVotes;
 
-        // µæÇ¥¼ö Àû¿ë ¿©±â¿¡
+        // ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¿¡
         AllCharacterManager.Manager.Player.AddVote(finalVotesResult);
 
         FinalPRDialogue();
@@ -234,7 +240,7 @@ public class MinieventManager : MonoBehaviour
 
     private void FinalPRDialogue()
     {
-        string[] dialogue = { $"1ºÐ PRÀÌ ³¡³µ½À´Ï´Ù. µæÇ¥¼ö {finalVotesResult}Ç¥¸¦ È¹µæÇÏ¿´½À´Ï´Ù.", "´ÙÀ½ ÀÌº¥Æ®·Î ÀÌµ¿ÇÕ´Ï´Ù." };
+        string[] dialogue = { $"1ï¿½ï¿½ PRï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½Ç¥ï¿½ï¿½ {finalVotesResult}Ç¥ï¿½ï¿½ È¹ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.", "ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Õ´Ï´ï¿½." };
         if (GMManager.Instance != null)
         {
             GMManager.Instance.StartDialogue(dialogue, () => NextScene());
@@ -243,12 +249,12 @@ public class MinieventManager : MonoBehaviour
 
 
     // =================================================================
-    // ¿¬½À ÀÌº¥Æ® (Roll 2È¸ -> Stat ºÐ¹è)
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® (Roll 2È¸ -> Stat ï¿½Ð¹ï¿½)
     // =================================================================
 
     private void StartPractice()
     {
-        string[] dialogue = { "¿¬½À ÀÌº¥Æ®¸¦ ½ÃÀÛÇÕ´Ï´Ù. ÁÖ»çÀ§ ÇÕ¸¸Å­ ½ºÅÈ Æ÷ÀÎÆ®¸¦ ¾ò°í ºÐ¹èÇÕ´Ï´Ù." };
+        string[] dialogue = { "ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½. ï¿½Ö»ï¿½ï¿½ï¿½ ï¿½Õ¸ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ð¹ï¿½ï¿½Õ´Ï´ï¿½." };
         if (GMManager.Instance != null)
         {
             GMManager.Instance.StartDialogue(dialogue,
@@ -260,7 +266,7 @@ public class MinieventManager : MonoBehaviour
     {
         practicePoints = rolls[0] + rolls[1];
 
-        // Next ¹öÆ°À» ´©¸£¸é StatAllocationManager È£Ãâ
+        // Next ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ StatAllocationManager È£ï¿½ï¿½
         StartPracticeAllocation();
     }
 
@@ -270,19 +276,20 @@ public class MinieventManager : MonoBehaviour
 
         if (StatAllocationManager.Instance != null)
         {
-            // ºÐ¹è°¡ ³¡³­ ÈÄ FinalPracticeDialogue ÇÔ¼ö¸¦ ½ÇÇàÇÏµµ·Ï ÄÝ¹é Àü´Þ
+            // ï¿½Ð¹è°¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ FinalPracticeDialogue ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½Ý¹ï¿½ ï¿½ï¿½ï¿½ï¿½
             StatAllocationManager.Instance.StartAllocation(practicePoints, FinalPracticeDialogue);
         }
         else
         {
-            Debug.LogError("StatAllocationManager ÀÎ½ºÅÏ½º¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù! ÃÖÁ¾ ´ëÈ­·Î ¹Ù·Î ÀÌµ¿ÇÕ´Ï´Ù.");
+            Debug.LogError("StatAllocationManager ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½! ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½ ï¿½Ù·ï¿½ ï¿½Ìµï¿½ï¿½Õ´Ï´ï¿½.");
             FinalPracticeDialogue();
         }
     }
 
     private void FinalPracticeDialogue()
     {
-        string[] dialogue = { $"¿¬½ÀÀÌ ³¡³µ½À´Ï´Ù. ÃÑ {practicePoints} Æ÷ÀÎÆ®¸¦ ½ºÅÈ¿¡ ºÐ¹èÇß½À´Ï´Ù.", "´ÙÀ½ ÀÌº¥Æ®·Î ÀÌµ¿ÇÕ´Ï´Ù." };
+        string[] dialogue =
+            { $"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ {practicePoints} ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½È¿ï¿½ ï¿½Ð¹ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.", "ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Õ´Ï´ï¿½." };
         if (GMManager.Instance != null)
         {
             GMManager.Instance.StartDialogue(dialogue, () => NextScene());
@@ -291,17 +298,20 @@ public class MinieventManager : MonoBehaviour
 
 
     // =================================================================
-    // ±æ°Å¸® °ø¿¬ ÀÌº¥Æ® (½ºÅÈ ¼±ÅÃ ¹× Roll 1È¸)
+    // ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Roll 1È¸)
     // =================================================================
 
     private void StartStreetPerformance()
     {
-        string[] dialogue = { "ÇÁ·Î±×·¥À» È«º¸ÇÏ±â À§ÇØ ±æ°Å¸® °ø¿¬ ÀÌº¥Æ®¸¦ ÁøÇàÇÕ´Ï´Ù!",
-            "¾î¶² Æ÷Áö¼ÇÀ¸·Î ±æ°Å¸® °ø¿¬ ÀÌº¥Æ®¿¡ ³ª°¡½Ã°Ú½À´Ï±î?"};
-        
+        string[] dialogue =
+        {
+            "ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ È«ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½!",
+            "ï¿½î¶² ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã°Ú½ï¿½ï¿½Ï±ï¿½?"
+        };
+
         if (GMManager.Instance != null)
         {
-            // ´ëÈ­°¡ ³¡³­ ÈÄ ½ºÅÈ ¼±ÅÃ UI È°¼ºÈ­
+            // ï¿½ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ UI È°ï¿½ï¿½È­
             GMManager.Instance.StartDialogue(dialogue, ShowStatSelectionUI);
         }
     }
@@ -310,7 +320,7 @@ public class MinieventManager : MonoBehaviour
     {
         if (statSelectionPanel != null)
         {
-            // ½ºÅÈ ¼±ÅÃ ÆÐ³ÎÀ» È°¼ºÈ­ÇÏ°í GM ÆÐ³ÎÀ» ´Ý½À´Ï´Ù.
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð³ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­ï¿½Ï°ï¿½ GM ï¿½Ð³ï¿½ï¿½ï¿½ ï¿½Ý½ï¿½ï¿½Ï´ï¿½.
             statSelectionPanel.SetActive(true);
             if (GMManager.Instance != null)
             {
@@ -329,10 +339,10 @@ public class MinieventManager : MonoBehaviour
             {
                 Button btn = statBtn.GetComponent<Button>();
 
-                // ±âÁ¸ ¸®½º³Ê Á¦°Å (ÇÊ¼ö)
+                // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ê¼ï¿½)
                 btn.onClick.RemoveAllListeners();
 
-                // AddListener¸¦ »ç¿ëÇØ ¶÷´Ù ÇÔ¼ö·Î µ¿Àû ¿¬°á
+                // AddListenerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 btn.onClick.AddListener(() => OnStatSelectedByCode(statBtn.statType));
             }
         }
@@ -340,20 +350,20 @@ public class MinieventManager : MonoBehaviour
 
     public void OnStatSelectedByCode(StatType type)
     {
-        // 2. ¼±ÅÃµÈ ½ºÅÈ ÀúÀå
+        // 2. ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         selectedStatForStreet = type;
 
         if (GMManager.Instance != null)
         {
             string translatedStat = GetKoreanStatName(type);
 
-            // 3. GM ÆÐ³Î¿¡ È®ÀÎ ¸Þ½ÃÁö Ç¥½Ã
+            // 3. GM ï¿½Ð³Î¿ï¿½ È®ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
             GMManager.Instance.gmText.text =
-                $"{translatedStat} ½ºÅÈÀ» ¼±ÅÃÇÏ½Ã°Ú½À´Ï±î?\n" +
-                "(¼º°ø ½Ã ½ºÅÈ Áõ°¡, ½ÇÆÐ ½Ã ½ºÅÈ °¨¼Ò)";
+                $"{translatedStat} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï½Ã°Ú½ï¿½ï¿½Ï±ï¿½?\n" +
+                "(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)";
             GMManager.Instance.gmPanel.SetActive(true);
 
-            // 4. Next ¹öÆ°¿¡ ÁÖ»çÀ§ ±¼¸² ½ÃÀÛ ÇÔ¼ö ¿¬°á
+            // 4. Next ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½Ö»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½
             GMManager.Instance.NextBtn.onClick.RemoveAllListeners();
             GMManager.Instance.NextBtn.onClick.AddListener(RollStreetPerformanceDice);
         }
@@ -362,7 +372,7 @@ public class MinieventManager : MonoBehaviour
 
     private void RollStreetPerformanceDice()
     {
-        // 1. ½ºÅÈ ¼±ÅÃ UI ¹× GM È®ÀÎ ÆÐ³Î ºñÈ°¼ºÈ­
+        // 1. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ UI ï¿½ï¿½ GM È®ï¿½ï¿½ ï¿½Ð³ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
         if (statSelectionPanel != null)
             statSelectionPanel.SetActive(false);
         if (GMManager.Instance != null)
@@ -370,22 +380,22 @@ public class MinieventManager : MonoBehaviour
 
         if (DiceRoller.Instance != null)
         {
-            // 2. ÁÖ»çÀ§ ÆÐ³Î ¿­±â
+            // 2. ï¿½Ö»ï¿½ï¿½ï¿½ ï¿½Ð³ï¿½ ï¿½ï¿½ï¿½ï¿½
             DiceRoller.Instance.ShowDicePanel();
 
             Button rollBtn = DiceRoller.Instance.rollButton;
             if (rollBtn != null)
             {
-                // 3. Roll ¹öÆ° ¸®½º³Ê ¼³Á¤: ±¼¸² ¿Ï·á ÈÄ ProcessStreetResult ½ÇÇà
+                // 3. Roll ï¿½ï¿½Æ° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½ ProcessStreetResult ï¿½ï¿½ï¿½ï¿½
                 rollBtn.onClick.RemoveAllListeners();
                 rollBtn.onClick.AddListener(() =>
                 {
-                    // ¼öÁ¦ ±¸Çö ÇÙ½É: RollDiceWithCallback¿¡ ProcessStreetResult ¿¬°á
+                    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½: RollDiceWithCallbackï¿½ï¿½ ProcessStreetResult ï¿½ï¿½ï¿½ï¿½
                     DiceRoller.Instance.RollDiceWithCallback(ProcessStreetResultManual);
                     rollBtn.interactable = false;
                 });
 
-                // UI ÅØ½ºÆ® ¼³Á¤
+                // UI ï¿½Ø½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
                 rollBtn.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Roll";
                 rollBtn.interactable = true;
             }
@@ -394,26 +404,27 @@ public class MinieventManager : MonoBehaviour
 
     private void ProcessStreetResultManual(int roll)
     {
-        // ProcessStreetResult ·ÎÁ÷À» Á÷Á¢ ½ÇÇàÇÕ´Ï´Ù.
+        // ProcessStreetResult ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
         string translatedStat = GetKoreanStatName(selectedStatForStreet);
 
-        // 1. ½ºÅÈ °ª °¡Á®¿À±â (ÀÓ½Ã)
+        // 1. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½Ó½ï¿½)
         int baseValue = GetPlayerStatValue(selectedStatForStreet);
 
         DiceCheckResult check = JudgeStreetRoll(roll);
         string resultMessage;
         int change = 0;
 
-        // 2. ¼º°ø/½ÇÆÐ ÆÇÁ¤ ¹× ½ºÅÈ º¯°æ °è»ê
+        // 2. ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         if (check == DiceCheckResult.Success)
         {
-            change = (int)(baseValue * StreetSuccessMultiplier) - baseValue; // ¼ø¼ö Áõ°¡·® °è»ê (¿¹: 10 -> 30, change = 20)
+            change = (int)(baseValue * StreetSuccessMultiplier) -
+                     baseValue; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½: 10 -> 30, change = 20)
 
             resultMessage =
-                $"[±¼¸²: {roll}] ¼º°ø!\n" +
-                $"{translatedStat} ½ºÅÈÀÌ {StreetSuccessMultiplier}¹è Áõ°¡ÇÏ¿© ÃÑ {baseValue + change}°¡ µÇ¾ú½À´Ï´Ù! (+{change})";
+                $"[ï¿½ï¿½ï¿½ï¿½: {roll}] ï¿½ï¿½ï¿½ï¿½!\n" +
+                $"{translatedStat} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ {StreetSuccessMultiplier}ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ {baseValue + change}ï¿½ï¿½ ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½! (+{change})";
 
-            // ½ºÅÈ Áõ°¡
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             ApplyStatChange(selectedStatForStreet, change);
         }
         else
@@ -422,26 +433,26 @@ public class MinieventManager : MonoBehaviour
             change = -reductionAmount;
 
             resultMessage =
-                $"[±¼¸²: {roll}] ½ÇÆÐ!\n" +
-                $"½ºÅÈÀÌ 20% °¨¼ÒÇÏ¿© {reductionAmount}¸¸Å­ ÁÙ¾îµé¾ú½À´Ï´Ù.";
+                $"[ï¿½ï¿½ï¿½ï¿½: {roll}] ï¿½ï¿½ï¿½ï¿½!\n" +
+                $"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 20% ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ {reductionAmount}ï¿½ï¿½Å­ ï¿½Ù¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.";
 
             ApplyStatChange(selectedStatForStreet, change);
         }
 
-        // 3. UI ¾÷µ¥ÀÌÆ® ¹× Next ¹öÆ° ¼³Á¤
+        // 3. UI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ Next ï¿½ï¿½Æ° ï¿½ï¿½ï¿½ï¿½
         if (DiceRoller.Instance != null)
         {
             DiceRoller.Instance.resultText.text = resultMessage;
             DiceRoller.Instance.SetRollCompletedUI();
 
-            // 4. Next ¹öÆ° Å¬¸¯ ½Ã FinalStreetDialogue ½ÇÇà
+            // 4. Next ï¿½ï¿½Æ° Å¬ï¿½ï¿½ ï¿½ï¿½ FinalStreetDialogue ï¿½ï¿½ï¿½ï¿½
             DiceRoller.Instance.onNextAction = FinalStreetDialogue;
         }
     }
 
     private void FinalStreetDialogue()
     {
-        Debug.Log("FinalStreetDialogue È£ÃâµÊ");
+        Debug.Log("FinalStreetDialogue È£ï¿½ï¿½ï¿½");
 
         if (DiceRoller.Instance != null)
         {
@@ -450,8 +461,8 @@ public class MinieventManager : MonoBehaviour
 
         string[] dialogue = new string[]
         {
-            "±æ°Å¸® °ø¿¬ ÀÌº¥Æ®°¡ ³¡³µ½À´Ï´Ù.",
-            "´ÙÀ½ ÀÌº¥Æ®·Î ÀÌµ¿ÇÕ´Ï´Ù."
+            "ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.",
+            "ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Õ´Ï´ï¿½."
         };
 
         if (GMManager.Instance != null)
@@ -462,12 +473,12 @@ public class MinieventManager : MonoBehaviour
 
     private void FinalActionOfStreetEvent()
     {
-        Debug.Log("±æ°Å¸® °ø¿¬ ÀÌº¥Æ® Á¾·á");
+        Debug.Log("ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½");
         NextScene();
-        // ¿©±â¿¡ ¾À ÀüÈ¯ ¶Ç´Â ´ÙÀ½ ÀÌº¥Æ® ½ÃÀÛ ·ÎÁ÷À» ³Ö½À´Ï´Ù.
+        // ï¿½ï¿½ï¿½â¿¡ ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.
     }
 
-    // ±æ°Å¸® °ø¿¬ ÆÇÁ¤ ·ÎÁ÷ (1~3: ½ÇÆÐ, 4~6: ¼º°ø)
+    // ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (1~3: ï¿½ï¿½ï¿½ï¿½, 4~6: ï¿½ï¿½ï¿½ï¿½)
     private DiceCheckResult JudgeStreetRoll(int roll)
     {
         if (roll >= 4) return DiceCheckResult.Success;
@@ -480,18 +491,18 @@ public class MinieventManager : MonoBehaviour
         int guaranteedVotes = 21;
         string[] dialogue = new string[]
         {
-            "PPL ¿¹´É ÄÚ³Ê¿¡¼­ È°¾àÇß½À´Ï´Ù.",
-            $"µæÇ¥¼ö {guaranteedVotes}Ç¥¸¦ ¾ò¾ú½À´Ï´Ù.\n´ÙÀ½ ´Ü°è·Î ÀÌµ¿ÇÕ´Ï´Ù."
+            "PPL ï¿½ï¿½ï¿½ï¿½ ï¿½Ú³Ê¿ï¿½ï¿½ï¿½ È°ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.",
+            $"ï¿½ï¿½Ç¥ï¿½ï¿½ {guaranteedVotes}Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.\nï¿½ï¿½ï¿½ï¿½ ï¿½Ü°ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Õ´Ï´ï¿½."
         };
 
         if (GMManager.Instance != null)
         {
             GMManager.Instance.StartDialogue(dialogue, () =>
             {
-                // µæÇ¥¼ö Ãß°¡
+                // ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ß°ï¿½
                 AllCharacterManager.Manager.Player.AddVote(guaranteedVotes);
                 NextScene();
-                Debug.Log("¿¹´É ÀÌº¥Æ® ³¡. ´ÙÀ½ ¾ÀÀ¸·Î ÀüÈ¯");
+                Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯");
             });
         }
     }
@@ -509,7 +520,8 @@ public class MinieventManager : MonoBehaviour
                 case StatType.Appearance: return playerStats.Appearance.Value;
             }
         }
-        return 10; // µð¹ö±ëÀ» À§ÇØ ±âº»°ª ¹ÝÈ¯ 
+
+        return 10; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½âº»ï¿½ï¿½ ï¿½ï¿½È¯ 
     }
 
     private void ApplyStatChange(StatType type, int amount)
@@ -518,16 +530,16 @@ public class MinieventManager : MonoBehaviour
         {
             var playerStats = AllCharacterManager.Manager.Player.Stat;
 
-            // CharacterStatsÀÇ AddStatValue ¶Ç´Â NewStatÀ» È°¿ëÇÏ¿© ½ºÅÈÀ» ¾÷µ¥ÀÌÆ®ÇÕ´Ï´Ù.
-            // AddStatValue(StatType, int) ÇÔ¼ö°¡ CharacterStats¿¡ ÀÖ´Ù°í °¡Á¤ÇÕ´Ï´Ù.
+            // CharacterStatsï¿½ï¿½ AddStatValue ï¿½Ç´ï¿½ NewStatï¿½ï¿½ È°ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Õ´Ï´ï¿½.
+            // AddStatValue(StatType, int) ï¿½Ô¼ï¿½ï¿½ï¿½ CharacterStatsï¿½ï¿½ ï¿½Ö´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
             playerStats.AddStatValue(type, amount);
 
-            Debug.Log($"[StreetPerformance] {type} ½ºÅÈ¿¡ {amount} ¹Ý¿µ ¿Ï·á.");
-            Debug.Log($"[StreetPerformance] ÃÖÁ¾ ½ºÅÈ: {playerStats.ToString()}");
+            Debug.Log($"[StreetPerformance] {type} ï¿½ï¿½ï¿½È¿ï¿½ {amount} ï¿½Ý¿ï¿½ ï¿½Ï·ï¿½.");
+            Debug.Log($"[StreetPerformance] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {playerStats.ToString()}");
         }
         else
         {
-            Debug.LogError("AllCharacterManager³ª Player ½ºÅÈ °´Ã¼¸¦ Ã£À» ¼ö ¾ø¾î ½ºÅÈ º¯°æÀ» Àû¿ëÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError("AllCharacterManagerï¿½ï¿½ Player ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
         }
     }
 }

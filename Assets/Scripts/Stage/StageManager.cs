@@ -135,10 +135,6 @@ namespace Script.Stage
             // 결과 화면으로 Scene 전환
         }
 
-        private void AdjustPlayerCharacterResult()
-        {
-        }
-
         private void AdjustOtherCharacterResult()
         {
             if (Config.Resource.StageData.CurrentStage.Equals(Constant.Stage.TITLE_STAGE))
@@ -150,6 +146,8 @@ namespace Script.Stage
             }
             else
             {
+                TeamBuildingManager.Manager.AdjustResult();
+                AllCharacterManager.Manager.CalculateRank();
                 //투표 수 반영
             }
         }
