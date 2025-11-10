@@ -17,5 +17,5 @@ MonoBehaviour:
     \uB9E4\uB825. \uC2B9\uBD80\uC695\uC774 \uAC15\uD558\uBA70 \uC794\uAF80\uB97C
     \uBD80\uB9AC\uC9C0 \uC54A\uB294 \uC815\uC9C1\uD568. \uBA64\uBC84\uB4E4 \uC0AC\uC774\uC758
     \uC911\uC7AC\uC790 \uC5ED\uD560."
-  standingImage: {fileID: -166966734, guid: 323e8b201bfa0124b9e0f7fa56d03ad3, type: 3}
-  portrait: {fileID: 4300864846566260561, guid: f902ef37127d6554daff1f0b2f2a3f42, type: 3}
+  standingImage: {fileID: 6902885565347864435, guid: 7dbcb48de71b8aa469a5db705af7db1e, type: 3}
+  portrait: {fileID: 1354909335, guid: 7dbcb48de71b8aa469a5db705af7db1e, type: 3}

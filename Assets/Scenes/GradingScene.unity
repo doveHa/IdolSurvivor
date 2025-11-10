@@ -2432,7 +2432,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Script.FadeInOut
   fadeDuration: 1.5
   waitBetweenInOut: 0
-  waitBeforeStart: 0
+  waitBeforeStart: 1.5
   type: 0
 --- !u!114 &519221041
 MonoBehaviour:
@@ -2695,6 +2695,7 @@ GameObject:
   - component: {fileID: 561073735}
   - component: {fileID: 561073737}
   - component: {fileID: 561073736}
+  - component: {fileID: 561073738}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -2759,6 +2760,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 561073734}
   m_CullTransparentMesh: 1
+--- !u!114 &561073738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 561073734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a1f456295b0438194310fcf0f2490a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI.PlayerUpperBodySprite
+  image: {fileID: 561073736}
 --- !u!1 &636379960
 GameObject:
   m_ObjectHideFlags: 0

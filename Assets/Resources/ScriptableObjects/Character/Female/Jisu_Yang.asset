@@ -16,5 +16,5 @@ MonoBehaviour:
   description: "\uBAA8\uBC94\uC0DD \uD0C0\uC785, \uC131\uC2E4\uD558\uACE0 \uCC29\uD568.
     \uB178\uB825\uD30C\uC774\uBA70 \uB208\uBB3C\uC774 \uB9CE\uC74C. \uBAA8\uB450\uC5D0\uAC8C
     \uCE5C\uC808\uD558\uC9C0\uB9CC \uC790\uC2E0\uAC10\uC774 \uBD80\uC871\uD568."
-  standingImage: {fileID: -166966734, guid: 323e8b201bfa0124b9e0f7fa56d03ad3, type: 3}
-  portrait: {fileID: 4300864846566260561, guid: f902ef37127d6554daff1f0b2f2a3f42, type: 3}
+  standingImage: {fileID: -4527751847180442685, guid: bb2035e9dd3315a4aa95dedca1b7f5d0, type: 3}
+  portrait: {fileID: 1180544028, guid: bb2035e9dd3315a4aa95dedca1b7f5d0, type: 3}

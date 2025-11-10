@@ -8,9 +8,6 @@ public class PracticeManager : MonoBehaviour
 {
     public static PracticeManager Instance { get; private set; }
 
-    [HideInInspector]
-    public string targetStageConstant = Constant.Stage.STAGE_ONE;
-
     private int firstRoll = 0;
     private int secondRoll = 0;
     private int thirdRoll = 0;
@@ -41,7 +38,6 @@ public class PracticeManager : MonoBehaviour
 
         if (GMManager.Instance != null)
         {
-            
             GMManager.Instance.StartDialogue(dialogue, RollFirstDice);
         }
         else
@@ -155,6 +151,8 @@ public class PracticeManager : MonoBehaviour
             DiceRoller.Instance.SetRollCompletedUI();
 
             // Next 버튼을 누르면 StatAllocationManager 호출
+            DiceRoller.Instance.SetRollCompletedUI();
+
             DiceRoller.Instance.onNextAction = StartStatAllocation;
         }
     }
@@ -171,6 +169,7 @@ public class PracticeManager : MonoBehaviour
         if (StatAllocationManager.Instance != null)
         {
             // 분배가 끝난 후 FinalPracticeDialogue 함수를 실행하도록 콜백 전달
+
             StatAllocationManager.Instance.StartAllocation(totalDiceSum, FinalPracticeDialogue);
         }
         else
@@ -182,8 +181,8 @@ public class PracticeManager : MonoBehaviour
 
     private void FinalPracticeDialogue()
     {
-        // 주사위 굴림 결과를 초기화
-        firstRoll = secondRoll = thirdRoll = 0;
+            // 주사위 굴림 결과를 초기화
+            firstRoll = secondRoll = thirdRoll = 0;
 
         string[] dialogue = new string[]
         {
@@ -193,10 +192,15 @@ public class PracticeManager : MonoBehaviour
 
         if (GMManager.Instance != null)
         {
-            GMManager.Instance.StartDialogue(dialogue, () => {
-                //Config.Resource.StageData.CurrentStage = targetStageConstant;
+            GMManager.Instance.StartDialogue(dialogue, () =>
+            {
+                if (Config.Resource.StageData.CurrentStage == Constant.Stage.TITLE_STAGE)
+                {
+                    Config.Resource.StageData.CurrentStage = Constant.Stage.STAGE_ONE;
+                }
+
                 UnityEngine.SceneManagement.SceneManager.LoadScene("StageScene");
-                });
+            });
         }
     }
 }

@@ -1,10 +1,22 @@
 fileFormatVersion: 2
-guid: 025289bd1dc45d84d9ca9b342221777e
+guid: 6e251854ff4f1b6488c89642959bcbbd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 557345339600556794
-    second: Temp_Female_Player_0
+      213: -2966200626249415253
+    second: 11_0
+  - first:
+      213: 6218123344806412219
+    second: 11_1
+  - first:
+      213: -5600215177432712551
+    second: 11_2
+  - first:
+      213: 5096867029969399710
+    second: 11_3
+  - first:
+      213: -4541126943143591400
+    second: 11_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +112,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Temp_Female_Player_UpperBody_0
+      name: F11_Sua_Jeong_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 576
-        width: 450
-        height: 334
+        x: 63
+        y: 3
+        width: 1256
+        height: 1994
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +127,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: af25c1822a61cb700800000000000000
-      internalID: 557345339600556794
+      spriteID: e9fe9b43f85bbb640800000000000000
+      internalID: 5096867029969399710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: F11_Sua_Jeong_Portrait
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 1519
+        width: 450
+        height: 450
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 72c671ea8dc99de468e071c85c845c14
+      internalID: -1892818424
       vertices: []
       indices: 
       edges: []
@@ -125,7 +159,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 687df057c48677949bbd2a0b7dc89357
+    spriteID: a7719d93f26344e4890adec2cee03393
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +169,13 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Temp_Female_Player_UpperBody_0: 557345339600556794
+      11_0: -2966200626249415253
+      11_1: 6218123344806412219
+      11_2: -5600215177432712551
+      11_4: -4541126943143591400
+      F11_Sua_Jeong_0: 5096867029969399710
+      F11_Sua_Jeong_1: -767570737
+      F11_Sua_Jeong_Portrait: -1892818424
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
