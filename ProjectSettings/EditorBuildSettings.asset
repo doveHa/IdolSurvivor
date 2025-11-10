@@ -32,6 +32,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MiniEvent2.unity
     guid: e949dd44087f5f9468e9afeee542658c
+  - enabled: 1
+    path: Assets/Scenes/RankingAnnouncement.unity
+    guid: c686debf415a3eb48b49493ad1a0e24c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
