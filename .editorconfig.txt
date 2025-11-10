@@ -1,0 +1,6 @@
+# 파일 인코딩 및 줄 바꿈 설정 강제
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf

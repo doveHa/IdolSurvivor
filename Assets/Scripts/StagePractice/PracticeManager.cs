@@ -1,4 +1,4 @@
-using Script;
+ï»¿using Script;
 using System;
 using TMPro;
 using UnityEngine;
@@ -26,7 +26,7 @@ public class PracticeManager : MonoBehaviour
 
     public void Start()
     {
-        // ¾À ½ÃÀÛ ½Ã ¹Ù·Î ¿¬½À ÀÌº¥Æ® ½ÃÀÛ
+        // ì”¬ ì‹œì‘ ì‹œ ë°”ë¡œ ì—°ìŠµ ì´ë²¤íŠ¸ ì‹œì‘
         StartPractice();
     }
 
@@ -34,9 +34,9 @@ public class PracticeManager : MonoBehaviour
     {
         string[] dialogue = new string[]
         {
-            "°ø¿¬ ¿¬½À ¹Ì´Ï ÀÌº¥Æ®¸¦ ½ÃÀÛÇÕ´Ï´Ù.",
-            "ÁÖ»çÀ§¸¦ ¼¼ ¹ø ±¼·Á ³ª¿Â ÇÕ¸¸Å­ ½ºÅÈ Æ÷ÀÎÆ®¸¦ ¾ò°í, ¿øÇÏ´Â ½ºÅÈ¿¡ ºĞ¹èÇÕ´Ï´Ù.",
-            "Áö±İºÎÅÍ Ã¹ ¹øÂ° ÁÖ»çÀ§¸¦ ±¼¸³´Ï´Ù."
+            "ê³µì—° ì—°ìŠµ ë¯¸ë‹ˆ ì´ë²¤íŠ¸ë¥¼ ì‹œì‘í•©ë‹ˆë‹¤.",
+            "ì£¼ì‚¬ìœ„ë¥¼ ì„¸ ë²ˆ êµ´ë ¤ ë‚˜ì˜¨ í•©ë§Œí¼ ìŠ¤íƒ¯ í¬ì¸íŠ¸ë¥¼ ì–»ê³ , ì›í•˜ëŠ” ìŠ¤íƒ¯ì— ë¶„ë°°í•©ë‹ˆë‹¤.",
+            "ì§€ê¸ˆë¶€í„° ì²« ë²ˆì§¸ ì£¼ì‚¬ìœ„ë¥¼ êµ´ë¦½ë‹ˆë‹¤."
         };
 
         if (GMManager.Instance != null)
@@ -78,7 +78,7 @@ public class PracticeManager : MonoBehaviour
 
         if (DiceRoller.Instance != null)
         {
-            DiceRoller.Instance.resultText.text = $"Ã¹ ¹øÂ°: {firstRoll}!";
+            DiceRoller.Instance.resultText.text = $"ì²« ë²ˆì§¸: {firstRoll}!";
             DiceRoller.Instance.SetRollCompletedUI();
 
             DiceRoller.Instance.onNextAction = RollSecondDice;
@@ -113,7 +113,7 @@ public class PracticeManager : MonoBehaviour
 
         if (DiceRoller.Instance != null)
         {
-            DiceRoller.Instance.resultText.text = $"µÎ ¹øÂ°: {secondRoll}!\nÇöÀç ÇÕ°è: {firstRoll + secondRoll}";
+            DiceRoller.Instance.resultText.text = $"ë‘ ë²ˆì§¸: {secondRoll}!\ní˜„ì¬ í•©ê³„: {firstRoll + secondRoll}";
             DiceRoller.Instance.SetRollCompletedUI();
 
             DiceRoller.Instance.onNextAction = RollThirdDice;
@@ -151,44 +151,44 @@ public class PracticeManager : MonoBehaviour
         if (DiceRoller.Instance != null)
         {
             DiceRoller.Instance.resultText.text =
-                $"¼¼ ¹øÂ°: {thirdRoll}!\nÃÖÁ¾ ÁÖ»çÀ§ ÇÕ°è: {firstRoll} + {secondRoll} + {thirdRoll} = {totalDiceSum}Æ÷ÀÎÆ® È¹µæ!";
+                $"ì„¸ ë²ˆì§¸: {thirdRoll}!\nìµœì¢… ì£¼ì‚¬ìœ„ í•©ê³„: {firstRoll} + {secondRoll} + {thirdRoll} = {totalDiceSum}í¬ì¸íŠ¸ íšë“!";
             DiceRoller.Instance.SetRollCompletedUI();
 
-            // Next ¹öÆ°À» ´©¸£¸é StatAllocationManager È£Ãâ
+            // Next ë²„íŠ¼ì„ ëˆ„ë¥´ë©´ StatAllocationManager í˜¸ì¶œ
             DiceRoller.Instance.onNextAction = StartStatAllocation;
         }
     }
 
     private void StartStatAllocation()
     {
-        // ÁÖ»çÀ§ ÆĞ³Î ¼û±â±â
+        // ì£¼ì‚¬ìœ„ íŒ¨ë„ ìˆ¨ê¸°ê¸°
         if (DiceRoller.Instance != null)
         {
             DiceRoller.Instance.HideDicePanel();
         }
 
-        // StatAllocationManager¸¦ È£ÃâÇÏ¿© ½ºÅÈ ºĞ¹è ½ÃÀÛ
+        // StatAllocationManagerë¥¼ í˜¸ì¶œí•˜ì—¬ ìŠ¤íƒ¯ ë¶„ë°° ì‹œì‘
         if (StatAllocationManager.Instance != null)
         {
-            // ºĞ¹è°¡ ³¡³­ ÈÄ FinalPracticeDialogue ÇÔ¼ö¸¦ ½ÇÇàÇÏµµ·Ï Äİ¹é Àü´Ş
+            // ë¶„ë°°ê°€ ëë‚œ í›„ FinalPracticeDialogue í•¨ìˆ˜ë¥¼ ì‹¤í–‰í•˜ë„ë¡ ì½œë°± ì „ë‹¬
             StatAllocationManager.Instance.StartAllocation(totalDiceSum, FinalPracticeDialogue);
         }
         else
         {
-            Debug.LogError("StatAllocationManager ÀÎ½ºÅÏ½º¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù! ÃÖÁ¾ ´ëÈ­·Î ¹Ù·Î ÀÌµ¿ÇÕ´Ï´Ù.");
+            Debug.LogError("StatAllocationManager ì¸ìŠ¤í„´ìŠ¤ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤! ìµœì¢… ëŒ€í™”ë¡œ ë°”ë¡œ ì´ë™í•©ë‹ˆë‹¤.");
             FinalPracticeDialogue();
         }
     }
 
     private void FinalPracticeDialogue()
     {
-        // ÁÖ»çÀ§ ±¼¸² °á°ú¸¦ ÃÊ±âÈ­
+        // ì£¼ì‚¬ìœ„ êµ´ë¦¼ ê²°ê³¼ë¥¼ ì´ˆê¸°í™”
         firstRoll = secondRoll = thirdRoll = 0;
 
         string[] dialogue = new string[]
         {
-            "¼º°øÀûÀÎ ¿¬½ÀÀÌ¾ú½À´Ï´Ù!",
-            "È¹µæÇÑ Æ÷ÀÎÆ®´Â Ä³¸¯ÅÍ ½ºÅÈ¿¡ ¿µ±¸ÀûÀ¸·Î Àû¿ëµÇ¾ú½À´Ï´Ù."
+            "ì„±ê³µì ì¸ ì—°ìŠµì´ì—ˆìŠµë‹ˆë‹¤!",
+            "íšë“í•œ í¬ì¸íŠ¸ëŠ” ìºë¦­í„° ìŠ¤íƒ¯ì— ì˜êµ¬ì ìœ¼ë¡œ ì ìš©ë˜ì—ˆìŠµë‹ˆë‹¤."
         };
 
         if (GMManager.Instance != null)
