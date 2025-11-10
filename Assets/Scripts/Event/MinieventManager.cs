@@ -75,13 +75,13 @@ public class MinieventManager : MonoBehaviour
         switch (type)
         {
             case StatType.Sing:
-                return "�뷡";
+                return "노래";
             case StatType.Dance:
-                return "��";
+                return "춤";
             case StatType.Charm:
-                return "�ŷ�";
+                return "매력";
             case StatType.Appearance:
-                return "�ܸ�";
+                return "외모";
             default:
                 return type.ToString();
         }
@@ -93,7 +93,7 @@ public class MinieventManager : MonoBehaviour
 
         if (allEvents.Length == 0)
         {
-            Debug.LogError("EventType Enum�� ���ǵ� �̺�Ʈ�� �����ϴ�. PR_1Min�� �⺻������ ��ȯ�մϴ�.");
+            Debug.LogError("EventType Enum에 정의된 이벤트가 없습니다. PR_1Min을 기본값으로 반환합니다.");
             return EventType.PR_1Min;
         }
 
@@ -148,7 +148,7 @@ public class MinieventManager : MonoBehaviour
         {
             // ���� �ֻ����� ���� ���: ���� ���� �غ� (Next ��ư���� ��ȯ)
             DiceRoller.Instance.resultText.text =
-                $"���� #{currentRollIndex} ���: {rollResult}!\n���� ������ �غ��ϼ���.";
+                $"굴림 #{currentRollIndex} 결과: {rollResult}!\n.";
 
             DiceRoller.Instance.SetRollCompletedUI(); // Roll -> Next ��ư ��ȯ
 
@@ -163,7 +163,7 @@ public class MinieventManager : MonoBehaviour
         else
         {
             // ��� ���� �Ϸ�: ���� ó�� ����
-            DiceRoller.Instance.resultText.text = $"��� ���� �Ϸ�! ���� ����� Ȯ���ϼ���.";
+            DiceRoller.Instance.resultText.text = $"모든 굴림 완료! 최종 결과를 확인하세요.";
             DiceRoller.Instance.SetRollCompletedUI(); // Roll -> Next ��ư ��ȯ
 
             // Next ��ư�� ���� ó�� �ݹ� ����
@@ -194,7 +194,7 @@ public class MinieventManager : MonoBehaviour
 
     private void StartOneMinPR()
     {
-        string[] dialogue = { "�̴� �̺�Ʈ '1�� PR'�� ���� ���� ȯ���մϴ�!", "�ֻ����� �� �� ���� ��ǥ���� �����մϴ�." };
+        string[] dialogue = { "'1분 PR'을 진행합니다!", "주사위를 굴려서 PR을 진행합니다." };
         if (GMManager.Instance != null)
         {
             // StartMultiRoll�� ����Ͽ� RollFirstPRDice, RollSecondPRDice �Լ��� ������
@@ -242,7 +242,7 @@ public class MinieventManager : MonoBehaviour
 
     private void FinalPRDialogue()
     {
-        string[] dialogue = { $"1�� PR�� �������ϴ�. ��ǥ�� {finalVotesResult}ǥ�� ȹ���Ͽ����ϴ�.", "���� �̺�Ʈ�� �̵��մϴ�." };
+        string[] dialogue = { $"1분 PR이 끝났습니다. 득표수 {finalVotesResult}를 얻었습니다.", "이벤트를 종료합니다." };
         if (GMManager.Instance != null)
         {
             GMManager.Instance.StartDialogue(dialogue, () => NextScene());
@@ -256,7 +256,7 @@ public class MinieventManager : MonoBehaviour
 
     private void StartPractice()
     {
-        string[] dialogue = { "���� �̺�Ʈ�� �����մϴ�. �ֻ��� �ո�ŭ ���� ����Ʈ�� ��� �й��մϴ�." };
+        string[] dialogue = { "연습 이벤트가 진행됩니다. 주사위 합만큼 연습 포인트를 얻어 분배합니다." };
         if (GMManager.Instance != null)
         {
             GMManager.Instance.StartDialogue(dialogue,
@@ -291,7 +291,7 @@ public class MinieventManager : MonoBehaviour
     private void FinalPracticeDialogue()
     {
         string[] dialogue =
-            { $"������ �������ϴ�. �� {practicePoints} ����Ʈ�� ���ȿ� �й��߽��ϴ�.", "���� �̺�Ʈ�� �̵��մϴ�." };
+            { $"연습을 완료했습니다. 총 {practicePoints} 포인트를 능력치에 분배했습니다.", "다음 이벤트로 이동합니다."};
         if (GMManager.Instance != null)
         {
             GMManager.Instance.StartDialogue(dialogue, () => NextScene());
@@ -307,8 +307,8 @@ public class MinieventManager : MonoBehaviour
     {
         string[] dialogue =
         {
-            "���α׷��� ȫ���ϱ� ���� ��Ÿ� ���� �̺�Ʈ�� �����մϴ�!",
-            "� ���������� ��Ÿ� ���� �̺�Ʈ�� �����ðڽ��ϱ�?"
+            "프로그램을 홍보하기 위한 길거리 공연 이벤트가 진행됩니다!",
+            "어떤 능력으로 길거리 공연 이벤트를 진행하시겠습니까?"
         };
 
         if (GMManager.Instance != null)
@@ -361,8 +361,8 @@ public class MinieventManager : MonoBehaviour
 
             // 3. GM �гο� Ȯ�� �޽��� ǥ��
             GMManager.Instance.gmText.text =
-                $"{translatedStat} ������ �����Ͻðڽ��ϱ�?\n" +
-                "(���� �� ���� ����, ���� �� ���� ����)";
+               $"{translatedStat} 능력으로 진행하시겠습니까?\n" +
+                "(성공 시 능력 상승, 실패 시 능력 감소)";
             GMManager.Instance.gmPanel.SetActive(true);
 
             // 4. Next ��ư�� �ֻ��� ���� ���� �Լ� ����
@@ -423,8 +423,8 @@ public class MinieventManager : MonoBehaviour
                      baseValue; // ���� ������ ��� (��: 10 -> 30, change = 20)
 
             resultMessage =
-                $"[����: {roll}] ����!\n" +
-                $"{translatedStat} ������ {StreetSuccessMultiplier}�� �����Ͽ� �� {baseValue + change}�� �Ǿ����ϴ�! (+{change})";
+                $"[결과: {roll}] 성공!\n" +
+                $"{translatedStat} 능력치가 {StreetSuccessMultiplier}배 증가하여 총 {baseValue + change}이 되었습니다! (+{change})";
 
             // ���� ����
             ApplyStatChange(selectedStatForStreet, change);
@@ -435,8 +435,8 @@ public class MinieventManager : MonoBehaviour
             change = -reductionAmount;
 
             resultMessage =
-                $"[����: {roll}] ����!\n" +
-                $"������ 20% �����Ͽ� {reductionAmount}��ŭ �پ������ϴ�.";
+                $"[결과: {roll}] 실패!\n" +
+                $"능력치가 20% 감소하여 {reductionAmount}만큼 줄어들었습니다.";
 
             ApplyStatChange(selectedStatForStreet, change);
         }
@@ -462,10 +462,10 @@ public class MinieventManager : MonoBehaviour
         }
 
         string[] dialogue = new string[]
-        {
-            "��Ÿ� ���� �̺�Ʈ�� �������ϴ�.",
-            "���� �̺�Ʈ�� �̵��մϴ�."
-        };
+                {
+            "길거리 공연 이벤트가 종료되었습니다.",
+            "다음 이벤트로 이동합니다."
+                };
 
         if (GMManager.Instance != null)
         {
@@ -475,7 +475,7 @@ public class MinieventManager : MonoBehaviour
 
     private void FinalActionOfStreetEvent()
     {
-        Debug.Log("��Ÿ� ���� �̺�Ʈ ����");
+        Debug.Log("길거리 공연 이벤트 종료");
         NextScene();
         // ���⿡ �� ��ȯ �Ǵ� ���� �̺�Ʈ ���� ������ �ֽ��ϴ�.
     }
@@ -493,8 +493,8 @@ public class MinieventManager : MonoBehaviour
         int guaranteedVotes = 21;
         string[] dialogue = new string[]
         {
-            "PPL ���� �ڳʿ��� Ȱ���߽��ϴ�.",
-            $"��ǥ�� {guaranteedVotes}ǥ�� ������ϴ�.\n���� �ܰ�� �̵��մϴ�."
+            "PPL 예능 활동을 하였습니다.",
+            $"득표수 {guaranteedVotes}표를 획득했습니다.\n다음 단계로 이동합니다."
         };
 
         if (GMManager.Instance != null)
@@ -504,7 +504,7 @@ public class MinieventManager : MonoBehaviour
                 // ��ǥ�� �߰�
                 AllCharacterManager.Manager.Player.AddVote(guaranteedVotes);
                 NextScene();
-                Debug.Log("���� �̺�Ʈ ��. ���� ������ ��ȯ");
+                Debug.Log("예능 이벤트 끝. 다음 씬으로 전환");
             });
         }
     }
@@ -536,12 +536,12 @@ public class MinieventManager : MonoBehaviour
             // AddStatValue(StatType, int) �Լ��� CharacterStats�� �ִٰ� �����մϴ�.
             playerStats.AddStatValue(type, amount);
 
-            Debug.Log($"[StreetPerformance] {type} ���ȿ� {amount} �ݿ� �Ϸ�.");
-            Debug.Log($"[StreetPerformance] ���� ����: {playerStats.ToString()}");
+            Debug.Log($"[StreetPerformance] {type} 능력치에 {amount} 반영 완료.");
+            Debug.Log($"[StreetPerformance] 현재 능력: {playerStats.ToString()}");
         }
         else
         {
-            Debug.LogError("AllCharacterManager�� Player ���� ��ü�� ã�� �� ���� ���� ������ ������ �� �����ϴ�.");
+            Debug.LogError("AllCharacterManager와 Player 객체를 찾을 수 없어 능력치 변경을 적용할 수 없습니다.");
         }
     }
 }
